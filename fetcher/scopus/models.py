@@ -61,6 +61,10 @@ class SearchEntry:
         self.openaccess_flag = json_data.get('openaccessFlag')
         self.freetoread = json_data.get('freetoread', {}).get('value', [])
         self.freetoread_label = json_data.get('freetoreadLabel', {}).get('value', [])
+        self.fundNo = json_data.get('fund-no')
+        self.fundAcr = json_data.get('fund-acr')
+        self.fundSponsor = json_data.get('fund-sponsor')
+        self.url = json_data.get('prism:url')
 
         self.links = [Link(link) for link in json_data.get('link', [])]
         self.affiliations = [Affiliation(affil) for affil in json_data.get('affiliation', [])]

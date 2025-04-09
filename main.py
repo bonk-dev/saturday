@@ -3,6 +3,8 @@ import os
 
 from dotenv import load_dotenv
 from fetcher.scopus.api import ScopusApi
+from database.dbContext import *
+from database.scopusController import *
 
 
 async def main():
@@ -19,6 +21,12 @@ async def main():
         r = await client.search('python3')
         for entry in r:
             print(entry)
+            
+        with app.app_context():
+            scopusBatchInsert(r)
+
+
+
 
 
 asyncio.run(main())
