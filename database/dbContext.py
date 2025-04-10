@@ -2,7 +2,7 @@ from flask import Flask, g
 import sqlite3
 
 app = Flask(__name__)
-DATABASE = '../articleDatabase.db'
+DATABASE = 'articleDatabase.db'
 
 def get_db():
     if 'db' not in g:
