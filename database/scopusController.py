@@ -1,4 +1,4 @@
-from dbContext import get_db
+from database.dbContext import get_db
 from fetcher.scopus.models import *
 
 def scopusBatchInsert(data: list[SearchEntry]):
