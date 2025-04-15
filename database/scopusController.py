@@ -8,12 +8,13 @@ def scopusBatchInsert(data: list[SearchEntry]):
     try:
         cursor.execute("BEGIN TRANSACTION")
 
-        cursor.execute("INSERT INTO InsertLog (Name) Values (Scopus)")
+        cursor.execute("INSERT INTO InsertLog (Source) Values (?)", ("Scopus",))
         insert_id = cursor.lastrowid
 
         for article in data:
             author_ids = insert_authors(article.authors, insert_id, cursor)
             affiliation_ids = insert_affiliations(article.affiliations, insert_id, cursor)
+
 
             keyword_ids = insert_keywords(article.authkeywords, insert_id, cursor)
             article_id = insert_article(article, insert_id, cursor)
@@ -42,7 +43,7 @@ def bind_authors(author_ids: list[int], article_id, cursor):
 def bind_keywords(keyword_ids: list[int], article_id, cursor):
     for keyword_id in keyword_ids:
         cursor.execute("""
-            INSERT INTO ArticlexKeyword (ArticleID, KeywordID)
+            INSERT INTO ArticlexKeywords (ArticleID, KeywordsID)
             VALUES (?, ?)
         """, (article_id, keyword_id))
 
@@ -59,7 +60,7 @@ def insert_authors(authors: list[Author], insert_id: int, cursor) -> list[int]:
     for author in authors:
         cursor.execute(
             "SELECT ID FROM Author WHERE ScopusID = ?",
-            author.authid
+            (author.authid,)
         )
         result = cursor.fetchone()
 
@@ -89,7 +90,7 @@ def insert_affiliations(affiliations: list[Affiliation], insert_id: int, cursor)
     for affiliation in affiliations:
         cursor.execute(
             "SELECT ID FROM Affiliation WHERE ScopusID = ?",
-            affiliation.afid
+            (affiliation.afid,)
         )
         result = cursor.fetchone()
 
@@ -105,24 +106,23 @@ def insert_affiliations(affiliations: list[Affiliation], insert_id: int, cursor)
                 affiliation.afid,
                 affiliation.affiliation_url,
                 affiliation.affilname,
-                affiliation.affiliation_city,
                 affiliation.affiliation_country,
+                affiliation.affiliation_city,
                 insert_id
             ))
             affiliation_id = cursor.lastrowid
         affiliation_ids.append(affiliation_id)
     return affiliation_ids
 
-def insert_keywords(keywordsConcat, insert_id: int, cursor) -> list[int]:
+def insert_keywords(keywords, insert_id: int, cursor) -> list[int]:
     keyword_ids = []
-    keywords = keywordsConcat.split("|")
 
     for keyword in keywords:
-        keyword = keyword.trim()
+        keyword = keyword.strip()
 
         cursor.execute(
             "SELECT Id FROM keywords WHERE keyword = ?",
-            keyword
+            (keyword,)
         )
         result = cursor.fetchone()
 

@@ -21,12 +21,10 @@ async def main():
         r = await client.search('python3')
         for entry in r:
             print(entry)
-            
-        with app.app_context():
-            scopusBatchInsert(r)
 
 
-
-
+    with app.app_context():
+        init_app(app)
+        scopusBatchInsert(r)
 
 asyncio.run(main())

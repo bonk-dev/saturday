@@ -17,3 +17,22 @@ def close_db(e=None):
 
 def init_app(app):
     app.teardown_appcontext(close_db)
+    create_db_if_missing()
+
+
+def create_db_if_missing():
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+
+    cursor.execute("""
+        SELECT name FROM sqlite_master 
+        WHERE type='table' AND name=?
+    """, ("InsertLog",))
+
+    table_exists = cursor.fetchone()
+
+    if not table_exists:
+        with open("database/dbCreateScript.sql", 'r') as file:
+            sql_script = file.read()
+        cursor.executescript(sql_script)
+        db.commit()
