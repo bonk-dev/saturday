@@ -3,12 +3,20 @@ import os
 
 from dotenv import load_dotenv
 from fetcher.scopus.api import ScopusApi
+from fetcher.gscholar.scraper import GoogleScholarScraper
 from database.dbContext import *
 from database.scopusController import *
+import json
 
 
 async def main():
     load_dotenv()
+
+    # TODO: Add console options to choose scrapers/APIs
+    # scr = GoogleScholarScraper()
+    # r = await scr.search('python3 c++ wulkan')
+    # print(json.dumps(r))
+    # print(r)
 
     scopus_key = os.getenv('SCOPUS_API_KEY')
     scopus_base = os.getenv('SCOPUS_API_BASE')
