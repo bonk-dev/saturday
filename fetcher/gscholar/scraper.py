@@ -4,6 +4,7 @@ from scholarly.data_types import Publication
 
 class GoogleScholarScraper:
     # TODO: Turn scholarly into async
+    # TODO: Add better handling of manually supplied list of proxies to scholarly
     async def search(self, query: str) -> list[Publication]:
         results = []
         scholarly_query = scholarly.search_pubs(query)
