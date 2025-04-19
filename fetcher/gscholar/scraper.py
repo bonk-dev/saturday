@@ -13,9 +13,11 @@ class GoogleScholarScraper:
             r = next(scholarly_query, 'end')
             while r != 'end':
                 results.append(r)
+                print(f'[GoogleScholarScraper] So far: {len(results)}; {r.get('bib').get('title')}')
+
                 r = next(scholarly_query, 'end')
-        except e:
+        except BaseException as e:
             print(f'GoogleScholarScraper errored out after scraping {len(results)} results')
-            print(e)
+            print(e, type(e))
         
         return results
