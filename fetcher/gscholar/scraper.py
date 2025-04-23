@@ -18,7 +18,8 @@ class GoogleScholarScraper:
             return
         pg = ProxyGenerator()
         next_proxy = next(self.proxies)
-        pg.SingleProxy(http=next_proxy, https=next_proxy)
+        # TODO: Make 'verify' controllable with CLI args/frontend
+        pg.SingleProxy(http=next_proxy, https=next_proxy, verify=False)
         scholarly.use_proxy(pg, pg)
 
     async def search(self, query: str) -> list[Publication]:
