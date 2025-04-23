@@ -19,15 +19,15 @@ class GoogleScholarScraper:
         pg = ProxyGenerator()
         next_proxy = next(self.proxies)
         pg.SingleProxy(http=next_proxy, https=next_proxy)
-        # TODO: Fix httpx error (0.28 has breaking changes regarding proxies)
         scholarly.use_proxy(pg, pg)
 
     async def search(self, query: str) -> list[Publication]:
         results = []
-        scholarly_query = scholarly.search_pubs(query)
 
-        self._use_next_proxy()
         try:
+            self._use_next_proxy()
+            scholarly_query = scholarly.search_pubs(query)
+
             r = next(scholarly_query, 'end')
             while r != 'end':
                 results.append(r)
