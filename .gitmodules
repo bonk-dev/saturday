@@ -1,0 +1,3 @@
+[submodule "third_party/scholarly"]
+	path = third_party/scholarly
+	url = https://github.com/bonk-dev/scholarly.git
