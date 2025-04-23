@@ -13,7 +13,7 @@ async def main():
     load_dotenv()
 
     # TODO: Add console options to choose scrapers/APIs
-    # scr = GoogleScholarScraper()
+    # scr = GoogleScholarScraper(proxies=['http://127.0.0.1:8080'])
     # r = await scr.search('python3 c++ wulkan')
     # print(json.dumps(r))
     # print(r)
@@ -29,7 +29,6 @@ async def main():
         r = await client.search('python3')
         for entry in r:
             print(entry)
-
 
     with app.app_context():
         init_app(app)
