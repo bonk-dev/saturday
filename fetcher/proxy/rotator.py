@@ -1,7 +1,5 @@
 import itertools
 
-import httpx
-
 
 class ProxyRotator:
     def __init__(self, proxies: list[str] | None = None):
