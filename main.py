@@ -25,26 +25,27 @@ async def main():
     use_scopus = args.scopus_api or args.all
     use_gscholar = args.google_scholar or args.all
 
-    # TODO: Add console options to choose scrapers/APIs
-    # scr = GoogleScholarScraper(proxies=['http://127.0.0.1:8080'])
-    # r = await scr.search('python3 c++ wulkan')
-    # print(json.dumps(r))
-    # print(r)
+    if use_gscholar:
+        scr = GoogleScholarScraper(proxies=['http://127.0.0.1:8080'])
+        r = await scr.search('python3 c++ wulkan')
+        print(json.dumps(r))
+        print(r)
 
-    scopus_key = os.getenv('SCOPUS_API_KEY')
-    scopus_base = os.getenv('SCOPUS_API_BASE')
+    if use_scopus:
+        scopus_key = os.getenv('SCOPUS_API_KEY')
+        scopus_base = os.getenv('SCOPUS_API_BASE')
 
-    if scopus_base is None or scopus_base is None:
-        print("Please set SCOPUS_API_KEY and SCOPUS_API_BASE in .env (check out .env.sample) or with environment variables")
-        return
+        if scopus_base is None or scopus_base is None:
+            print("Please set SCOPUS_API_KEY and SCOPUS_API_BASE in .env (check out .env.sample) or with environment variables")
+            return
 
-    async with ScopusApi(api_key=scopus_key, api_endpoint=scopus_base) as client:
-        r = await client.search('python3')
-        for entry in r:
-            print(entry)
+        async with ScopusApi(api_key=scopus_key, api_endpoint=scopus_base) as client:
+            r = await client.search('python3')
+            for entry in r:
+                print(entry)
 
-    with app.app_context():
-        init_app(app)
-        scopusBatchInsert(r)
+        with app.app_context():
+            init_app(app)
+            scopusBatchInsert(r)
 
 asyncio.run(main())
