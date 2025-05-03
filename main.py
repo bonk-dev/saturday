@@ -21,6 +21,7 @@ async def main():
     parser = argparse.ArgumentParser(description="Science publication metadata scraper")
     parser.add_argument('search_query', help='Generic search query to use when scraping metadata')
     parser.add_argument('-a', '--all', action='store_true', help='Use all methods (google-scholar, scopus)')
+    parser.add_argument('-p', '--proxy', action='append', help='HTTP(S) proxy address, example: -p http://127.0.0.1:8080 -p http://127.0.0.2:1234')
     parser.add_argument('-g', '--google-scholar', action='store_true', help='Use Google Scholar for scraping metadata')
     parser.add_argument('-s', '--scopus-api', action='store_true', help='Use Scopus API for scraping metadata')
     parser.add_argument('--ssl-insecure', action='store_true', help='Do not verify upstream server SSL/TLS certificates')
@@ -33,7 +34,7 @@ async def main():
     use_gscholar = args.google_scholar or args.all
 
     if use_gscholar:
-        scr = GoogleScholarScraper(verify_ssl=not args.ssl_insecure, proxies=['http://127.0.0.1:8080'])
+        scr = GoogleScholarScraper(verify_ssl=not args.ssl_insecure, proxies=args.proxy)
         r = await scr.search(search_query)
         logger.debug(json.dumps(r))
         logger.debug(r)
