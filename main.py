@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 
 from dotenv import load_dotenv
@@ -10,6 +11,8 @@ import json
 
 
 async def main():
+    logging.basicConfig(level=logging.WARN)
+
     load_dotenv()
 
     # TODO: Add console options to choose scrapers/APIs
