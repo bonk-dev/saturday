@@ -43,15 +43,14 @@ async def main():
 
         if scopus_base is None or scopus_base is None:
             logger.critical("Please set SCOPUS_API_KEY and SCOPUS_API_BASE in .env (check out .env.sample) or with environment variables")
-            return
+        else:
+            async with ScopusApi(api_key=scopus_key, api_endpoint=scopus_base) as client:
+                r = await client.search(search_query)
+                for entry in r:
+                    logger.debug(entry)
 
-        async with ScopusApi(api_key=scopus_key, api_endpoint=scopus_base) as client:
-            r = await client.search(search_query)
-            for entry in r:
-                logger.debug(entry)
-
-        with app.app_context():
-            init_app(app)
-            scopusBatchInsert(r)
+            with app.app_context():
+                init_app(app)
+                scopusBatchInsert(r)
 
 asyncio.run(main())
