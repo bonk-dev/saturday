@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import logging
 import os
@@ -14,6 +15,15 @@ async def main():
     logging.basicConfig(level=logging.WARN)
 
     load_dotenv()
+
+    parser = argparse.ArgumentParser(description="Science publication metadata scraper")
+    parser.add_argument('-a', '--all', action='store_true', help='Use all methods (google-scholar, scopus)')
+    parser.add_argument('-g', '--google-scholar', action='store_true', help='Use Google Scholar for scraping metadata')
+    parser.add_argument('-s', '--scopus-api', action='store_true', help='Use Scopus API for scraping metadata')
+    args = parser.parse_args()
+
+    use_scopus = args.scopus_api or args.all
+    use_gscholar = args.google_scholar or args.all
 
     # TODO: Add console options to choose scrapers/APIs
     # scr = GoogleScholarScraper(proxies=['http://127.0.0.1:8080'])
