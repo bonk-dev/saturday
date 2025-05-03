@@ -1,3 +1,4 @@
+import logging
 import httpx
 
 from fetcher.scopus.models import SearchResults, SearchEntry
@@ -16,6 +17,7 @@ class ScopusApi:
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.10 Safari/605.1.1',
             'X-ELS-APIKey': api_key
         })
+        self._logger = logging.getLogger(__name__)
 
     async def __aenter__(self):
         return self
@@ -24,6 +26,8 @@ class ScopusApi:
         await self._session.aclose()
 
     async def search(self, title: str) -> list[SearchEntry]:
+        self._logger.info(f'Searching (all pages) for "{title}"')
+
         first_page = await self.search_one_page(title)
         start_index = first_page.itemsPerPage
         entries_on_page = first_page.itemsPerPage
@@ -40,11 +44,18 @@ class ScopusApi:
         return entries
 
     async def search_one_page(self, title: str, start: int = 0, count: int = SCOBUS_SEARCH_MAX_COUNT) -> SearchResults:
+        self._logger.info(f'Searching (single page) for "{title}", start: {start}, count: {count}')
+
         if count > SCOBUS_SEARCH_MAX_COUNT:
             raise ValueError(f"Count must be less than SCOBUS_SEARCH_MAX_COUNT ({SCOBUS_SEARCH_MAX_COUNT}, but was {count})")
 
         query = self._build_search_query(title, start, count)
+        self._logger.debug(f'Search query: {query}')
+
         response = await self._session.get(f'{self._base}/content/search/scopus', params=query)
+        self._logger.debug(f'Response status: {str(response.status_code)}')
+        self._logger.debug(f'Response text: {response.text}')
+
         return SearchResults(json_data=response.json())
 
     @staticmethod
