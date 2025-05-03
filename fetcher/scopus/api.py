@@ -1,6 +1,7 @@
 import logging
 import httpx
 
+from fetcher.proxy.rotator import ProxyRotator
 from fetcher.scopus.models import SearchResults, SearchEntry
 
 SCOBUS_SEARCH_MAX_COUNT = 25
@@ -9,8 +10,9 @@ SCOBUS_SEARCH_MAX_COUNT = 25
 class ScopusApi:
     BASE_URI = 'https://api.elsevier.com'
 
-    def __init__(self, api_key: str, api_endpoint: str | None = BASE_URI):
-        self._session = httpx.AsyncClient()
+    def __init__(self, api_key: str, api_endpoint: str | None = BASE_URI, verify_ssl: bool = True, proxies: list[str] | None = None):
+        self._proxy_rotator = ProxyRotator(proxies=proxies)
+        self._session = httpx.AsyncClient(proxy=self._proxy_rotator.use_next_proxy(), verify=verify_ssl)
         self._base = api_endpoint
         self._session.headers.update({
             'Accept': 'application/json',
