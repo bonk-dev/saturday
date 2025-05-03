@@ -1,3 +1,4 @@
+import logging
 from itertools import cycle
 
 from scholarly import scholarly, ProxyGenerator
@@ -12,17 +13,20 @@ class GoogleScholarScraper:
             proxies = []
         self.count_of_proxies = len(proxies)
         self.proxies = cycle(proxies)
+        self._logger = logging.getLogger(__name__)
 
     def _use_next_proxy(self):
         if self.count_of_proxies <= 0:
             return
         pg = ProxyGenerator()
         next_proxy = next(self.proxies)
+        self._logger.debug(f'Next proxy: {next_proxy}')
         # TODO: Make 'verify' controllable with CLI args/frontend
         pg.SingleProxy(http=next_proxy, https=next_proxy, verify=False)
         scholarly.use_proxy(pg, pg)
 
     async def search(self, query: str) -> list[Publication]:
+        self._logger.info(f'Searching for {query}')
         results = []
 
         try:
@@ -32,13 +36,13 @@ class GoogleScholarScraper:
             r = next(scholarly_query, 'end')
             while r != 'end':
                 results.append(r)
-                print(f'[GoogleScholarScraper] So far: {len(results)}; {r.get('bib').get('title')}')
+                self._logger.debug(f'So far: {len(results)}; {r.get('bib').get('title')}')
 
                 self._use_next_proxy()
                 r = next(scholarly_query, 'end')
         except BaseException as e:
             # TODO: Rotate proxy on exception
-            print(f'GoogleScholarScraper errored out after scraping {len(results)} results')
-            print(e, type(e))
+            self._logger.error(f'GoogleScholarScraper errored out after scraping {len(results)} results')
+            self._logger.error(e, type(e))
         
         return results
