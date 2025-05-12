@@ -1,4 +1,6 @@
 import logging
+import random
+import string
 import urllib.parse
 import httpx
 from fetcher.scopus_batch.models import SearchEidsResult, ExportFileType, FieldGroupIdentifiers
@@ -55,6 +57,20 @@ class ScopusScraper:
         # TODO: Refresh JWT on 403, or throw error
         r = await self._session.post(f'{self.__BASE__}/api/documents/search/eids', json=payload)
         return SearchEidsResult(json_data=r.json())
+
+    @staticmethod
+    def get_batch_id_prefix() -> str:
+        prefix_length = 6
+        alphabet = string.ascii_lowercase + string.digits
+        return ''.join(random.choice(alphabet) for i in range(prefix_length))
+
+    @staticmethod
+    def get_batch_id(exported: int, prefix: str | None = None):
+        if prefix is None:
+            prefix = ScopusScraper.get_batch_id_prefix()
+        block_2000_index = exported // 2000
+        block_100_index = (exported - block_2000_index * 2000) // 100
+        return f'{prefix}_{block_2000_index}_{block_100_index}'
 
     async def export_part(self,
                           batch_id: str,
