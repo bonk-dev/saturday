@@ -1,7 +1,7 @@
 import logging
 import urllib.parse
 import httpx
-from fetcher.scopus_batch.models import SearchEidsResult
+from fetcher.scopus_batch.models import SearchEidsResult, ExportFileType, FieldGroupIdentifiers
 
 
 class ScopusScraperConfig:
@@ -31,6 +31,8 @@ class ScopusScraper:
             'User-Agent': config.user_agent,
             'Cookie': config.build_cookie_header()
         })
+        self._sessionId = config.sc_session_id
+        self._nextTransactionId = 1
         self._logger = logging.getLogger(__name__)
 
     async def __aenter__(self):
@@ -50,5 +52,38 @@ class ScopusScraper:
 
         self._logger.debug(f'search_eids: {payload}')
 
+        # TODO: Refresh JWT on 403, or throw error
         r = await self._session.post(f'{self.__BASE__}/api/documents/search/eids', json=payload)
         return SearchEidsResult(json_data=r.json())
+
+    async def export_part(self,
+                          batch_id: str,
+                          total_docs: int,
+                          eids: list[str],
+                          file_type: ExportFileType,
+                          field_group_ids: list[FieldGroupIdentifiers],
+                          locale: str = 'en-US') -> str:
+        # payload.keyEvent:
+        # transactionId: Filled with data from JS window.PlatformData. Doesn't need to be correct
+        # primary: Filled with data from JS window.ScopusUser. Not required
+        payload = {
+            'eids': eids,
+            'fileType': file_type.value,
+            'fieldGroupIdentifiers': list(map(lambda i: i.value, field_group_ids)),
+            'keyEvent': {
+                'sessionId': self._sessionId,
+                'transactionId': self._sessionId + ':' + str(self._nextTransactionId),  # Read comment above
+                'origin': 'resultsList',
+                'zone': 'resultsListHeader',
+                'primary': '',  # Read comment above
+                'totalDocs': total_docs
+            },
+            'locale': locale,
+            'hideHeaders': False
+        }
+        self._logger.debug(f'export_part: {payload}')
+        self._nextTransactionId += 1
+
+        # TODO: Refresh JWT on 403, or throw error
+        r = await self._session.post(f'{self.__BASE__}/gateway/export-service/export?batchId={batch_id}', json=payload)
+        return r.text

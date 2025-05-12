@@ -11,6 +11,7 @@ from database.dbContext import *
 from database.scopusController import *
 import json
 
+from fetcher.scopus_batch.models import ExportFileType, all_identifiers
 from fetcher.scopus_batch.scraper import ScopusScraper, ScopusScraperConfig
 
 
@@ -79,7 +80,19 @@ async def main():
                         awselb=scopus_batch_awselb.value,
                         scopus_session_uuid=scopus_batch_session_uuid.value,
                         sc_session_id=scopus_batch_sc_session_id.value), verify_ssl=not args.ssl_insecure) as sc_batch:
-                    await sc_batch.search_eids(item_count=5, offset=0, query=f"TITLE-ABS-KEY({search_query})")
+                    eids = await sc_batch.search_eids(item_count=5, offset=0, query=f"TITLE-ABS-KEY({search_query})")
+                    eids_to_export = eids.response.docs if eids and len(eids.response.docs) > 0 else None
+                    if eids_to_export is not None:
+                        logger.debug(f'Exporting EIDs {eids_to_export}')
+                        exports = await sc_batch.export_part(
+                            batch_id='aaaaaa_-1_0',
+                            total_docs=len(eids_to_export),
+                            eids=eids_to_export,
+                            file_type=ExportFileType.CSV,
+                            field_group_ids=all_identifiers())
+                        print(exports)
+                    else:
+                        logger.info('No EID found')
 
     if use_scopus:
         scopus_key = os.getenv('SCOPUS_API_KEY')
