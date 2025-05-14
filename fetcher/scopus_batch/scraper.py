@@ -20,13 +20,14 @@ class ScopusScraperConfig:
         self.sc_session_id = sc_session_id
 
     def build_cookie_store(self) -> Cookies:
-        return Cookies({
+        cookies = Cookies({
             'SCSessionID': self.sc_session_id,
             'scopusSessionUUID': self.scopus_session_uuid,
             'AWSELB': self.awselb,
-            'SCOPUS_JWT': self.scopus_jwt,
             'at_check': 'true'
         })
+        cookies.set('SCOPUS_JWT', self.scopus_jwt, domain='.scopus.com', path='/')
+        return cookies
 
 
 class ScopusScraper:
