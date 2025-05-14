@@ -80,21 +80,9 @@ async def main():
                         awselb=scopus_batch_awselb.value,
                         scopus_session_uuid=scopus_batch_session_uuid.value,
                         sc_session_id=scopus_batch_sc_session_id.value), verify_ssl=not args.ssl_insecure) as sc_batch:
-                    eids = await sc_batch.search_eids(item_count=5, offset=0, query=f"TITLE-ABS-KEY({search_query})")
-                    eids_to_export = eids.response.docs if eids and len(eids.response.docs) > 0 else None
-                    if eids_to_export is not None:
-                        logger.debug(f'Scopus batch: Exporting EIDs {eids_to_export}')
-                        batch_prefix = ScopusScraper.get_batch_id_prefix()
-                        logger.debug(f'Scopus batch: Using batch prefix: {batch_prefix}')
-                        exports = await sc_batch.export_part(
-                            batch_id=ScopusScraper.get_batch_id(0, batch_prefix),
-                            total_docs=len(eids_to_export),
-                            eids=eids_to_export,
-                            file_type=ExportFileType.CSV,
-                            field_group_ids=all_identifiers())
-                        print(exports)
-                    else:
-                        logger.info('Scopus batch: No EID found')
+                    export_data = await sc_batch.export_all(search_query, file_type=ExportFileType.CSV, fields=all_identifiers())
+                    with open('/tmp/export.csv', 'w') as export_file:
+                        export_file.write(export_data)
 
     if use_scopus:
         scopus_key = os.getenv('SCOPUS_API_KEY')

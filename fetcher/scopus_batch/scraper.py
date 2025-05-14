@@ -1,3 +1,4 @@
+import itertools
 import logging
 import random
 import string
@@ -24,6 +25,8 @@ class ScopusScraperConfig:
 
 class ScopusScraper:
     BASE_URI = 'https://api.elsevier.com'
+    __MAX_EIDS_PER_SEARCH__ = 2000
+    __MAX_BATCH_ITEMS_PER_REQUEST__ = 100
 
     def __init__(self, config: ScopusScraperConfig, verify_ssl: bool = True):
         self.__BASE__ = 'https://www.scopus.com'
@@ -68,8 +71,8 @@ class ScopusScraper:
     def get_batch_id(exported: int, prefix: str | None = None):
         if prefix is None:
             prefix = ScopusScraper.get_batch_id_prefix()
-        block_2000_index = exported // 2000
-        block_100_index = (exported - block_2000_index * 2000) // 100
+        block_2000_index = exported // ScopusScraper.__MAX_EIDS_PER_SEARCH__
+        block_100_index = (exported - block_2000_index * ScopusScraper.__MAX_EIDS_PER_SEARCH__) // ScopusScraper.__MAX_BATCH_ITEMS_PER_REQUEST__
         return f'{prefix}_{block_2000_index}_{block_100_index}'
 
     async def export_part(self,
@@ -78,7 +81,8 @@ class ScopusScraper:
                           eids: list[str],
                           file_type: ExportFileType,
                           field_group_ids: list[FieldGroupIdentifiers],
-                          locale: str = 'en-US') -> str:
+                          locale: str = 'en-US',
+                          hide_headers: bool = False) -> str:
         # payload.keyEvent:
         # transactionId: Filled with data from JS window.PlatformData. Doesn't need to be correct
         # primary: Filled with data from JS window.ScopusUser. Not required
@@ -95,7 +99,7 @@ class ScopusScraper:
                 'totalDocs': total_docs
             },
             'locale': locale,
-            'hideHeaders': False
+            'hideHeaders': hide_headers
         }
         self._logger.debug(f'export_part: {payload}')
         self._nextTransactionId += 1
@@ -103,3 +107,42 @@ class ScopusScraper:
         # TODO: Refresh JWT on 403, or throw error
         r = await self._session.post(f'{self.__BASE__}/gateway/export-service/export?batchId={batch_id}', json=payload)
         return r.text
+
+    async def export_all(self, title: str, file_type: ExportFileType, fields: list[FieldGroupIdentifiers]) -> str:
+        batch_prefix = ScopusScraper.get_batch_id_prefix()
+        self._logger.debug(f"export_all: using {batch_prefix} as the batch prefix")
+
+        query = f'TITLE-ABS-KEY({title})'
+
+        # TODO: Handle timeouts
+        eid_search_results = await self.search_eids(ScopusScraper.__MAX_EIDS_PER_SEARCH__, 0, query)
+        all_eid_count = eid_search_results.response.num_found
+        eids = eid_search_results.response.docs
+        exported_eid_count = 0
+        export_data = []
+
+        self._logger.debug(f"export_all: EIDs to export: {all_eid_count}")
+
+        while exported_eid_count < all_eid_count:
+            for eid_batch in itertools.batched(eids, ScopusScraper.__MAX_BATCH_ITEMS_PER_REQUEST__):
+                batch_id = ScopusScraper.get_batch_id(exported_eid_count, batch_prefix)
+                self._logger.debug(f'export_all: batch_id: {batch_id}')
+
+                batch_data = await self.export_part(
+                    batch_id,
+                    all_eid_count,
+                    eid_batch,
+                    file_type,
+                    fields,
+                    hide_headers=exported_eid_count > 0)
+                self._logger.debug(f'export_all: batch_data: {batch_data}')
+                export_data.append(batch_data)
+
+                exported_eid_count += len(eid_batch)
+            self._logger.debug(f'export_all: researching EIDs (offset={exported_eid_count})')
+            eid_search_results = await self.search_eids(ScopusScraper.__MAX_EIDS_PER_SEARCH__, exported_eid_count, query)
+            all_eid_count = eid_search_results.response.num_found
+            eids = eid_search_results.response.docs
+            self._logger.debug(f'export_all: found {len(eids)} new EIDs')
+        self._logger.info(f'export_all: exported total of {exported_eid_count} EIDs')
+        return ''.join(export_data)
