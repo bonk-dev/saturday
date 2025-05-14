@@ -2,7 +2,8 @@ import itertools
 import logging
 import random
 import string
-import urllib.parse
+from typing import Any
+
 import httpx
 from httpx import Cookies
 
@@ -61,8 +62,9 @@ class ScopusScraper:
 
         self._logger.debug(f'search_eids: {payload}')
 
-        # TODO: Refresh JWT on 403, or throw error
-        r = await self._session.post(f'{self.__BASE__}/api/documents/search/eids', json=payload)
+        r = await self._post(f'{self.__BASE__}/api/documents/search/eids', json=payload)
+        if r.is_error:
+            raise RuntimeError(f'An error has occurred while searching for EIDs (code={r.status_code}): {r.text}')
         return SearchEidsResult(json_data=r.json())
 
     @staticmethod
@@ -87,6 +89,7 @@ class ScopusScraper:
                           field_group_ids: list[FieldGroupIdentifiers],
                           locale: str = 'en-US',
                           hide_headers: bool = False) -> str:
+        # TODO: 'transactionId' and 'primary' can be read from the Scopus JWT token
         # payload.keyEvent:
         # transactionId: Filled with data from JS window.PlatformData. Doesn't need to be correct
         # primary: Filled with data from JS window.ScopusUser. Not required
@@ -108,8 +111,9 @@ class ScopusScraper:
         self._logger.debug(f'export_part: {payload}')
         self._nextTransactionId += 1
 
-        # TODO: Refresh JWT on 403, or throw error
-        r = await self._session.post(f'{self.__BASE__}/gateway/export-service/export?batchId={batch_id}', json=payload)
+        r = await self._post(f'{self.__BASE__}/gateway/export-service/export?batchId={batch_id}', json=payload)
+        if r.is_error:
+            raise RuntimeError(f'An error has occurred while exporting part (code={r.status_code}): {r.text}')
         return r.text
 
     async def export_all(self, title: str, file_type: ExportFileType, fields: list[FieldGroupIdentifiers]) -> str:
@@ -150,3 +154,22 @@ class ScopusScraper:
             self._logger.debug(f'export_all: found {len(eids)} new EIDs')
         self._logger.info(f'export_all: exported total of {exported_eid_count} EIDs')
         return ''.join(export_data)
+
+    async def _post(self, url: str, json: Any | None = None) -> httpx.Response:
+        r = await self._session.post(url, json=json)
+        if r.status_code == 403:
+            refresh_successful = await self._refresh_jwt_token()
+            if refresh_successful:
+                r = await self._session.post(url, json=json)
+        return r
+
+    async def _refresh_jwt_token(self) -> httpx.Response:
+        self._logger.debug('Refreshing JWT token')
+        r = await self._session.get(f'{self.__BASE__}/api/auth/refresh-scopus-jwt')
+        if r.is_success:
+            # HTTPX client auto-saves the new token from the Set-Cookie header
+            self._logger.debug('Successfully refreshed JWT token')
+        else:
+            self._logger.error('An error has occurred while refreshing the Scopus JWT token')
+            self._logger.error(r.text)
+        return r
