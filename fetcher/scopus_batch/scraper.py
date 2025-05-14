@@ -150,6 +150,7 @@ class ScopusScraper:
                 export_data.append(batch_data)
 
                 exported_eid_count += len(eid_batch)
+                self._logger.info(f'export_all: exported {exported_eid_count}/{all_eid_count}')
             self._logger.debug(f'export_all: researching EIDs (offset={exported_eid_count})')
             eid_search_results = await self.search_eids(ScopusScraper.__MAX_EIDS_PER_SEARCH__, exported_eid_count, query)
             all_eid_count = eid_search_results.response.num_found
