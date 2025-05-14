@@ -1,3 +1,4 @@
+import asyncio
 import itertools
 import logging
 import random
@@ -44,6 +45,7 @@ class ScopusScraper:
         self._sessionId = config.sc_session_id
         self._nextTransactionId = 1
         self._logger = logging.getLogger(__name__)
+        self._post_lock = asyncio.Lock()
 
     async def __aenter__(self):
         return self
@@ -156,11 +158,12 @@ class ScopusScraper:
         return ''.join(export_data)
 
     async def _post(self, url: str, json: Any | None = None) -> httpx.Response:
-        r = await self._session.post(url, json=json)
-        if r.status_code == 403:
-            refresh_successful = await self._refresh_jwt_token()
-            if refresh_successful:
-                r = await self._session.post(url, json=json)
+        async with self._post_lock:
+            r = await self._session.post(url, json=json)
+            if r.status_code == 403:
+                refresh_successful = await self._refresh_jwt_token()
+                if refresh_successful:
+                    r = await self._session.post(url, json=json)
         return r
 
     async def _refresh_jwt_token(self) -> httpx.Response:
