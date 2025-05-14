@@ -4,6 +4,8 @@ import random
 import string
 import urllib.parse
 import httpx
+from httpx import Cookies
+
 from fetcher.scopus_batch.models import SearchEidsResult, ExportFileType, FieldGroupIdentifiers
 
 
@@ -15,12 +17,14 @@ class ScopusScraperConfig:
         self.scopus_session_uuid = scopus_session_uuid
         self.sc_session_id = sc_session_id
 
-    def build_cookie_header(self) -> str:
-        return (f'SCSessionID={urllib.parse.quote(self.sc_session_id)}; '
-                f'scopusSessionUUID={urllib.parse.quote(self.scopus_session_uuid)}; '
-                f'AWSELB={urllib.parse.quote(self.awselb)}; '
-                f'SCOPUS_JWT={urllib.parse.quote(self.scopus_jwt)}; '
-                f'at_check=true')
+    def build_cookie_store(self) -> Cookies:
+        return Cookies({
+            'SCSessionID': self.sc_session_id,
+            'scopusSessionUUID': self.scopus_session_uuid,
+            'AWSELB': self.awselb,
+            'SCOPUS_JWT': self.scopus_jwt,
+            'at_check': 'true'
+        })
 
 
 class ScopusScraper:
@@ -30,11 +34,11 @@ class ScopusScraper:
 
     def __init__(self, config: ScopusScraperConfig, verify_ssl: bool = True):
         self.__BASE__ = 'https://www.scopus.com'
-        self._session = httpx.AsyncClient(verify=verify_ssl, proxy="http://localhost:8080", timeout=30)
+        self._session = httpx.AsyncClient(verify=verify_ssl, proxy="http://localhost:8080", timeout=30,
+                                          cookies=config.build_cookie_store())
         self._session.headers.update({
             'Accept': 'application/json',
-            'User-Agent': config.user_agent,
-            'Cookie': config.build_cookie_header()
+            'User-Agent': config.user_agent
         })
         self._sessionId = config.sc_session_id
         self._nextTransactionId = 1
