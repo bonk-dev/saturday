@@ -37,7 +37,7 @@ class ScopusScraper:
 
     def __init__(self, config: ScopusScraperConfig, verify_ssl: bool = True):
         self.__BASE__ = 'https://www.scopus.com'
-        self._session = httpx.AsyncClient(verify=verify_ssl, proxy="http://localhost:8080", timeout=30,
+        self._session = httpx.AsyncClient(verify=verify_ssl, timeout=30,
                                           cookies=config.build_cookie_store())
         self._session.headers.update({
             'Accept': 'application/json',
