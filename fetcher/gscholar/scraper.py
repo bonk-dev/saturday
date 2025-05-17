@@ -6,7 +6,12 @@ from scholarly.data_types import Publication
 
 
 class GoogleScholarScraper:
-    # TODO: Turn scholarly into async
+    """
+    Scraper for searching publications from Google Scholar via the `scholarly` library.
+
+    Supports toggling SSL verification, and collects results into a list
+    of `Publication` objects.
+    """
 
     def __init__(self, verify_ssl: bool = True, proxies: list[str] | None = None):
         if proxies is None:
