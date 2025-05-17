@@ -54,6 +54,16 @@ async def main():
     if use_scopus_batch:
         logger.debug('Using Scopus batch export')
         cookie_file_path = os.getenv('SCOPUS_BATCH_COOKIE_FILE')
+        scopus_batch_uri = os.getenv('SCOPUS_BATCH_BASE')
+        scopus_cookie_domain_name = os.getenv('SCOPUS_BATCH_COOKIE_JWT_DOMAIN')
+
+        if not scopus_cookie_domain_name:
+            logger.warning(f'Scopus batch: SCOPUS_BATCH_COOKIE_JWT_DOMAIN not set, defaulting to .scopus.com')
+            scopus_cookie_domain_name = '.scopus.com'
+        if not scopus_batch_uri:
+            logger.warning(f'Scopus batch: SCOPUS_BATCH_BASE not set, defaulting to {ScopusScraper.BASE_URI}')
+            scopus_batch_uri = ScopusScraper.BASE_URI
+
         if not os.path.isfile(cookie_file_path):
             logger.error(f'Scopus batch: SCOPUS_BATCH_COOKIE_FILE file does not exist (path: "{cookie_file_path}")')
         else:
@@ -84,9 +94,10 @@ async def main():
                 async with ScopusScraper(ScopusScraperConfig(
                         user_agent=scopus_batch_ua,
                         scopus_jwt=scopus_batch_jwt.value,
+                        scopus_jwt_domain=scopus_cookie_domain_name,
                         awselb=scopus_batch_awselb.value,
                         scopus_session_uuid=scopus_batch_session_uuid.value,
-                        sc_session_id=scopus_batch_sc_session_id.value), verify_ssl=not args.ssl_insecure) as sc_batch:
+                        sc_session_id=scopus_batch_sc_session_id.value), verify_ssl=not args.ssl_insecure, base_uri=scopus_batch_uri) as sc_batch:
                     export_data = await sc_batch.export_all(
                         search_query,
                         file_type=ExportFileType.CSV,
