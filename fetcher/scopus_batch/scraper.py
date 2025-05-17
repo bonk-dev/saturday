@@ -266,6 +266,9 @@ class ScopusScraper:
         """
         Internal helper to serialize POST requests and refresh JWT if needed.
 
+        Automatically refreshes the JWT on HTTP status 403, and retries the original request
+        one time if the token was refreshed successfully.
+
         :param str url:         Full request URL.
         :param Any json:        JSON payload for the POST.
         :return: The HTTPX `Response` from the final attempt.
