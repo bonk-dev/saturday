@@ -17,18 +17,21 @@ class ScopusScraperConfig:
 
     :param str user_agent:           The User-Agent header to present on requests.
     :param str scopus_jwt:           The JWT token for Scopus API authentication.
+    :param str scopus_jwt_domain:    The SCOPUS_JWT cookie domain
     :param str awselb:               The AWSELB cookie value for load-balancer stickiness.
     :param str scopus_session_uuid:  The Scopus session UUID cookie value.
     :param str sc_session_id:        The SCSessionID cookie value.
     :ivar str user_agent:            See `user_agent` parameter.
     :ivar str scopus_jwt:            See `scopus_jwt` parameter.
+    :ivar str scopus_jwt_domain:     See `scopus_jwt_domina` parameter.
     :ivar str awselb:                See `awselb` parameter.
     :ivar str scopus_session_uuid:   See `scopus_session_uuid` parameter.
     :ivar str sc_session_id:         See `sc_session_id` parameter.
     """
-    def __init__(self, user_agent: str, scopus_jwt: str, awselb: str, scopus_session_uuid: str, sc_session_id: str):
+    def __init__(self, user_agent: str, scopus_jwt: str, scopus_jwt_domain: str, awselb: str, scopus_session_uuid: str, sc_session_id: str):
         self.user_agent = user_agent
         self.scopus_jwt = scopus_jwt
+        self.scopus_jwt_domain = scopus_jwt_domain
         self.awselb = awselb
         self.scopus_session_uuid = scopus_session_uuid
         self.sc_session_id = sc_session_id
@@ -46,7 +49,8 @@ class ScopusScraperConfig:
             'AWSELB': self.awselb,
             'at_check': 'true'
         })
-        cookies.set('SCOPUS_JWT', self.scopus_jwt, domain='.scopus.com', path='/')
+        # cookies.set('SCOPUS_JWT', self.scopus_jwt, domain='.scopus.com', path='/')
+        cookies.set('SCOPUS_JWT', value=self.scopus_jwt, domain=self.scopus_jwt_domain, path='/')
         return cookies
 
 
@@ -74,14 +78,16 @@ class ScopusScraper:
     __MAX_BATCH_ITEMS_PER_REQUEST__ = 100
     """Maximum number of items accepted by the `/gateway/export-service/export` endpoint."""
 
-    def __init__(self, config: ScopusScraperConfig, verify_ssl: bool = True):
+    def __init__(self, config: ScopusScraperConfig, verify_ssl: bool = True, base_uri: str = BASE_URI):
         """
         Initialize the ScopusScraper.
 
         :param ScopusScraperConfig config:  Auth and cookie configuration.
         :param bool verify_ssl:             Toggle SSL certificate verification.
+        :param str base_uri:         Override the base URI (default: BASE_URI).
         """
 
+        self._base = base_uri
         self._session = httpx.AsyncClient(verify=verify_ssl, timeout=60,
                                           cookies=config.build_cookie_store())
         self._session.headers.update({
@@ -121,7 +127,7 @@ class ScopusScraper:
 
         self._logger.debug(f'search_eids: {payload}')
 
-        r = await self._post(f'{self.BASE_URI}/api/documents/search/eids', json=payload)
+        r = await self._post(f'{self._base}/api/documents/search/eids', json=payload)
         if r.is_error:
             raise RuntimeError(f'An error has occurred while searching for EIDs (code={r.status_code}): {r.text}')
         return SearchEidsResult(json_data=r.json())
@@ -201,7 +207,7 @@ class ScopusScraper:
         self._logger.debug(f'export_part: {payload}')
         self._nextTransactionId += 1
 
-        r = await self._post(f'{self.BASE_URI}/gateway/export-service/export?batchId={batch_id}', json=payload)
+        r = await self._post(f'{self._base}/gateway/export-service/export?batchId={batch_id}', json=payload)
         if r.is_error:
             raise RuntimeError(f'An error has occurred while exporting part (code={r.status_code}): {r.text}')
         return r.text
@@ -291,7 +297,7 @@ class ScopusScraper:
         """
 
         self._logger.debug('Refreshing JWT token')
-        r = await self._session.get(f'{self.BASE_URI}/api/auth/refresh-scopus-jwt')
+        r = await self._session.get(f'{self._base}/api/auth/refresh-scopus-jwt')
         if r.is_success:
             # HTTPX client auto-saves the new token from the Set-Cookie header
             self._logger.debug('Successfully refreshed JWT token')
