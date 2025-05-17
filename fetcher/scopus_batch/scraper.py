@@ -64,7 +64,7 @@ class ScopusScraper:
     :param bool verify_ssl:                    Whether to verify SSL certificates (default: True).
     """
 
-    BASE_URI = 'https://api.elsevier.com'
+    BASE_URI = 'https://www.scopus.com'
 
     # These are limits enforced by Scopus
 
@@ -82,7 +82,6 @@ class ScopusScraper:
         :param bool verify_ssl:             Toggle SSL certificate verification.
         """
 
-        self.__BASE__ = 'https://www.scopus.com'
         self._session = httpx.AsyncClient(verify=verify_ssl, timeout=60,
                                           cookies=config.build_cookie_store())
         self._session.headers.update({
@@ -122,7 +121,7 @@ class ScopusScraper:
 
         self._logger.debug(f'search_eids: {payload}')
 
-        r = await self._post(f'{self.__BASE__}/api/documents/search/eids', json=payload)
+        r = await self._post(f'{self.BASE_URI}/api/documents/search/eids', json=payload)
         if r.is_error:
             raise RuntimeError(f'An error has occurred while searching for EIDs (code={r.status_code}): {r.text}')
         return SearchEidsResult(json_data=r.json())
@@ -202,7 +201,7 @@ class ScopusScraper:
         self._logger.debug(f'export_part: {payload}')
         self._nextTransactionId += 1
 
-        r = await self._post(f'{self.__BASE__}/gateway/export-service/export?batchId={batch_id}', json=payload)
+        r = await self._post(f'{self.BASE_URI}/gateway/export-service/export?batchId={batch_id}', json=payload)
         if r.is_error:
             raise RuntimeError(f'An error has occurred while exporting part (code={r.status_code}): {r.text}')
         return r.text
@@ -292,7 +291,7 @@ class ScopusScraper:
         """
 
         self._logger.debug('Refreshing JWT token')
-        r = await self._session.get(f'{self.__BASE__}/api/auth/refresh-scopus-jwt')
+        r = await self._session.get(f'{self.BASE_URI}/api/auth/refresh-scopus-jwt')
         if r.is_success:
             # HTTPX client auto-saves the new token from the Set-Cookie header
             self._logger.debug('Successfully refreshed JWT token')
