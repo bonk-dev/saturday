@@ -8,9 +8,25 @@ SCOBUS_SEARCH_MAX_COUNT = 25
 
 
 class ScopusApi:
+    """
+    Fetcher for searching the Scopus API with automatic proxy rotation.
+
+    Provides asynchronous context-manager support, paginated search across
+    all result pages, and single-page search.
+    """
+
     BASE_URI = 'https://api.elsevier.com'
 
     def __init__(self, api_key: str, api_endpoint: str | None = BASE_URI, verify_ssl: bool = True, proxies: list[str] | None = None):
+        """
+        Initialize the ScopusApi client.
+
+        :param str api_key:              Your Elsevier API key.
+        :param str | None api_endpoint:  Override the base API endpoint (default: BASE_URI).
+        :param bool verify_ssl:          Whether to verify SSL certificates (default: True).
+        :param list[str] | None proxies: List of proxy URLs to rotate (default: None).
+        """
+
         self._proxy_rotator = ProxyRotator(proxies=proxies)
         self._session = httpx.AsyncClient(proxy=self._proxy_rotator.use_next_proxy(), verify=verify_ssl)
         self._base = api_endpoint
@@ -28,6 +44,16 @@ class ScopusApi:
         await self._session.aclose()
 
     async def search(self, title: str) -> list[SearchEntry]:
+        """
+        Search Scopus for all pages of results matching the given title.
+
+        Iterates page by page until `totalResults` is reached,
+        aggregating `SearchEntry` items into a single list.
+
+        :param str title: The title or keyword to search in Scopus records.
+        :return: List of all `SearchEntry` objects matching the query.
+        :rtype: list[SearchEntry]
+        """
         self._logger.info(f'Searching (all pages) for "{title}"')
 
         first_page = await self.search_one_page(title)
@@ -46,6 +72,21 @@ class ScopusApi:
         return entries
 
     async def search_one_page(self, title: str, start: int = 0, count: int = SCOBUS_SEARCH_MAX_COUNT) -> SearchResults:
+        """
+        Search a single page of Scopus results with pagination parameters.
+
+        Validates that `count` does not exceed `SCOBUS_SEARCH_MAX_COUNT`,
+        constructs the query, logs request and response details,
+        and returns a `SearchResults` object parsed from JSON.
+
+        :param str title:  The title or keyword to search.
+        :param int start:  Zero-based index of the first result to return.
+        :param int count:  Number of results to return on this page
+                           (must be ≤ :const:`SCOBUS_SEARCH_MAX_COUNT`).
+        :raises ValueError: If `count` > `SCOBUS_SEARCH_MAX_COUNT`.
+        :return: Parsed search results for this page.
+        :rtype: SearchResults
+        """
         self._logger.info(f'Searching (single page) for "{title}", start: {start}, count: {count}')
 
         if count > SCOBUS_SEARCH_MAX_COUNT:
@@ -62,6 +103,15 @@ class ScopusApi:
 
     @staticmethod
     def _build_search_query(title: str, start: int, count: int) -> dict:
+        """
+        Construct the query parameters dict for the Scopus API search endpoint.
+
+        :param str title: The title or keyword to search.
+        :param int start: Zero-based index of the first result.
+        :param int count: Number of results to request.
+        :return: Dictionary of query parameters.
+        :rtype: dict
+        """
         return {
             'query': f'TITLE-ABS-KEY({title})',
             'view': 'COMPLETE',
