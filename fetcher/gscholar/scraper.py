@@ -14,6 +14,12 @@ class GoogleScholarScraper:
     """
 
     def __init__(self, verify_ssl: bool = True, proxies: list[str] | None = None):
+        """
+        Initialize a new GoogleScholarScraper instance.
+
+        :param bool verify_ssl: Toggle SSL certificate verification (default: ``True``).
+        :param list[str] | None proxies: Proxy URLs to rotate through (default: ``None``).
+        """
         if proxies is None:
             proxies = []
         self.count_of_proxies = len(proxies)
@@ -22,6 +28,13 @@ class GoogleScholarScraper:
         self._verify_ssl = verify_ssl
 
     def _use_next_proxy(self):
+        """
+        Rotate to the next proxy in the cycle and configure `scholarly` to use it.
+
+        If no proxies were provided, this method does nothing.
+
+        :raises ValueError: If the next proxy URL is invalid (propagates from ProxyGenerator).
+        """
         if self.count_of_proxies <= 0:
             return
         pg = ProxyGenerator()
@@ -31,6 +44,19 @@ class GoogleScholarScraper:
         scholarly.use_proxy(pg, pg)
 
     async def search(self, query: str) -> list[Publication]:
+        """
+        Search Google Scholar for the given query string.
+
+        Rotates proxies between each page of results, collects all
+        `Publication` objects, and logs progress. If an error occurs,
+        logs the error and returns whatever was collected so far.
+
+        :param str query: The search query to submit to Google Scholar.
+        :return: List of publications matching the query.
+        :rtype: list[Publication]
+        :raises scholarly.ScholarlyException: If `scholarly` raises on setup or iteration.
+        """
+
         self._logger.info(f'Searching for {query}')
         results = []
 
