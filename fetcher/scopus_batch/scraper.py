@@ -65,8 +65,14 @@ class ScopusScraper:
     """
 
     BASE_URI = 'https://api.elsevier.com'
+
+    # These are limits enforced by Scopus
+
     __MAX_EIDS_PER_SEARCH__ = 2000
+    """Maximum `itemcount` value accepted by the `/api/documents/search/eids` endpoint."""
+
     __MAX_BATCH_ITEMS_PER_REQUEST__ = 100
+    """Maximum number of items accepted by the `/gateway/export-service/export` endpoint."""
 
     def __init__(self, config: ScopusScraperConfig, verify_ssl: bool = True):
         """
