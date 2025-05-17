@@ -22,7 +22,6 @@ class GoogleScholarScraper:
         pg = ProxyGenerator()
         next_proxy = next(self.proxies)
         self._logger.debug(f'Next proxy: {next_proxy}')
-        # TODO: Make 'verify' controllable with CLI args/frontend
         pg.SingleProxy(http=next_proxy, https=next_proxy, verify=self._verify_ssl)
         scholarly.use_proxy(pg, pg)
 
@@ -45,5 +44,5 @@ class GoogleScholarScraper:
             # TODO: Rotate proxy on exception
             self._logger.error(f'GoogleScholarScraper errored out after scraping {len(results)} results')
             self._logger.error(e, type(e))
-        
+
         return results
