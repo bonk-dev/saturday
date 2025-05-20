@@ -4,17 +4,45 @@ from fetcher.scopus_batch.parser_models import Publication
 
 
 class ScopusCsvParser:
+    """
+    Parser for CSV data exported from Scopus.
+
+    :param text_data: The raw CSV text data, potentially containing a Byte Order Mark (BOM).
+    :type text_data: str
+    """
+
     def __init__(self, text_data: str):
         # TODO: Find a more elegant solution for handling BOM?
         self._lines = text_data.removeprefix('\ufeff').splitlines()
 
     @staticmethod
     def _split_cell(cell: str) -> list:
+        """
+        Split a semicolon‐separated cell value into a list of stripped strings.
+
+        :param cell: The raw cell string from the CSV, potentially containing multiple
+                     values separated by semicolons.
+        :type cell: str
+        :return: A list of trimmed substrings. If the cell is empty or None-like, returns an empty list.
+        :rtype: List[str]
+        """
+
         if not cell or len(cell) <= 0:
             return []
         return [cv.strip() for cv in cell.split(';')]
 
-    def read_all_publications(self) -> list:
+    def read_all_publications(self) -> list[Publication]:
+        """
+        Parse all rows from the CSV lines and convert them into Publication objects.
+
+        The first non‐empty line is expected to be a header matching the Scopus CSV export format.
+        All subsequent lines are parsed, with specific columns split into lists via `_split_cell`.
+
+        :raises ValueError: If the actual CSV header row does not match the expected header row.
+        :return: A list of Publication instances populated with data from each CSV row.
+        :rtype: List[Publication]
+        """
+
         publications = []
 
         reader = csv.reader(self._lines)
