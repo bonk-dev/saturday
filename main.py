@@ -114,7 +114,11 @@ async def main():
         if export_data is not None:
             logger.debug('Scopus batch: parsing data')
             parser = ScopusCsvParser(export_data)
-            parser.read_all_publications()
+
+            scopus_batch_pubs = parser.read_all_publications()
+            logger.info(f'Parsed publications: {len(scopus_batch_pubs)}')
+            for pub in scopus_batch_pubs:
+                logger.debug(pub.to_debug_string())
 
     if use_scopus:
         scopus_key = os.getenv('SCOPUS_API_KEY')
