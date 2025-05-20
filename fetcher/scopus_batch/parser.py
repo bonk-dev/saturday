@@ -44,6 +44,8 @@ class ScopusCsvParser:
             tradenames = self._split_cell(tradenames)
             manufacturers = self._split_cell(manufacturers)
             # TODO: References (also separated by ';', each ref might contain ';' inside the name)
+            editors = self._split_cell(editors.strip())
+            sponsors = self._split_cell(sponsors.strip())
             open_access = self._split_cell(open_access)
 
             print('=====================================================')
