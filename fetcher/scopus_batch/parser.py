@@ -8,6 +8,8 @@ class ScopusCsvParser:
 
     @staticmethod
     def _split_cell(cell: str) -> list:
+        if not cell or len(cell) <= 0:
+            return []
         return [cv.strip() for cv in cell.split(';')]
 
     def read_all_publications(self) -> list:
