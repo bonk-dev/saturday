@@ -33,6 +33,7 @@ async def main():
     parser.add_argument('-b', '--scopus-batch',
                         action='store_true',
                         help='Use Scopus batch export for scraping metadata')
+    parser.add_argument('--scopus-batch-file', help='Use a local .CSV dump instead of exporting from Scopus')
     parser.add_argument('--ssl-insecure',
                         action='store_true',
                         help='Do not verify upstream server SSL/TLS certificates')
@@ -64,7 +65,12 @@ async def main():
             logger.warning(f'Scopus batch: SCOPUS_BATCH_BASE not set, defaulting to {ScopusScraper.BASE_URI}')
             scopus_batch_uri = ScopusScraper.BASE_URI
 
-        if not os.path.isfile(cookie_file_path):
+        export_data = None
+        if args.scopus_batch_file is not None:
+            logger.info(f'Scopus batch: reading from local file: {args.scopus_batch_file}')
+            with open(args.scopus_batch_file, 'r') as b_file:
+                export_data = b_file.read()
+        elif not os.path.isfile(cookie_file_path):
             logger.error(f'Scopus batch: SCOPUS_BATCH_COOKIE_FILE file does not exist (path: "{cookie_file_path}")')
         else:
             with open(cookie_file_path, 'r') as cookie_file_f:
