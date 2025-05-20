@@ -12,6 +12,7 @@ from database.scopusController import *
 import json
 
 from fetcher.scopus_batch.models import ExportFileType, all_identifiers
+from fetcher.scopus_batch.parser import ScopusCsvParser
 from fetcher.scopus_batch.scraper import ScopusScraper, ScopusScraperConfig
 
 
@@ -110,6 +111,10 @@ async def main():
                         fields=all_identifiers())
                     with open('/tmp/export.csv', 'w') as export_file:
                         export_file.write(export_data)
+        if export_data is not None:
+            logger.debug('Scopus batch: parsing data')
+            parser = ScopusCsvParser(export_data)
+            parser.read_all_publications()
 
     if use_scopus:
         scopus_key = os.getenv('SCOPUS_API_KEY')
