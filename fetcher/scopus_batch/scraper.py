@@ -256,6 +256,7 @@ class ScopusScraper:
                     hide_headers=exported_eid_count > 0)
                 self._logger.debug(f'export_all: batch_data: {batch_data}')
                 export_data.append(batch_data)
+                export_data.append('\n')
 
                 exported_eid_count += len(eid_batch)
                 self._logger.info(f'export_all: exported {exported_eid_count}/{all_eid_count}')
