@@ -6,6 +6,10 @@ class ScopusCsvParser:
         # TODO: Find a more elegant solution for handling BOM?
         self._lines = text_data.removeprefix('\ufeff').splitlines()
 
+    @staticmethod
+    def _split_cell(cell: str) -> list:
+        return [cv.strip() for cv in cell.split(';')]
+
     def read_all_publications(self) -> list:
         publications = []
 
@@ -25,14 +29,23 @@ class ScopusCsvParser:
             raise ValueError('The actual CSV header row does not match the expected header row.')
 
         for row in reader:
-            (_, authors_full_name_raw, _, title, year, source_title, volume, issue, article_number, page_start,
-             page_end, page_count, cited_by, doi, link, affiliations_raw, _, abstract, author_keywords_raw,
+            (_, authors_full_name, _, title, year, source_title, volume, issue, article_number, page_start,
+             page_end, page_count, cited_by, doi, link, affiliations, _, abstract, author_keywords,
              index_keywords, _, _, tradenames, manufacturers, funding_details, funding_texts, references,
              correspondence_address, editors, publisher, sponsors, _, _, _, _, issn, isbn, coden, pubmed_id,
              language_of_orig_doc, abbr_source_title, document_type, publication_stage, open_access, source, eid) = row
 
+            authors = self._split_cell(authors_full_name)
+            affiliations = self._split_cell(affiliations)
+            author_keywords = self._split_cell(author_keywords)
+            index_keywords = self._split_cell(index_keywords)
+            tradenames = self._split_cell(tradenames)
+            manufacturers = self._split_cell(manufacturers)
+            # TODO: References (also separated by ';', each ref might contain ';' inside the name)
+            open_access = self._split_cell(open_access)
+
             print('=====================================================')
-            print('authors_full_name_raw =', authors_full_name_raw)
+            print('authors =', authors)
             print('title =', title)
             print('year =', year)
             print('source_title =', source_title)
@@ -45,9 +58,9 @@ class ScopusCsvParser:
             print('cited_by =', cited_by)
             print('doi =', doi)
             print('link =', link)
-            print('affilations_raw =', affiliations_raw)
+            print('affiliations =', affiliations)
             print('abstract =', abstract)
-            print('author_keywords_raw =', author_keywords_raw)
+            print('author_keywords =', author_keywords)
             print('index_keywords =', index_keywords)
             print('tradenames =', tradenames)
             print('manufacturers =', manufacturers)
