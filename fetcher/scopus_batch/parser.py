@@ -55,7 +55,6 @@ class ScopusCsvParser:
                                'PubMed ID', 'Language of Original Document', 'Abbreviated Source Title',
                                'Document Type', 'Publication Stage', 'Open Access', 'Source', 'EID']
         actual_header_row = next(reader)
-        print(actual_header_row)
         if actual_header_row != expected_header_row:
             raise ValueError('The actual CSV header row does not match the expected header row.')
 
