@@ -42,6 +42,13 @@ class TestParser(unittest.TestCase):
                              'The actual CSV header row does not match the expected header row.',
                              f'Unexpected error message: {cm.exception}')
 
+    def test_empty(self):
+        input_path = os.path.join(self.data_dir, 'empty.csv')
+        with open(input_path, 'r') as input_file:
+            parser = ScopusCsvParser(input_file.read())
+            pubs = parser.read_all_publications()
+            self.assertEqual(len(pubs), 0, f'Expected empty array, got array of length={len(pubs)}')
+
 
 if __name__ == '__main__':
     unittest.main()
