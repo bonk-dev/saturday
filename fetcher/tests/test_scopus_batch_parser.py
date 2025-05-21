@@ -32,6 +32,16 @@ class TestParser(unittest.TestCase):
                     expected_ith_pub = expected[i]
                     self.assertEqual(actual_ith_pub, expected_ith_pub)
 
+    def test_invalid_header_throw(self):
+        input_path = os.path.join(self.data_dir, 'invalid-header.csv')
+        with open(input_path, 'r') as input_file:
+            parser = ScopusCsvParser(input_file.read())
+            with self.assertRaises(ValueError) as cm:
+                _ = parser.read_all_publications()
+            self.assertEqual(str(cm.exception),
+                             'The actual CSV header row does not match the expected header row.',
+                             f'Unexpected error message: {cm.exception}')
+
 
 if __name__ == '__main__':
     unittest.main()
