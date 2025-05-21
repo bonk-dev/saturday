@@ -12,8 +12,7 @@ class ScopusCsvParser:
     """
 
     def __init__(self, text_data: str):
-        # TODO: Find a more elegant solution for handling BOM?
-        self._lines = text_data.removeprefix('\ufeff').splitlines()
+        self._lines = text_data.splitlines()
 
     @staticmethod
     def _split_cell(cell: str) -> list:

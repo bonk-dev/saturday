@@ -113,6 +113,8 @@ async def main():
                         export_file.write(export_data)
         if export_data is not None:
             logger.debug('Scopus batch: parsing data')
+            # TODO: Find a more elegant solution for handling BOM?
+            export_data = export_data.removeprefix('\ufeff')
             parser = ScopusCsvParser(export_data)
 
             scopus_batch_pubs = parser.read_all_publications()
