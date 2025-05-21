@@ -9,14 +9,14 @@ class TestParser(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         base_path = os.path.dirname(__file__)
-        cls.data_dir = os.path.join(base_path, 'data')
+        cls.data_dir = os.path.join(base_path, 'data', 'scopus-batch')
 
     def test_batch_parser_1(self):
         cases = ['1']
 
         for case in cases:
-            input_name = f'scopus-batch-{case}.csv'
-            golden_name = f'scopus-batch-{case}-expected.json'
+            input_name = f'golden-{case}.csv'
+            golden_name = f'golden-{case}-expected.json'
             with self.subTest(csv=input_name):
                 input_path = os.path.join(self.data_dir, input_name)
                 golden_path = os.path.join(self.data_dir, golden_name)
