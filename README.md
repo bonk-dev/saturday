@@ -128,3 +128,9 @@ when sending requests to the Scopus' endpoints.
 
 It is important to use the user's web-browser `User-Agent` value, because
 using anything different **will** trigger Cloudflare anti-bot mechanisms.
+
+### Google Scholar
+This fetcher module doesn't use any environment variables.
+
+A user can supply a proxy server to use while scraping with 
+the `--proxy` option (see [Usage](#usage)).
