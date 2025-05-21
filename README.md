@@ -65,3 +65,66 @@ with the `SCOPUS_API_BASE` environment variable (or in .env).
 SCOPUS_API_BASE=https://api.elsevier.com
 SCOPUS_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
+
+### Scopus batch export
+Scopus batch export is an alternative method to the official Elsevier API.
+It uses the endpoints utilized by the Scopus website, allowing the user to export
+more data at once, while also skipping the weekly limit enforced by the Elsevier API.
+
+The downside is it is harder to set up. Instead of a single, long-lived API key, a cookie
+dump from the user's browser is needed. These cookies are short-lived and need to be refreshed
+once in a while (implemented in the app).
+
+The required coookies are:
+- `SCSessionID`
+- `scopusSessionUUID`
+- `AWSELB`
+- `SCOPUS_JWT`
+
+#### Example .env
+```
+SCOPUS_BATCH_BASE=https://www.scopus.com
+SCOPUS_BATCH_COOKIE_FILE=/tmp/scopus-batch-cookies
+SCOPUS_BATCH_COOKIE_JWT_DOMAIN=.scopus.com
+SCOPUS_BATCH_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3
+```
+
+After creating the file, the user needs to supply the path to the app with
+an environment variable (or the .env file): `SCOPUS_BATCH_COOKIE_FILE`.
+For example `SCOPUS_BATCH_COOKIE_FILE=/tmp/scopus-cookies`.
+
+#### SCOPUS_BATCH_BASE
+This env variable allows the user to change the base URI of the endpoints used
+by the scraper module. Default value: `https://www.scopus.com`.
+
+For example, if you change this to https://example.org, then the scraper
+will send a request to `https://example.org/api/documents/search/eids` 
+and **NOT** to `https://www.scopus.com/api/documents/search/eids` when searching
+for documents to export.
+
+#### SCOPUS_BATCH_COOKIE_FILE
+This env variable allows the user to set the path to a file containing the user's
+authentication cookies.
+
+The cookies are to be supplied as sent by browser in the `Cookie:` header. 
+This means, that a user can copy and paste the `Cookie:` header value 
+into a file, and use it as is (unexpected cookies will be ignored).
+
+Example file:
+```
+SCSessionID=cookie_val; scopusSessionUUID=cookie_val2; AWSELB=cookie_val3; SCOPUS_JWT=cookie_val4
+```
+
+#### SCOPUS_BATCH_COOKIE_JWT_DOMAIN
+This env variable controls the `Domain` parameter of the `SCOPUS_JWT` cookie.
+Default value: `.scopus.com`.
+`SCOPUS_JWT` needs to have the correct `Domain` value, because it's refreshed
+periodically (by the `Set-Cookie` header) and the [HTTPX](https://github.com/encode/httpx)
+client won't accept a cookie with a different domain, than previously set.
+
+#### SCOPUS_BATCH_USER_AGENT
+This env variable is used by the app to set the correct `User-Agent` header
+when sending requests to the Scopus' endpoints.
+
+It is important to use the user's web-browser `User-Agent` value, because
+using anything different **will** trigger Cloudflare anti-bot mechanisms.
