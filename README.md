@@ -41,3 +41,27 @@ $ python3 main.py --scopus-batch "python3 C++"
 ```shell
 $ python3 main.py --scopus-batch --google-scholar "python3 C++" 
 ```
+
+## Setup
+Some fetcher modules require additional setup (API keys, cookies etc.).
+Here are the required steps for all implemented fetchers.
+
+### Elsevier (Scopus) API
+
+#### SCOPUS_API_KEY
+In order to use the Elsevier API a key is required. You can create 
+such key (which is linked to your account) on [https://dev.elsevier.com/apikey/manage](https://dev.elsevier.com/apikey/manage).
+
+After acquiring the API key, it needs to be supplied with an environment
+variable: `SCOPUS_API_KEY`.
+The app supports .env files (see `.env.sample`).
+
+#### SCOPUS_API_BASE
+The app also supports using a different API endpoint, which can be controlled
+with the `SCOPUS_API_BASE` environment variable (or in .env).
+
+#### Example .env
+```
+SCOPUS_API_BASE=https://api.elsevier.com
+SCOPUS_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
