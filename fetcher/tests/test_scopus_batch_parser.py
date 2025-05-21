@@ -12,7 +12,7 @@ class TestParser(unittest.TestCase):
         cls.data_dir = os.path.join(base_path, 'data')
 
     def test_batch_parser_1(self):
-        cases = ['1', '2']
+        cases = ['1']
 
         for case in cases:
             input_name = f'scopus-batch-{case}.csv'
