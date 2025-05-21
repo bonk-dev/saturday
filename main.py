@@ -12,6 +12,7 @@ from database.scopusController import *
 import json
 
 from fetcher.scopus_batch.models import ExportFileType, all_identifiers
+from fetcher.scopus_batch.parser import ScopusCsvParser
 from fetcher.scopus_batch.scraper import ScopusScraper, ScopusScraperConfig
 
 
@@ -33,6 +34,7 @@ async def main():
     parser.add_argument('-b', '--scopus-batch',
                         action='store_true',
                         help='Use Scopus batch export for scraping metadata')
+    parser.add_argument('--scopus-batch-file', help='Use a local .CSV dump instead of exporting from Scopus')
     parser.add_argument('--ssl-insecure',
                         action='store_true',
                         help='Do not verify upstream server SSL/TLS certificates')
@@ -64,7 +66,12 @@ async def main():
             logger.warning(f'Scopus batch: SCOPUS_BATCH_BASE not set, defaulting to {ScopusScraper.BASE_URI}')
             scopus_batch_uri = ScopusScraper.BASE_URI
 
-        if not os.path.isfile(cookie_file_path):
+        export_data = None
+        if args.scopus_batch_file is not None:
+            logger.info(f'Scopus batch: reading from local file: {args.scopus_batch_file}')
+            with open(args.scopus_batch_file, 'r') as b_file:
+                export_data = b_file.read()
+        elif not os.path.isfile(cookie_file_path):
             logger.error(f'Scopus batch: SCOPUS_BATCH_COOKIE_FILE file does not exist (path: "{cookie_file_path}")')
         else:
             with open(cookie_file_path, 'r') as cookie_file_f:
@@ -104,6 +111,16 @@ async def main():
                         fields=all_identifiers())
                     with open('/tmp/export.csv', 'w') as export_file:
                         export_file.write(export_data)
+        if export_data is not None:
+            logger.debug('Scopus batch: parsing data')
+            # TODO: Find a more elegant solution for handling BOM?
+            export_data = export_data.removeprefix('\ufeff')
+            parser = ScopusCsvParser(export_data)
+
+            scopus_batch_pubs = parser.read_all_publications()
+            logger.info(f'Parsed publications: {len(scopus_batch_pubs)}')
+            for pub in scopus_batch_pubs:
+                logger.debug(pub.to_debug_string())
 
     if use_scopus:
         scopus_key = os.getenv('SCOPUS_API_KEY')
