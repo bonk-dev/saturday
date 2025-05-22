@@ -31,15 +31,18 @@ options:
                         based on IP authentication (Elsevier, Scopus)
   -g, --google-scholar  Use Google Scholar for scraping metadata
   --google-scholar-output GOOGLE_SCHOLAR_OUTPUT
-                        Path to a file where raw data fetched from Google Scholar will be saved
+                        Path to a file where raw data fetched from Google Scholar will be saved. File
+                        type: JSON.
   -s, --scopus-api      Use Scopus API for scraping metadata
   --scopus-api-output SCOPUS_API_OUTPUT
-                        Path to a file where raw data fetched from Elsevier API will be saved
+                        Path to a file where raw data fetched from Elsevier API will be saved. File
+                        type: JSON.
   -b, --scopus-batch    Use Scopus batch export for scraping metadata
   --scopus-batch-file SCOPUS_BATCH_FILE
                         Use a local .CSV dump instead of exporting from Scopus
   --scopus-batch-output SCOPUS_BATCH_OUTPUT
-                        Path to a file where raw data fetched from Scopus batch export will be saved
+                        Path to a file where raw data fetched from Scopus batch export will be saved.
+                        File type: CSV.
   --ssl-insecure        Do not verify upstream server SSL/TLS certificates
 ```
 

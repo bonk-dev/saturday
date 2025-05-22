@@ -69,18 +69,19 @@ async def main():
                              'IP authentication (Elsevier, Scopus)')
     parser.add_argument('-g', '--google-scholar', action='store_true', help='Use Google Scholar for scraping metadata')
     parser.add_argument('--google-scholar-output',
-                        help='Path to a file where raw data fetched from Google Scholar will be saved')
+                        help='Path to a file where raw data fetched from Google Scholar will be saved. File type: JSON.')
 
     parser.add_argument('-s', '--scopus-api', action='store_true', help='Use Scopus API for scraping metadata')
     parser.add_argument('--scopus-api-output',
-                        help='Path to a file where raw data fetched from Elsevier API will be saved')
+                        help='Path to a file where raw data fetched from Elsevier API will be saved. File type: JSON.')
 
     parser.add_argument('-b', '--scopus-batch',
                         action='store_true',
                         help='Use Scopus batch export for scraping metadata')
     parser.add_argument('--scopus-batch-file', help='Use a local .CSV dump instead of exporting from Scopus')
     parser.add_argument('--scopus-batch-output',
-                        help='Path to a file where raw data fetched from Scopus batch export will be saved')
+                        help='Path to a file where raw data fetched from Scopus batch export will be saved. '
+                             'File type: CSV.')
     parser.add_argument('--ssl-insecure',
                         action='store_true',
                         help='Do not verify upstream server SSL/TLS certificates')
