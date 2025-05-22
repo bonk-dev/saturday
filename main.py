@@ -53,7 +53,7 @@ async def main():
         logger.info(f'Using debug proxy: "{debug_proxy}"')
         if prod_proxies and len(prod_proxies) > 0:
             logger.warning(f'Overwriting production proxies with the debug proxy')
-            prod_proxies = [debug_proxy]
+        prod_proxies = [debug_proxy]
 
     use_scopus = args.scopus_api or args.all
     use_scopus_batch = args.scopus_batch or args.all
