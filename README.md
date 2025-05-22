@@ -52,6 +52,11 @@ $ python3 main.py --all "python3 C++"
 $ python3 main.py --scopus-batch "python3 C++" 
 ```
 
+#### Scopus (batch gateway, save dump to file)
+```shell
+$ python3 main.py --scopus-batch --scopus-batch-output "/tmp/sc-batch.csv" "python3 C++" 
+```
+
 #### Scopus (batch gateway) and Google Scholar
 ```shell
 $ python3 main.py --scopus-batch --google-scholar "python3 C++" 
