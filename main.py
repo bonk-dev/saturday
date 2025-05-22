@@ -28,7 +28,11 @@ async def main():
     parser.add_argument('-a', '--all', action='store_true', help='Use all methods (google-scholar, scopus)')
     parser.add_argument('-p', '--proxy',
                         action='append',
-                        help='HTTP(S) proxy address, example: -p http://127.0.0.1:8080 -p http://127.0.0.2:1234')
+                        help='HTTP(S) proxy address, example: -p http://127.0.0.1:8080 -p http://127.0.0.2:1234. '
+                             'Not used when making requests to IP-authenticated services (Elsevier, Scopus, etc.)')
+    parser.add_argument('--debug-proxy',
+                        help='HTTP(S) proxy address, used for ALL requests, including ones made to services based on '
+                             'IP authentication (Elsevier, Scopus)')
     parser.add_argument('-g', '--google-scholar', action='store_true', help='Use Google Scholar for scraping metadata')
     parser.add_argument('-s', '--scopus-api', action='store_true', help='Use Scopus API for scraping metadata')
     parser.add_argument('-b', '--scopus-batch',
@@ -43,12 +47,20 @@ async def main():
     search_query = args.search_query
     logger.info(f'Using "{search_query}" as the search query')
 
+    prod_proxies = args.proxy
+    debug_proxy = args.debug_proxy
+    if debug_proxy:
+        logger.info(f'Using debug proxy: "{debug_proxy}"')
+        if prod_proxies and len(prod_proxies) > 0:
+            logger.warning(f'Overwriting production proxies with the debug proxy')
+            prod_proxies = [debug_proxy]
+
     use_scopus = args.scopus_api or args.all
     use_scopus_batch = args.scopus_batch or args.all
     use_gscholar = args.google_scholar or args.all
 
     if use_gscholar:
-        scr = GoogleScholarScraper(verify_ssl=not args.ssl_insecure, proxies=args.proxy)
+        scr = GoogleScholarScraper(verify_ssl=not args.ssl_insecure, proxies=prod_proxies)
         r = await scr.search(search_query)
         logger.debug(json.dumps(r))
         logger.debug(r)
@@ -133,7 +145,7 @@ async def main():
             async with ScopusApi(
                     api_key=scopus_key,
                     api_endpoint=scopus_base,
-                    proxies=args.proxy,
+                    proxies=debug_proxy,
                     verify_ssl=not args.ssl_insecure) as client:
                 r = await client.search(search_query)
                 for entry in r:
