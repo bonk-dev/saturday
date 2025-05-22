@@ -6,7 +6,7 @@ import string
 from typing import Any
 
 import httpx
-from httpx import Cookies
+from httpx import Cookies, URL, Proxy
 
 from fetcher.scopus_batch.models import SearchEidsResult, ExportFileType, FieldGroupIdentifiers
 
@@ -78,17 +78,19 @@ class ScopusScraper:
     __MAX_BATCH_ITEMS_PER_REQUEST__ = 100
     """Maximum number of items accepted by the `/gateway/export-service/export` endpoint."""
 
-    def __init__(self, config: ScopusScraperConfig, verify_ssl: bool = True, base_uri: str = BASE_URI):
+    def __init__(self, config: ScopusScraperConfig, verify_ssl: bool = True, base_uri: str = BASE_URI,
+                 proxy: URL | str | Proxy | None = None):
         """
         Initialize the ScopusScraper.
 
         :param ScopusScraperConfig config:  Auth and cookie configuration.
         :param bool verify_ssl:             Toggle SSL certificate verification.
         :param str base_uri:         Override the base URI (default: BASE_URI).
+        :param URL | str | Proxy | None proxy:  Proxy to use when making HTTP(S) requests.
         """
 
         self._base = base_uri
-        self._session = httpx.AsyncClient(verify=verify_ssl, timeout=60,
+        self._session = httpx.AsyncClient(verify=verify_ssl, timeout=60, proxy=proxy,
                                           cookies=config.build_cookie_store())
         self._session.headers.update({
             'Accept': 'application/json',

@@ -116,7 +116,7 @@ async def main():
                         scopus_jwt_domain=scopus_cookie_domain_name,
                         awselb=scopus_batch_awselb.value,
                         scopus_session_uuid=scopus_batch_session_uuid.value,
-                        sc_session_id=scopus_batch_sc_session_id.value), verify_ssl=not args.ssl_insecure, base_uri=scopus_batch_uri) as sc_batch:
+                        sc_session_id=scopus_batch_sc_session_id.value), verify_ssl=not args.ssl_insecure, base_uri=scopus_batch_uri, proxy=debug_proxy) as sc_batch:
                     export_data = await sc_batch.export_all(
                         search_query,
                         file_type=ExportFileType.CSV,
