@@ -179,6 +179,7 @@ async def main():
                             export_data,
                             f_module='Scopus batch',
                             logger=logger)
+        if export_data:
             logger.debug('Scopus batch: parsing data')
             # TODO: Find a more elegant solution for handling BOM?
             export_data = export_data.removeprefix('\ufeff')
