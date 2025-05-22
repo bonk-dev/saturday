@@ -9,7 +9,11 @@ A Python 3 app designed to scrape science publication metadata from various sour
 ### Command-line
 ```shell
 $ python3 main.py
-usage: main.py [-h] [-a] [-p PROXY] [--debug-proxy DEBUG_PROXY] [-g] [-s] [-b] [--scopus-batch-file SCOPUS_BATCH_FILE] [--ssl-insecure] search_query
+usage: main.py [-h] [-a] [-p PROXY] [--debug-proxy DEBUG_PROXY] [-g]
+               [--google-scholar-output GOOGLE_SCHOLAR_OUTPUT] [-s]
+               [--scopus-api-output SCOPUS_API_OUTPUT] [-b] [--scopus-batch-file SCOPUS_BATCH_FILE]
+               [--scopus-batch-output SCOPUS_BATCH_OUTPUT] [--ssl-insecure]
+               search_query
 
 Science publication metadata scraper
 
@@ -19,14 +23,26 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -a, --all             Use all methods (google-scholar, scopus)
-  -p, --proxy PROXY     HTTP(S) proxy address, example: -p http://127.0.0.1:8080 -p http://127.0.0.2:1234. Not used when making requests to IP-authenticated services (Elsevier, Scopus, etc.)
+  -p, --proxy PROXY     HTTP(S) proxy address, example: -p http://127.0.0.1:8080 -p
+                        http://127.0.0.2:1234. Not used when making requests to IP-authenticated
+                        services (Elsevier, Scopus, etc.)
   --debug-proxy DEBUG_PROXY
-                        HTTP(S) proxy address, used for ALL requests, including ones made to services based on IP authentication (Elsevier, Scopus)
+                        HTTP(S) proxy address, used for ALL requests, including ones made to services
+                        based on IP authentication (Elsevier, Scopus)
   -g, --google-scholar  Use Google Scholar for scraping metadata
+  --google-scholar-output GOOGLE_SCHOLAR_OUTPUT
+                        Path to a file where raw data fetched from Google Scholar will be saved. File
+                        type: JSON.
   -s, --scopus-api      Use Scopus API for scraping metadata
+  --scopus-api-output SCOPUS_API_OUTPUT
+                        Path to a file where raw data fetched from Elsevier API will be saved. File
+                        type: JSON.
   -b, --scopus-batch    Use Scopus batch export for scraping metadata
   --scopus-batch-file SCOPUS_BATCH_FILE
                         Use a local .CSV dump instead of exporting from Scopus
+  --scopus-batch-output SCOPUS_BATCH_OUTPUT
+                        Path to a file where raw data fetched from Scopus batch export will be saved.
+                        File type: CSV.
   --ssl-insecure        Do not verify upstream server SSL/TLS certificates
 ```
 
@@ -37,6 +53,11 @@ $ python3 main.py --all "python3 C++"
 #### Scopus (batch gateway)
 ```shell
 $ python3 main.py --scopus-batch "python3 C++" 
+```
+
+#### Scopus (batch gateway, save dump to file)
+```shell
+$ python3 main.py --scopus-batch --scopus-batch-output "/tmp/sc-batch.csv" "python3 C++" 
 ```
 
 #### Scopus (batch gateway) and Google Scholar
