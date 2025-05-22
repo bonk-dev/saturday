@@ -9,7 +9,7 @@ A Python 3 app designed to scrape science publication metadata from various sour
 ### Command-line
 ```shell
 $ python3 main.py
-usage: main.py [-h] [-a] [-p PROXY] [-g] [-s] [-b] [--scopus-batch-file SCOPUS_BATCH_FILE] [--ssl-insecure] search_query
+usage: main.py [-h] [-a] [-p PROXY] [--debug-proxy DEBUG_PROXY] [-g] [-s] [-b] [--scopus-batch-file SCOPUS_BATCH_FILE] [--ssl-insecure] search_query
 
 Science publication metadata scraper
 
@@ -19,7 +19,9 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -a, --all             Use all methods (google-scholar, scopus)
-  -p, --proxy PROXY     HTTP(S) proxy address, example: -p http://127.0.0.1:8080 -p http://127.0.0.2:1234
+  -p, --proxy PROXY     HTTP(S) proxy address, example: -p http://127.0.0.1:8080 -p http://127.0.0.2:1234. Not used when making requests to IP-authenticated services (Elsevier, Scopus, etc.)
+  --debug-proxy DEBUG_PROXY
+                        HTTP(S) proxy address, used for ALL requests, including ones made to services based on IP authentication (Elsevier, Scopus)
   -g, --google-scholar  Use Google Scholar for scraping metadata
   -s, --scopus-api      Use Scopus API for scraping metadata
   -b, --scopus-batch    Use Scopus batch export for scraping metadata
