@@ -12,6 +12,18 @@ class Author:
     def __str__(self):
         return f"{self.authname} ({self.authid})"
 
+    def to_dict(self):
+        return {
+            "seq": self.seq,
+            "author_url": self.author_url,
+            "authid": self.authid,
+            "authname": self.authname,
+            "surname": self.surname,
+            "given_name": self.given_name,
+            "initials": self.initials,
+            "afid": self.afid
+        }
+
 
 class Affiliation:
     def __init__(self, json_data):
@@ -24,6 +36,15 @@ class Affiliation:
     def __str__(self):
         return f"{self.affilname}, {self.affiliation_city}, {self.affiliation_country}"
 
+    def to_dict(self):
+        return {
+            "affiliation_url": self.affiliation_url,
+            "afid": self.afid,
+            "affilname": self.affilname,
+            "affiliation_city": self.affiliation_city,
+            "affiliation_country": self.affiliation_country
+        }
+
 
 class Link:
     def __init__(self, json_data):
@@ -32,6 +53,12 @@ class Link:
 
     def __str__(self):
         return f"{self.ref}: {self.href}"
+
+    def to_dict(self):
+        return {
+            'ref': self.ref,
+            'href': self.href
+        }
 
 
 class SearchEntry:
@@ -73,6 +100,42 @@ class SearchEntry:
     def __str__(self):
         return f"{self.eid}: {self.title} by {self.creator} in {self.publication_name}"
 
+    def to_dict(self):
+        return {
+            "eid": self.eid,
+            "title": self.title,
+            "creator": self.creator,
+            "description": self.description,
+            "identifier": self.identifier,
+            "publication_name": self.publication_name,
+            "issn": self.issn,
+            "eissn": self.eissn,
+            "volume": self.volume,
+            "issue": self.issue,
+            "page_range": self.page_range,
+            "cover_date": self.cover_date,
+            "cover_display_date": self.cover_display_date,
+            "doi": self.doi,
+            "citedby_count": self.citedby_count,
+            "aggregation_type": self.aggregation_type,
+            "subtype": self.subtype,
+            "subtype_description": self.subtype_description,
+            "authkeywords": self.authkeywords,
+            "article_number": self.article_number,
+            "source_id": self.source_id,
+            "openaccess": self.openaccess,
+            "openaccess_flag": self.openaccess_flag,
+            "freetoread": self.freetoread,
+            "freetoread_label": self.freetoread_label,
+            "fundNo": self.fundNo,
+            "fundAcr": self.fundAcr,
+            "fundSponsor": self.fundSponsor,
+            "url": self.url,
+            "links": [link.to_dict() for link in self.links],
+            "affiliations": [aff.to_dict() for aff in self.affiliations],
+            "authors": [author.to_dict() for author in self.authors]
+        }
+
 
 class SearchResults:
     def __init__(self, json_data: dict):
@@ -88,4 +151,12 @@ class SearchResults:
             s += str(entry)
             s += '\n'
         return s
+
+    def to_dict(self):
+        return {
+            'totalResults': self.totalResults,
+            'startIndex': self.startIndex,
+            'itemsPerPage': self.itemsPerPage,
+            'entry': [e.to_dict() for e in self.entry]
+        }
 

@@ -68,7 +68,11 @@ async def main():
                         help='HTTP(S) proxy address, used for ALL requests, including ones made to services based on '
                              'IP authentication (Elsevier, Scopus)')
     parser.add_argument('-g', '--google-scholar', action='store_true', help='Use Google Scholar for scraping metadata')
+
     parser.add_argument('-s', '--scopus-api', action='store_true', help='Use Scopus API for scraping metadata')
+    parser.add_argument('--scopus-api-output',
+                        help='Path to a file where raw data fetched from Elsevier API will be saved')
+
     parser.add_argument('-b', '--scopus-batch',
                         action='store_true',
                         help='Use Scopus batch export for scraping metadata')
@@ -92,6 +96,7 @@ async def main():
         prod_proxies = [debug_proxy]
 
     use_scopus = args.scopus_api or args.all
+    scopus_api_output_path = args.scopus_api_output
 
     use_scopus_batch = args.scopus_batch or args.all
     scopus_batch_output_path = args.scopus_batch_output
@@ -189,9 +194,15 @@ async def main():
             async with ScopusApi(
                     api_key=scopus_key,
                     api_endpoint=scopus_base,
-                    proxies=debug_proxy,
+                    proxies=[debug_proxy],
                     verify_ssl=not args.ssl_insecure) as client:
                 r = await client.search(search_query)
+                if scopus_api_output_path:
+                    write_dump(
+                        scopus_api_output_path,
+                        json.dumps([p.to_dict() for p in r], ensure_ascii=False),
+                        'Elsevier API',
+                        logger)
                 for entry in r:
                     logger.debug(entry)
 
