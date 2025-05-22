@@ -3,6 +3,7 @@ import asyncio
 import http.cookies
 import logging
 import os
+from typing import AnyStr
 
 from dotenv import load_dotenv
 from fetcher.scopus.api import ScopusApi
@@ -14,6 +15,39 @@ import json
 from fetcher.scopus_batch.models import ExportFileType, all_identifiers
 from fetcher.scopus_batch.parser import ScopusCsvParser
 from fetcher.scopus_batch.scraper import ScopusScraper, ScopusScraperConfig
+
+
+def write_dump(filename: str, data: AnyStr, f_module: str, logger: logging.Logger):
+    """
+    Write the given data to a file, logging progress and any errors encountered.
+
+    :param filename: Path to the file where data will be written.
+    :type filename: str
+    :param data: Data to be written to the file. Can be either str or bytes.
+    :type data: AnyStr
+    :param f_module: Name of the calling module or function, used in log messages.
+    :type f_module: str
+    :param logger: Logger instance used for informational and error messages.
+    :type logger: logging.Logger
+
+    :returns: None. Logs an informational message on success or an error message on failure.
+    :rtype: None
+
+    :note: This function catches any file‐related exceptions (e.g., PermissionError,
+           IsADirectoryError, OSError) and logs the appropriate error rather than
+           propagating them. If an error occurs, no exception is raised by this function.
+    """
+
+    logger.info(f'{f_module}: writing output to "{filename}"')
+    try:
+        with open(filename, 'w') as export_file:
+            export_file.write(data)
+    except PermissionError as e:
+        logger.error(f'{f_module}: permission denied to output file: {e.filename}')
+    except IsADirectoryError as e:
+        logger.error(f'{f_module}: output file path "{e.filename}" is a directory')
+    except OSError as e:
+        logger.error(f'{f_module}: os error [{e.errno}] {e.strerror}')
 
 
 async def main():
@@ -39,6 +73,8 @@ async def main():
                         action='store_true',
                         help='Use Scopus batch export for scraping metadata')
     parser.add_argument('--scopus-batch-file', help='Use a local .CSV dump instead of exporting from Scopus')
+    parser.add_argument('--scopus-batch-output',
+                        help='Path to a file where raw data fetched from Scopus batch export will be saved')
     parser.add_argument('--ssl-insecure',
                         action='store_true',
                         help='Do not verify upstream server SSL/TLS certificates')
@@ -56,7 +92,10 @@ async def main():
         prod_proxies = [debug_proxy]
 
     use_scopus = args.scopus_api or args.all
+
     use_scopus_batch = args.scopus_batch or args.all
+    scopus_batch_output_path = args.scopus_batch_output
+
     use_gscholar = args.google_scholar or args.all
 
     if use_gscholar:
@@ -123,9 +162,12 @@ async def main():
                         search_query,
                         file_type=ExportFileType.CSV,
                         fields=all_identifiers())
-                    with open('/tmp/export.csv', 'w') as export_file:
-                        export_file.write(export_data)
-        if export_data is not None:
+                    if scopus_batch_output_path:
+                        write_dump(
+                            scopus_batch_output_path,
+                            export_data,
+                            f_module='Scopus batch',
+                            logger=logger)
             logger.debug('Scopus batch: parsing data')
             # TODO: Find a more elegant solution for handling BOM?
             export_data = export_data.removeprefix('\ufeff')
