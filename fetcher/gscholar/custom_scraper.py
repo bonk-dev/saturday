@@ -164,6 +164,30 @@ class GoogleScholarScraperCustom:
         return scraped_entries
 
     async def scrape_bibtex_file(self, entry: GoogleScholarHtmlEntry) -> GoogleScholarBibtexScrapeEntry:
+        """
+        Retrieve the BibTeX record for a given Google Scholar entry.
+
+        This coroutine sends an HTTP GET request to the `bibtex_uri` of the provided
+        `GoogleScholarHtmlEntry`. If the request is successful, it wraps the resulting
+        BibTeX text in a `GoogleScholarBibtexScrapeEntry` and returns it. If Google
+        Scholar responds with a 403 status code, a `CaptchaError` is raised, indicating
+        that a CAPTCHA may have been triggered. Any other non-2xx status codes will
+        raise an HTTP error.
+
+        :param entry: A `GoogleScholarHtmlEntry` object containing metadata and the
+                      URI to fetch the BibTeX record.
+        :type entry: GoogleScholarHtmlEntry
+
+        :returns: A `GoogleScholarBibtexScrapeEntry` containing the original entry ID
+                  and the raw BibTeX data as a string.
+        :rtype: GoogleScholarBibtexScrapeEntry
+
+        :raises CaptchaError: If Google Scholar returns a 403 status code on the
+                              BibTeX download, indicating a CAPTCHA challenge.
+        :raises HTTPError: If the HTTP request completes with any other non-successful
+                           status code.
+        """
+
         r = await self._session.get(entry.bibtex_uri)
         if r.status_code == 403:
             raise CaptchaError('Google Scholar returned 403 on BibTex download, probably triggered a captcha')
