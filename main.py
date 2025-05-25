@@ -7,7 +7,7 @@ from typing import AnyStr
 
 from dotenv import load_dotenv
 
-from fetcher.gscholar.custom_scraper import GoogleScholarScraperCustom
+from fetcher.gscholar.scraper import GoogleScholarScraperCustom
 from fetcher.scopus.api import ScopusApi
 from database.dbContext import *
 from database.scopusController import *
