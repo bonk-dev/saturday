@@ -2,8 +2,11 @@ import logging
 from itertools import cycle
 from bs4 import BeautifulSoup
 import httpx
-
 from fetcher.gscholar.models import GoogleScholarHtmlEntry, GoogleScholarBibtexScrapeEntry
+
+
+class CaptchaError(Exception):
+    pass
 
 
 class GoogleScholarScraperCustom:
@@ -108,6 +111,7 @@ class GoogleScholarScraperCustom:
         :rtype: None
         :raises httpx.HTTPStatusError: If the search request returns an unsuccessful status code.
         :raises RuntimeError: If the 'Import into BibTeX' link cannot be located in a result entry.
+        :raises from fetcher.gscholar.custom_scraper.CaptchaError: When Google Scholar requests a captcha check
         """
 
         uri = f'{self._base}/scholar'
@@ -122,6 +126,10 @@ class GoogleScholarScraperCustom:
         r.raise_for_status()
 
         s = BeautifulSoup(r.text, 'html.parser')
+        captcha_form = s.find('form', attrs={'id': 'gs_captcha_f'})
+        if captcha_form is not None:
+            raise CaptchaError('Google Scholar requested a captcha verification')
+
         entries = s.find_all(attrs={'class': 'gs_r gs_or gs_scl'})
 
         scraped_entries = []
