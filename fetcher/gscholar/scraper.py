@@ -1,5 +1,7 @@
 import logging
 from itertools import cycle
+from typing import Optional
+
 from bs4 import BeautifulSoup
 import httpx
 from fetcher.gscholar.models import GoogleScholarHtmlEntry, GoogleScholarBibtexScrapeEntry
@@ -22,8 +24,8 @@ class GoogleScholarScraperCustom:
         self._base = base_uri
         self._session = None
 
-    async def init(self, proxy: str | None = None):
-        self._session = httpx.AsyncClient(verify=self._verify_ssl, timeout=30, proxy=proxy)
+    async def init(self, proxy: str | None = None, transport: Optional[httpx.AsyncBaseTransport] = None):
+        self._session = httpx.AsyncClient(verify=self._verify_ssl, timeout=30, proxy=proxy, transport=transport)
         self._session.headers.update({
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,'
                       '*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
