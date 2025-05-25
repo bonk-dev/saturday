@@ -138,6 +138,7 @@ class GoogleScholarScraperCustom:
 
         scraped_entries = []
         for e in entries:
+            file_type = ''
             data_id = e.attrs['data-cid']
             title_element = e.find(attrs={'class': 'gs_rt'}).find('a')
             title = title_element.text
@@ -149,8 +150,6 @@ class GoogleScholarScraperCustom:
                 file_type_element = file_type_element.find()
                 if file_type_element is not None:
                     file_type = file_type_element.text
-            else:
-                file_type = ''
             authors = e.find(attrs={'class': 'gs_a'}).text
 
             import_bibtex_e = e.find('a', attrs={'class': 'gs_nta gs_nph'}, string='Import into BibTeX')
