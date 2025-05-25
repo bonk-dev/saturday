@@ -127,8 +127,17 @@ async def main():
         scr = GoogleScholarScraperCustom(verify_ssl=not args.ssl_insecure, proxies=prod_proxies)
         await scr.get_initial_cookies()
         await scr.set_preferences()
-        scraped_entries = await scr.search_scholar(search_query)
-        logger.info(f'gscholar_custom: scraped_entries={len(scraped_entries)}')
+
+        page = 0
+        while True:
+            scraped_entries = await scr.search_scholar(search_query, start=page)
+            last_scraped_entries = len(scraped_entries)
+
+            if last_scraped_entries <= 0:
+                break
+
+            logger.info(f'gscholar_custom: page={page}, scraped_entries={len(scraped_entries)}')
+            page += 10
 
         out_dir = '/tmp/bibtex'
         os.makedirs(out_dir, exist_ok=True)
