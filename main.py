@@ -131,6 +131,7 @@ async def main():
                                          base_uri=gscholar_base,
                                          user_agent=gscholar_ua)
 
+        # TODO: Rotate proxies on captcha or error
         gscholar_proxy = prod_proxies[0] if len(prod_proxies) > 0 else None
         await scr.init(proxy=gscholar_proxy)
 
