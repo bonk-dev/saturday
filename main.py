@@ -124,9 +124,8 @@ async def main():
         logger.debug(r)
 
     if use_gscholar_custom:
-        scr = GoogleScholarScraperCustom(verify_ssl=not args.ssl_insecure, proxies=prod_proxies)
-        await scr.get_initial_cookies()
-        await scr.set_preferences()
+        scr = GoogleScholarScraperCustom(verify_ssl=not args.ssl_insecure)
+        await scr.init(proxy=next(prod_proxies))
 
         page = 0
         while True:

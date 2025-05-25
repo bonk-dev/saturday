@@ -11,24 +11,28 @@ class CaptchaError(Exception):
 
 class GoogleScholarScraperCustom:
     BASE_URI = 'https://scholar.google.com'
+    _session: httpx.AsyncClient | None
 
     def __init__(self, verify_ssl: bool = True, base_uri: str = BASE_URI,
-                 proxies: list[str] | None = None,
                  user_agent: str | None = None):
-        if proxies is None:
-            proxies = []
-        self._count_of_proxies = len(proxies)
-        self._proxies = cycle(proxies)
         self._logger = logging.getLogger(__name__)
 
-        self._session = httpx.AsyncClient(verify=verify_ssl, timeout=30, proxy=next(self._proxies))
+        self._verify_ssl = verify_ssl
+        self._ua = user_agent
+        self._base = base_uri
+        self._session = None
+
+    async def init(self, proxy: str | None = None):
+        self._session = httpx.AsyncClient(verify=self._verify_ssl, timeout=30, proxy=proxy)
         self._session.headers.update({
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,'
                       '*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'User-Agent': user_agent if user_agent else 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
-                                                        '(KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
+            'User-Agent': self._ua if self._ua else 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                                                    '(KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
         })
-        self._base = base_uri
+
+        await self.get_initial_cookies()
+        await self.set_preferences()
 
     async def get_initial_cookies(self):
         """
