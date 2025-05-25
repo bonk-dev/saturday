@@ -146,7 +146,9 @@ class GoogleScholarScraperCustom:
             if file_type_element is not None:
                 # gs_ctc usually contains one visible text element, and one hidden
                 # if you would do file_type_element, you would get duplicated file type
-                file_type = file_type_element.find()
+                file_type_element = file_type_element.find()
+                if file_type_element is not None:
+                    file_type = file_type_element.text
             else:
                 file_type = ''
             authors = e.find(attrs={'class': 'gs_a'}).text
