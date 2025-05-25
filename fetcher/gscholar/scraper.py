@@ -24,7 +24,8 @@ class GoogleScholarScraperCustom:
         self._base = base_uri
         self._session = None
 
-    async def init(self, proxy: str | None = None, transport: Optional[httpx.AsyncBaseTransport] = None):
+    async def init(self, proxy: str | None = None, transport: Optional[httpx.AsyncBaseTransport] = None,
+                   dry: bool = False):
         self._session = httpx.AsyncClient(verify=self._verify_ssl, timeout=30, proxy=proxy, transport=transport)
         self._session.headers.update({
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,'
@@ -33,8 +34,9 @@ class GoogleScholarScraperCustom:
                                                     '(KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
         })
 
-        await self.get_initial_cookies()
-        await self.set_preferences()
+        if not dry:
+            await self.get_initial_cookies()
+            await self.set_preferences()
 
     async def aclose(self):
         """
