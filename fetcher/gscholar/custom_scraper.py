@@ -164,6 +164,10 @@ class GoogleScholarScraperCustom:
 
     async def scrape_bibtex_file(self, entry: GoogleScholarHtmlEntry) -> GoogleScholarBibtexScrapeEntry:
         r = await self._session.get(entry.bibtex_uri)
+        if r.status_code == 403:
+            raise CaptchaError('Google Scholar returned 403 on BibTex download, probably triggered a captcha')
+        r.raise_for_status()
+
         bib_entry = GoogleScholarBibtexScrapeEntry(id=entry.id, bibtex_data=r.text)
         self._logger.debug(f'scrape_bibtex_files: id={entry.id}, bibtex={r.text}')
         return bib_entry
