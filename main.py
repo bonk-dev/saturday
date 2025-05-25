@@ -6,6 +6,8 @@ import os
 from typing import AnyStr
 
 from dotenv import load_dotenv
+
+from fetcher.gscholar.custom_scraper import GoogleScholarScraperCustom
 from fetcher.scopus.api import ScopusApi
 from fetcher.gscholar.scraper import GoogleScholarScraper
 from database.dbContext import *
@@ -71,6 +73,10 @@ async def main():
     parser.add_argument('--google-scholar-output',
                         help='Path to a file where raw data fetched from Google Scholar will be saved. File type: JSON.')
 
+    parser.add_argument('--google-scholar-custom',
+                        action='store_true',
+                        help='Use Google Scholar (custom scraper) for scraping metadata')
+
     parser.add_argument('-s', '--scopus-api', action='store_true', help='Use Scopus API for scraping metadata')
     parser.add_argument('--scopus-api-output',
                         help='Path to a file where raw data fetched from Elsevier API will be saved. File type: JSON.')
@@ -107,6 +113,8 @@ async def main():
     use_gscholar = args.google_scholar or args.all
     gscholar_output_path = args.google_scholar_output
 
+    use_gscholar_custom = args.google_scholar_custom or args.all
+
     if use_gscholar:
         scr = GoogleScholarScraper(verify_ssl=not args.ssl_insecure, proxies=prod_proxies)
         r = await scr.search(search_query)
@@ -114,6 +122,13 @@ async def main():
             write_dump(gscholar_output_path, json.dumps(r, ensure_ascii=False), 'gscholar', logger)
         logger.debug(json.dumps(r))
         logger.debug(r)
+
+    if use_gscholar_custom:
+        scr = GoogleScholarScraperCustom(verify_ssl=not args.ssl_insecure, proxies=prod_proxies)
+        await scr.get_initial_cookies()
+        await scr.set_preferences()
+        await scr.search_scholar('python3 C++')
+        # await scr.get_bibtex('UqjFPrJEjN4J')
 
     if use_scopus_batch:
         logger.debug('Using Scopus batch export')
