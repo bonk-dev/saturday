@@ -34,6 +34,15 @@ class GoogleScholarScraperCustom:
         await self.get_initial_cookies()
         await self.set_preferences()
 
+    async def aclose(self):
+        """
+        Close the underlying HTTP session.
+
+        This coroutine invokes the `aclose` method on the internal HTTP session to
+        release any held resources and properly shut down the connection pool.
+        """
+        await self._session.aclose()
+
     async def get_initial_cookies(self):
         """
         Perform an initial GET request to the base URI to retrieve and store any required cookies.
