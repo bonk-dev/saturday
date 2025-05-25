@@ -129,7 +129,19 @@ async def main():
         await scr.set_preferences()
         scraped_entries = await scr.search_scholar(search_query)
         logger.info(f'gscholar_custom: scraped_entries={len(scraped_entries)}')
-        bibtex_entries = await scr.scrape_bibtex_files(scraped_entries)
+
+        out_dir = '/tmp/bibtex'
+        os.makedirs(out_dir, exist_ok=True)
+        for entry in scraped_entries:
+            bibtex_path = os.path.join(out_dir, f'{entry.id}.bib')
+            if not os.path.exists(bibtex_path):
+                bibtex_entry = await scr.scrape_bibtex_file(entry)
+
+                logger.info(f'gscholar_custom: writing bibtex to {bibtex_path}')
+                with open(bibtex_path, 'w') as bibtex_file:
+                    bibtex_file.write(bibtex_entry.bibtex_data)
+            else:
+                logger.info(f'gscholar_custom: bibtex for id={entry.id} already exists')
 
     if use_scopus_batch:
         logger.debug('Using Scopus batch export')

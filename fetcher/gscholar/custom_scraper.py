@@ -149,12 +149,8 @@ class GoogleScholarScraperCustom:
             self._logger.debug('search_scholar: ' + scr_entry.to_debug_string())
         return scraped_entries
 
-    async def scrape_bibtex_files(self, entries: list[GoogleScholarHtmlEntry]) -> list[GoogleScholarBibtexScrapeEntry]:
-        # TODO: Parallel
-        bibtex_entries = []
-        for e in entries:
-            r = await self._session.get(e.bibtex_uri)
-            bib_entry = GoogleScholarBibtexScrapeEntry(id=e.id, bibtex_data=r.text)
-            self._logger.debug(f'scrape_bibtex_files: id={e.id}, bibtex={r.text}')
-            bibtex_entries.append(bib_entry)
-        return bibtex_entries
+    async def scrape_bibtex_file(self, entry: GoogleScholarHtmlEntry) -> GoogleScholarBibtexScrapeEntry:
+        r = await self._session.get(entry.bibtex_uri)
+        bib_entry = GoogleScholarBibtexScrapeEntry(id=entry.id, bibtex_data=r.text)
+        self._logger.debug(f'scrape_bibtex_files: id={entry.id}, bibtex={r.text}')
+        return bib_entry
