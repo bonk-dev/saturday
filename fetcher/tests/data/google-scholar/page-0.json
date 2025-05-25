@@ -1,0 +1,82 @@
+[
+    {
+        "id": "UqjFPrJEjN4J",
+        "title": "ezc3d: An easy C3D file I/O cross-platform solution for C++, Python and MATLAB",
+        "link": "https://joss.theoj.org/papers/10.21105/joss.02911.pdf",
+        "file_type": "[PDF]",
+        "authors": "B Michaud, M Begon - Journal of Open Source Software, 2021 - joss.theoj.org",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:UqjFPrJEjN4J:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT5lYNIW3DzDxaaf6gD0J0nU&scisf=4&ct=citation&cd=0&hl=en"
+    },
+    {
+        "id": "fKLbyDkPBTYJ",
+        "title": "Programming in Python 3",
+        "link": "https://cs.smu.ca/~porter/csc/227/ProgrammingInPython3.pdf",
+        "file_type": "[BOOK]",
+        "authors": "M Summerfield - 1900 - cs.smu.ca",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:fKLbyDkPBTYJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvTz6E59lvq9KNORFvgU_qrhY&scisf=4&ct=citation&cd=1&hl=en"
+    },
+    {
+        "id": "Et0H48cCHSgJ",
+        "title": "Traductor automàtic de C++ a Python",
+        "link": "https://upcommons.upc.edu/handle/2117/404442",
+        "file_type": "",
+        "authors": "IV Balteanu - 2023 - upcommons.upc.edu",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:Et0H48cCHSgJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT6ayN60wVFFnIuul0t-VV9o&scisf=4&ct=citation&cd=2&hl=en"
+    },
+    {
+        "id": "c6SoNoC4-hAJ",
+        "title": "Python 3",
+        "link": "https://www.knihydaniela.cz/book-preview-334728.pdf",
+        "file_type": "[BOOK]",
+        "authors": "M Summerfield, VMR Calderón, AC Concejil… - 2010 - knihydaniela.cz",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:c6SoNoC4-hAJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvTytdg-c_jxNAGfXpmFEUFts&scisf=4&ct=citation&cd=3&hl=en"
+    },
+    {
+        "id": "cbwIRHG-y9gJ",
+        "title": "Hands-On Machine Learning with C++: Build, train, and deploy end-to-end machine learning and deep learning pipelines",
+        "link": "https://books.google.com/books?hl=en&lr=&id=SRY3EQAAQBAJ&oi=fnd&pg=PP1&dq=python3+C%2B%2B&ots=s69j9Hg4qb&sig=2K7pE04Nw-rPfa4Q9SEp5tWiMYA",
+        "file_type": "[BOOK]",
+        "authors": "K Kolodiazhnyi - 2025 - books.google.com",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:cbwIRHG-y9gJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvTxjKrVEJv9Ddi2pKRId7uCs&scisf=4&ct=citation&cd=4&hl=en"
+    },
+    {
+        "id": "_9lEaft2eXgJ",
+        "title": "Performance evaluation of c/c++, micropython, rust and tinygo programming languages on esp32 microcontroller",
+        "link": "https://www.mdpi.com/2079-9292/12/1/143",
+        "file_type": "",
+        "authors": "I Plauska, A Liutkevičius, A Janavičiūtė - Electronics, 2022 - mdpi.com",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:_9lEaft2eXgJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT4knTZ_1mfXLegojZq43X1k&scisf=4&ct=citation&cd=5&hl=en"
+    },
+    {
+        "id": "KzePotVcsx8J",
+        "title": "Inflationary Constant Factors and Why Python is Faster Than C++",
+        "link": "https://arxiv.org/abs/1911.12338",
+        "file_type": "",
+        "authors": "M Niknami - arXiv preprint arXiv:1911.12338, 2019 - arxiv.org",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:KzePotVcsx8J:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvTzT2aQWH_NByQvEcYTvF2pA&scisf=4&ct=citation&cd=6&hl=en"
+    },
+    {
+        "id": "zDgwbj-lumYJ",
+        "title": "FluidFFT: Common API (C++ and Python) for fast fourier transform HPC libraries",
+        "link": "https://arxiv.org/abs/1807.01775",
+        "file_type": "",
+        "authors": "AV Mohanan, C Bonamy, P Augier - arXiv preprint arXiv:1807.01775, 2018 - arxiv.org",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:zDgwbj-lumYJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT1QcIBo30IWSIX9GFzYeG1I&scisf=4&ct=citation&cd=7&hl=en"
+    },
+    {
+        "id": "rjVrErA9chgJ",
+        "title": "The impact of programming language choice on execution time when performing virtual simulation with a driver model: A comparison of C++ and Python performance …",
+        "link": "https://odr.chalmers.se/items/6157f6f2-3c09-4126-a7b4-42208ba47618",
+        "file_type": "",
+        "authors": "BC Soydas - 2024 - odr.chalmers.se",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:rjVrErA9chgJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT8hF1_ZWYg2ythyotPHQ-TQ&scisf=4&ct=citation&cd=8&hl=en"
+    },
+    {
+        "id": "CrjzZs6XnokJ",
+        "title": "PyGB: GraphBLAS DSL in Python with dynamic compilation into efficient C++",
+        "link": "https://ieeexplore.ieee.org/abstract/document/8425426/",
+        "file_type": "",
+        "authors": "J Chamberlin, M Zalewski, S McMillan… - 2018 IEEE …, 2018 - ieeexplore.ieee.org",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:CrjzZs6XnokJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT3t5JyLd0GfQcEQVoCZKhjs&scisf=4&ct=citation&cd=9&hl=en"
+    }
+]

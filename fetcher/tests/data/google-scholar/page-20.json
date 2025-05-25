@@ -1,0 +1,82 @@
+[
+    {
+        "id": "okzzDBBb6osJ",
+        "title": "A beginners guide to Python 3 programming",
+        "link": "https://link.springer.com/content/pdf/10.1007/978-3-031-35122-8.pdf",
+        "file_type": "[BOOK]",
+        "authors": "J Hunt - 2019 - Springer",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:okzzDBBb6osJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSRs:AAZF9b8AAAAAaDNvURsDGSgYmYKV-ea2TK8JAm0&scisig=AAZF9b8AAAAAaDNvUdO3RtK8zq2uaPtiutrVWn4&scisf=4&ct=citation&cd=20&hl=en"
+    },
+    {
+        "id": "GP8whadoCokJ",
+        "title": "Caravel: A C++ framework for the computation of multi-loop amplitudes with numerical unitarity",
+        "link": "https://www.sciencedirect.com/science/article/pii/S0010465521001818",
+        "file_type": "",
+        "authors": "S Abreu, J Dormans, FF Cordero, H Ita, M Kraus… - Computer Physics …, 2021 - Elsevier",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:GP8whadoCokJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSRs:AAZF9b8AAAAAaDNvURsDGSgYmYKV-ea2TK8JAm0&scisig=AAZF9b8AAAAAaDNvUcrOPCo4tAYzLRXFYl_wIUY&scisf=4&ct=citation&cd=21&hl=en"
+    },
+    {
+        "id": "BfcrMrJb-0MJ",
+        "title": "A Python Library for Matrix Algebra on GPU and Multicore Architectures",
+        "link": "https://ieeexplore.ieee.org/abstract/document/9973474/",
+        "file_type": "",
+        "authors": "D Nance, S Tomov, K Wong - … on Mobile Ad Hoc and Smart …, 2022 - ieeexplore.ieee.org",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:BfcrMrJb-0MJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSRs:AAZF9b8AAAAAaDNvURsDGSgYmYKV-ea2TK8JAm0&scisig=AAZF9b8AAAAAaDNvUbrjfdFsOk-5PY_5Q3L_IMA&scisf=4&ct=citation&cd=22&hl=en"
+    },
+    {
+        "id": "sM7kIBmvVogJ",
+        "title": "Magpy: A C++ accelerated Python package for simulating magnetic nanoparticle stochastic dynamics",
+        "link": "https://arxiv.org/abs/1801.06073",
+        "file_type": "",
+        "authors": "O Laslett, J Waters, H Fangohr, O Hovorka - arXiv preprint arXiv …, 2018 - arxiv.org",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:sM7kIBmvVogJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSRs:AAZF9b8AAAAAaDNvURsDGSgYmYKV-ea2TK8JAm0&scisig=AAZF9b8AAAAAaDNvUXwj7iQARc6HmwgT_V0ZYq8&scisf=4&ct=citation&cd=23&hl=en"
+    },
+    {
+        "id": "93jvPZ5qA8UJ",
+        "title": "Object-oriented implementations of the MPDATA advection equation solver in C++, Python and Fortran",
+        "link": "https://arxiv.org/abs/1301.1334",
+        "file_type": "",
+        "authors": "S Arabas, D Jarecka, A Jaruga… - arXiv preprint arXiv …, 2013 - arxiv.org",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:93jvPZ5qA8UJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSRs:AAZF9b8AAAAAaDNvURsDGSgYmYKV-ea2TK8JAm0&scisig=AAZF9b8AAAAAaDNvURu2m6ADSpKHgWsW2W7rJH8&scisf=4&ct=citation&cd=24&hl=en"
+    },
+    {
+        "id": "UjGbuW0jiNgJ",
+        "title": "Einführung in Python 3: Für Ein-und Umsteiger",
+        "link": "https://books.google.com/books?hl=en&lr=&id=xpGqBAAAQBAJ&oi=fnd&pg=PR5&dq=python3+C%2B%2B&ots=lm5o2xYe2t&sig=fGLIHlYiVtmDSHWPti_DZZzxq50",
+        "file_type": "[BOOK]",
+        "authors": "B Klein - 2014 - books.google.com",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:UjGbuW0jiNgJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSRs:AAZF9b8AAAAAaDNvURsDGSgYmYKV-ea2TK8JAm0&scisig=AAZF9b8AAAAAaDNvUf3HoQF82gLqwMLrZR03UPk&scisf=4&ct=citation&cd=25&hl=en"
+    },
+    {
+        "id": "hf8uBpCuKKkJ",
+        "title": "Refactoring to Standard C++ 20 Modules",
+        "link": "https://onlinelibrary.wiley.com/doi/abs/10.1002/smr.2736",
+        "file_type": "",
+        "authors": "R Szalay, Z Porkoláb - Journal of Software: Evolution and …, 2025 - Wiley Online Library",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:hf8uBpCuKKkJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSRs:AAZF9b8AAAAAaDNvURsDGSgYmYKV-ea2TK8JAm0&scisig=AAZF9b8AAAAAaDNvUUDL6VdvLBgh8bXFYPmxrd0&scisf=4&ct=citation&cd=26&hl=en"
+    },
+    {
+        "id": "pRc6DSXdT50J",
+        "title": "Python 3: výukový kurz",
+        "link": "https://books.google.com/books?hl=en&lr=&id=heNDEAAAQBAJ&oi=fnd&pg=PA13&dq=python3+C%2B%2B&ots=J1Svmtzw7b&sig=MxFR8iDHRgKnWSrdmHzsVucLuqA",
+        "file_type": "[BOOK]",
+        "authors": "M Summerfield - 2021 - books.google.com",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:pRc6DSXdT50J:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSRs:AAZF9b8AAAAAaDNvURsDGSgYmYKV-ea2TK8JAm0&scisig=AAZF9b8AAAAAaDNvUVQd0jeEXopt5y2qw_lio3c&scisf=4&ct=citation&cd=27&hl=en"
+    },
+    {
+        "id": "b-ekxXFVQmUJ",
+        "title": "Cython: A Guide for Python Programmers",
+        "link": "https://books.google.com/books?hl=en&lr=&id=ERFkBgAAQBAJ&oi=fnd&pg=PT1&dq=python3+C%2B%2B&ots=Bb67Lz5cXl&sig=OUrCA5PP3G8jmCAsf6-lKXVTyYM",
+        "file_type": "[BOOK]",
+        "authors": "KW Smith - 2015 - books.google.com",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:b-ekxXFVQmUJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSRs:AAZF9b8AAAAAaDNvURsDGSgYmYKV-ea2TK8JAm0&scisig=AAZF9b8AAAAAaDNvUVWYwGKD-e2NhvyaH7GyqKw&scisf=4&ct=citation&cd=28&hl=en"
+    },
+    {
+        "id": "mfD7uUR3hLMJ",
+        "title": "Einführung in Python",
+        "link": "https://link.springer.com/chapter/10.1007/978-3-662-61325-2_15",
+        "file_type": "",
+        "authors": "BE Abali, C Çakıroğlu, BE Abali, C Çakıroğlu - Numerische Methoden für …, 2020 - Springer",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:mfD7uUR3hLMJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSRs:AAZF9b8AAAAAaDNvURsDGSgYmYKV-ea2TK8JAm0&scisig=AAZF9b8AAAAAaDNvUQ2MKPd3mHwrivWp2b4kN64&scisf=4&ct=citation&cd=29&hl=en"
+    }
+]
