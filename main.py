@@ -140,6 +140,7 @@ async def main():
             last_scraped_entries = len(scraped_entries)
 
             if last_scraped_entries <= 0:
+                logger.info('gscholar_custom: all done!')
                 break
 
             logger.info(f'gscholar_custom: page={page}, scraped_entries={len(scraped_entries)}')
