@@ -3,7 +3,7 @@ from itertools import cycle
 from bs4 import BeautifulSoup
 import httpx
 
-from fetcher.gscholar.models import GoogleScholarHtmlEntry
+from fetcher.gscholar.models import GoogleScholarHtmlEntry, GoogleScholarBibtexScrapeEntry
 
 
 class GoogleScholarScraperCustom:
@@ -148,3 +148,13 @@ class GoogleScholarScraperCustom:
             scraped_entries.append(scr_entry)
             self._logger.debug('search_scholar: ' + scr_entry.to_debug_string())
         return scraped_entries
+
+    async def scrape_bibtex_files(self, entries: list[GoogleScholarHtmlEntry]) -> list[GoogleScholarBibtexScrapeEntry]:
+        # TODO: Parallel
+        bibtex_entries = []
+        for e in entries:
+            r = await self._session.get(e.bibtex_uri)
+            bib_entry = GoogleScholarBibtexScrapeEntry(id=e.id, bibtex_data=r.text)
+            self._logger.debug(f'scrape_bibtex_files: id={e.id}, bibtex={r.text}')
+            bibtex_entries.append(bib_entry)
+        return bibtex_entries

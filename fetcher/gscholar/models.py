@@ -14,3 +14,10 @@ class GoogleScholarHtmlEntry:
     def to_debug_string(self) -> str:
         return (f'search_scholar: id={self.id!r} title={self.title!r}, link={self.link!r}, '
                 f'file_type={self.file_type!r}, authors={self.authors!r}, bibtex_uri={self.bibtex_uri!r}')
+
+
+@dataclass
+class GoogleScholarBibtexScrapeEntry:
+    """Class for holding BibTex entries downloaded from Google Scholar"""
+    id: str
+    bibtex_data: str
