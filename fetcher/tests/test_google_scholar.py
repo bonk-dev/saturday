@@ -13,6 +13,7 @@ class TestMyServiceWithInjectedTransport(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         base_path = os.path.dirname(__file__)
         self.data_dir = os.path.join(base_path, 'data', 'google-scholar')
+
         async def mock_handler(request: httpx.Request) -> httpx.Response:
             data_dir = os.path.join(base_path, 'data', 'google-scholar')
 
@@ -22,7 +23,7 @@ class TestMyServiceWithInjectedTransport(unittest.IsolatedAsyncioTestCase):
                 return httpx.Response(200, headers={"Content-Type": "text/html"}, text="<html></html>")
             elif path.startswith('/scholar_settings'):
                 # set preferences
-                with open(os.path.join(data_dir, 'settings-page.html'), 'r') as settings_page_file:
+                with open(os.path.join(data_dir, 'settings-page.html.raw'), 'r') as settings_page_file:
                     return httpx.Response(200,
                                           headers={"Content-Type": "text/html"},
                                           text=settings_page_file.read())
@@ -45,9 +46,9 @@ class TestMyServiceWithInjectedTransport(unittest.IsolatedAsyncioTestCase):
                     return httpx.Response(500, text='Invalid page num')
                 page_num = int(page_num)
 
-                file_path = os.path.join(data_dir, f'page-{str(page_num)}.html')
+                file_path = os.path.join(data_dir, f'page-{str(page_num)}.html.raw')
                 if not os.path.isfile(file_path):
-                    file_path = os.path.join(data_dir, 'empty.html')
+                    file_path = os.path.join(data_dir, 'empty.html.raw')
 
                 with open(file_path, 'r') as html_file:
                     return httpx.Response(200, headers={"Content-Type": "text/html"}, text=html_file.read())
