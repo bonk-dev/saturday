@@ -124,7 +124,12 @@ async def main():
         logger.debug(r)
 
     if use_gscholar_custom:
-        scr = GoogleScholarScraperCustom(verify_ssl=not args.ssl_insecure)
+        gscholar_base = os.getenv('GOOGLE_SCHOLAR_BASE')
+        gscholar_ua = os.getenv('GOOGLE_SCHOLAR_USER_AGENT')
+
+        scr = GoogleScholarScraperCustom(verify_ssl=not args.ssl_insecure,
+                                         base_uri=gscholar_base,
+                                         user_agent=gscholar_ua)
 
         gscholar_proxy = prod_proxies[0] if len(prod_proxies) > 0 else None
         await scr.init(proxy=gscholar_proxy)
