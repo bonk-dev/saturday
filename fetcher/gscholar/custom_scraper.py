@@ -115,7 +115,8 @@ class GoogleScholarScraperCustom:
             'start': str(start),
             'q': query,
             'hl': language,
-            'as_sdt': as_sdt
+            'as_sdt': as_sdt,
+            'as_vis': '1'  # exclude "citations"
         })
         self._logger.debug(f'search_scholar: status={r.status_code}')
         r.raise_for_status()
