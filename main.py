@@ -125,7 +125,9 @@ async def main():
 
     if use_gscholar_custom:
         scr = GoogleScholarScraperCustom(verify_ssl=not args.ssl_insecure)
-        await scr.init(proxy=next(prod_proxies))
+
+        gscholar_proxy = prod_proxies[0] if len(prod_proxies) > 0 else None
+        await scr.init(proxy=gscholar_proxy)
 
         page = 0
         while True:
