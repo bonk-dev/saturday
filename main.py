@@ -6,8 +6,9 @@ import os
 from typing import AnyStr
 
 from dotenv import load_dotenv
-from fetcher.scopus.api import ScopusApi
+
 from fetcher.gscholar.scraper import GoogleScholarScraper
+from fetcher.scopus.api import ScopusApi
 from database.dbContext import *
 from database.scopusController import *
 import json
@@ -68,8 +69,6 @@ async def main():
                         help='HTTP(S) proxy address, used for ALL requests, including ones made to services based on '
                              'IP authentication (Elsevier, Scopus)')
     parser.add_argument('-g', '--google-scholar', action='store_true', help='Use Google Scholar for scraping metadata')
-    parser.add_argument('--google-scholar-output',
-                        help='Path to a file where raw data fetched from Google Scholar will be saved. File type: JSON.')
 
     parser.add_argument('-s', '--scopus-api', action='store_true', help='Use Scopus API for scraping metadata')
     parser.add_argument('--scopus-api-output',
@@ -105,15 +104,34 @@ async def main():
     scopus_batch_output_path = args.scopus_batch_output
 
     use_gscholar = args.google_scholar or args.all
-    gscholar_output_path = args.google_scholar_output
 
     if use_gscholar:
-        scr = GoogleScholarScraper(verify_ssl=not args.ssl_insecure, proxies=prod_proxies)
-        r = await scr.search(search_query)
-        if gscholar_output_path:
-            write_dump(gscholar_output_path, json.dumps(r, ensure_ascii=False), 'gscholar', logger)
-        logger.debug(json.dumps(r))
-        logger.debug(r)
+        gscholar_base = os.getenv('GOOGLE_SCHOLAR_BASE')
+        gscholar_ua = os.getenv('GOOGLE_SCHOLAR_USER_AGENT')
+
+        scr = GoogleScholarScraper(verify_ssl=not args.ssl_insecure,
+                                   base_uri=gscholar_base,
+                                   user_agent=gscholar_ua)
+
+        # TODO: Rotate proxies on captcha or error
+        gscholar_proxy = prod_proxies[0] if len(prod_proxies) > 0 else None
+        await scr.init(proxy=gscholar_proxy)
+
+        page = 0
+        while True:
+            scraped_entries = await scr.search_scholar(search_query, start=page)
+            last_scraped_entries = len(scraped_entries)
+
+            if last_scraped_entries <= 0:
+                logger.info('gscholar_custom: all done!')
+                break
+
+            logger.info(f'gscholar_custom: page={page}, scraped_entries={len(scraped_entries)}')
+            page += 10
+
+            for entry in scraped_entries:
+                bibtex_entry = await scr.scrape_bibtex_file(entry)
+                logger.info(f'gscholar_custom: bibtext entry for id={entry.id!r}: {bibtex_entry!r}')
 
     if use_scopus_batch:
         logger.debug('Using Scopus batch export')
