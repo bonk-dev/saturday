@@ -129,7 +129,6 @@ async def main():
         await scr.set_preferences()
         scraped_entries = await scr.search_scholar(search_query)
         logger.info(f'gscholar_custom: scraped_entries={len(scraped_entries)}')
-        # await scr.get_bibtex('UqjFPrJEjN4J')
 
     if use_scopus_batch:
         logger.debug('Using Scopus batch export')
