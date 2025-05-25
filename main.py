@@ -127,7 +127,8 @@ async def main():
         scr = GoogleScholarScraperCustom(verify_ssl=not args.ssl_insecure, proxies=prod_proxies)
         await scr.get_initial_cookies()
         await scr.set_preferences()
-        await scr.search_scholar(search_query)
+        scraped_entries = await scr.search_scholar(search_query)
+        logger.info(f'gscholar_custom: scraped_entries={len(scraped_entries)}')
         # await scr.get_bibtex('UqjFPrJEjN4J')
 
     if use_scopus_batch:

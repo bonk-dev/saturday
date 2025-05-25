@@ -3,6 +3,8 @@ from itertools import cycle
 from bs4 import BeautifulSoup
 import httpx
 
+from fetcher.gscholar.models import GoogleScholarHtmlEntry
+
 
 class GoogleScholarScraperCustom:
     BASE_URI = 'https://scholar.google.com'
@@ -89,7 +91,8 @@ class GoogleScholarScraperCustom:
             'save': ''
         })
 
-    async def search_scholar(self, query: str, start: int = 0, as_sdt: str = '0,5', language: str = 'en'):
+    async def search_scholar(self, query: str, start: int = 0, as_sdt: str = '0,5', language: str = 'en') \
+            -> list[GoogleScholarHtmlEntry]:
         """
         Search Google Scholar for a given query and parse the resulting entries.
 
@@ -101,7 +104,7 @@ class GoogleScholarScraperCustom:
         :type as_sdt: str
         :param language: The language code for the search interface. Defaults to 'en' (English).
         :type language: str
-        :returns: TODO
+        :returns: list[GoogleScholarHtmlEntry]
         :rtype: None
         :raises httpx.HTTPStatusError: If the search request returns an unsuccessful status code.
         :raises RuntimeError: If the 'Import into BibTeX' link cannot be located in a result entry.
@@ -120,6 +123,7 @@ class GoogleScholarScraperCustom:
         s = BeautifulSoup(r.text, 'html.parser')
         entries = s.find_all(attrs={'class': 'gs_r gs_or gs_scl'})
 
+        scraped_entries = []
         for e in entries:
             data_id = e.attrs['data-cid']
             title_element = e.find(attrs={'class': 'gs_rt'}).find('a')
@@ -139,5 +143,8 @@ class GoogleScholarScraperCustom:
                 raise RuntimeError('Could not find Import into BibTex anchor. Make sure you set the preferences!')
             bibtex_uri = import_bibtex_e.attrs['href']
 
-            self._logger.debug(f'search_scholar: id={data_id!r} title={title!r}, link={entry_link!r}, '
-                               f'file_type={file_type!r}, authors={authors!r}, bibtex_uri={bibtex_uri!r}')
+            scr_entry = GoogleScholarHtmlEntry(id=data_id, title=title, authors=authors, link=entry_link,
+                                               file_type=file_type, bibtex_uri=bibtex_uri)
+            scraped_entries.append(scr_entry)
+            self._logger.debug('search_scholar: ' + scr_entry.to_debug_string())
+        return scraped_entries
