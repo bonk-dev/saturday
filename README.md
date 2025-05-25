@@ -61,6 +61,17 @@ $ python3 main.py --scopus-batch --scopus-batch-output "/tmp/sc-batch.csv" "pyth
 $ python3 main.py --scopus-batch --google-scholar "python3 C++" 
 ```
 
+## Tests
+Currently, only the `fetchers` module contains automated unit tests:
+```shell
+$ python -m unittest discover fetcher/tests
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.156s
+
+OK
+```
+
 ## Setup
 Some fetcher modules require additional setup (API keys, cookies etc.).
 Here are the required steps for all implemented fetchers.
