@@ -6,7 +6,7 @@ from urllib.parse import parse_qs, urlparse
 import httpx
 
 from fetcher.gscholar.models import GoogleScholarHtmlEntry
-from fetcher.gscholar.scraper import GoogleScholarScraperCustom
+from fetcher.gscholar.scraper import GoogleScholarScraper
 
 
 class TestMyServiceWithInjectedTransport(unittest.IsolatedAsyncioTestCase):
@@ -54,7 +54,7 @@ class TestMyServiceWithInjectedTransport(unittest.IsolatedAsyncioTestCase):
             else:
                 return httpx.Response(500)
         self.mock_t = httpx.MockTransport(mock_handler)
-        self.scraper = GoogleScholarScraperCustom()
+        self.scraper = GoogleScholarScraper()
         await self.scraper.init(transport=self.mock_t, dry=True)
 
     async def asyncTearDown(self):

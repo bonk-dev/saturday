@@ -11,7 +11,7 @@ class CaptchaError(Exception):
     pass
 
 
-class GoogleScholarScraperCustom:
+class GoogleScholarScraper:
     BASE_URI = 'https://scholar.google.com'
     _session: httpx.AsyncClient | None
 

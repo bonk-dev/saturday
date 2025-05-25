@@ -7,7 +7,7 @@ from typing import AnyStr
 
 from dotenv import load_dotenv
 
-from fetcher.gscholar.scraper import GoogleScholarScraperCustom
+from fetcher.gscholar.scraper import GoogleScholarScraper
 from fetcher.scopus.api import ScopusApi
 from database.dbContext import *
 from database.scopusController import *
@@ -109,9 +109,9 @@ async def main():
         gscholar_base = os.getenv('GOOGLE_SCHOLAR_BASE')
         gscholar_ua = os.getenv('GOOGLE_SCHOLAR_USER_AGENT')
 
-        scr = GoogleScholarScraperCustom(verify_ssl=not args.ssl_insecure,
-                                         base_uri=gscholar_base,
-                                         user_agent=gscholar_ua)
+        scr = GoogleScholarScraper(verify_ssl=not args.ssl_insecure,
+                                   base_uri=gscholar_base,
+                                   user_agent=gscholar_ua)
 
         # TODO: Rotate proxies on captcha or error
         gscholar_proxy = prod_proxies[0] if len(prod_proxies) > 0 else None
