@@ -7,7 +7,8 @@ from typing import AnyStr
 
 from dotenv import load_dotenv
 
-from fetcher.gscholar.scraper import GoogleScholarScraper
+from cli import gscholar, scopus_batch, elsevier_api
+from cli.options import ProxiesFetcherOptions
 from fetcher.scopus.api import ScopusApi
 from database.dbContext import *
 from database.scopusController import *
@@ -16,39 +17,6 @@ import json
 from fetcher.scopus_batch.models import ExportFileType, all_identifiers
 from fetcher.scopus_batch.parser import ScopusCsvParser
 from fetcher.scopus_batch.scraper import ScopusScraper, ScopusScraperConfig
-
-
-def write_dump(filename: str, data: AnyStr, f_module: str, logger: logging.Logger):
-    """
-    Write the given data to a file, logging progress and any errors encountered.
-
-    :param filename: Path to the file where data will be written.
-    :type filename: str
-    :param data: Data to be written to the file. Can be either str or bytes.
-    :type data: AnyStr
-    :param f_module: Name of the calling module or function, used in log messages.
-    :type f_module: str
-    :param logger: Logger instance used for informational and error messages.
-    :type logger: logging.Logger
-
-    :returns: None. Logs an informational message on success or an error message on failure.
-    :rtype: None
-
-    :note: This function catches any file‐related exceptions (e.g., PermissionError,
-           IsADirectoryError, OSError) and logs the appropriate error rather than
-           propagating them. If an error occurs, no exception is raised by this function.
-    """
-
-    logger.info(f'{f_module}: writing output to "{filename}"')
-    try:
-        with open(filename, 'w') as export_file:
-            export_file.write(data)
-    except PermissionError as e:
-        logger.error(f'{f_module}: permission denied to output file: {e.filename}')
-    except IsADirectoryError as e:
-        logger.error(f'{f_module}: output file path "{e.filename}" is a directory')
-    except OSError as e:
-        logger.error(f'{f_module}: os error [{e.errno}] {e.strerror}')
 
 
 async def main():
@@ -105,33 +73,13 @@ async def main():
 
     use_gscholar = args.google_scholar or args.all
 
+    fetcher_options = ProxiesFetcherOptions(verify_ssl=not args.ssl_insecure,
+                                            search_query=search_query,
+                                            proxies=prod_proxies,
+                                            debug_proxy=debug_proxy)
     if use_gscholar:
-        gscholar_base = os.getenv('GOOGLE_SCHOLAR_BASE')
-        gscholar_ua = os.getenv('GOOGLE_SCHOLAR_USER_AGENT')
-
-        scr = GoogleScholarScraper(verify_ssl=not args.ssl_insecure,
-                                   base_uri=gscholar_base,
-                                   user_agent=gscholar_ua)
-
-        # TODO: Rotate proxies on captcha or error
-        gscholar_proxy = prod_proxies[0] if len(prod_proxies) > 0 else None
-        await scr.init(proxy=gscholar_proxy)
-
-        page = 0
-        while True:
-            scraped_entries = await scr.search_scholar(search_query, start=page)
-            last_scraped_entries = len(scraped_entries)
-
-            if last_scraped_entries <= 0:
-                logger.info('gscholar_custom: all done!')
-                break
-
-            logger.info(f'gscholar_custom: page={page}, scraped_entries={len(scraped_entries)}')
-            page += 10
-
-            for entry in scraped_entries:
-                bibtex_entry = await scr.scrape_bibtex_file(entry)
-                logger.info(f'gscholar_custom: bibtext entry for id={entry.id!r}: {bibtex_entry!r}')
+        # TODO: Use data
+        google_scholar_data = await gscholar.use(fetcher_options)
 
     if use_scopus_batch:
         logger.debug('Using Scopus batch export')
