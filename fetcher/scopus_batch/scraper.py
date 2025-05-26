@@ -45,13 +45,13 @@ class ScopusScraperConfig:
         :rtype: httpx.Cookies
         """
         cookies = Cookies({
-            'SCSessionID': self.sc_session_id,
-            'scopusSessionUUID': self.scopus_session_uuid,
-            'AWSELB': self.awselb,
-            'at_check': 'true'
+            consts.COOKIE_SESSION_ID: self.sc_session_id,
+            consts.COOKIE_SESSION_UUID: self.scopus_session_uuid,
+            consts.COOKIE_AWSELB: self.awselb,
+            consts.COOKIE_AT_CHECK: 'true'
         })
         # cookies.set('SCOPUS_JWT', self.scopus_jwt, domain='.scopus.com', path='/')
-        cookies.set('SCOPUS_JWT', value=self.scopus_jwt, domain=self.scopus_jwt_domain, path='/')
+        cookies.set(consts.COOKIE_JWT, value=self.scopus_jwt, domain=self.scopus_jwt_domain, path='/')
         return cookies
 
 

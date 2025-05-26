@@ -59,20 +59,20 @@ async def use(options: CommonFetcherOptions,
         cookies = http.cookies.SimpleCookie(cookie_file)
         cookies.load(cookie_file)
 
-        scopus_batch_jwt = cookies.get('SCOPUS_JWT')
-        scopus_batch_awselb = cookies.get('AWSELB')
-        scopus_batch_session_uuid = cookies.get('scopusSessionUUID')
-        scopus_batch_sc_session_id = cookies.get('SCSessionID')
+        scopus_batch_jwt = cookies.get(consts.COOKIE_JWT)
+        scopus_batch_awselb = cookies.get(consts.COOKIE_AWSELB)
+        scopus_batch_session_uuid = cookies.get(consts.COOKIE_SESSION_UUID)
+        scopus_batch_sc_session_id = cookies.get(consts.COOKIE_SESSION_ID)
         scopus_batch_ua = os.getenv('SCOPUS_BATCH_USER_AGENT')
 
         if not scopus_batch_jwt:
-            logger.error('SCOPUS_JWT cookie is required')
+            logger.error(f'{consts.COOKIE_JWT} cookie is required')
         elif not scopus_batch_awselb:
-            logger.error('AWSELB cookie is required')
+            logger.error(f'{consts.COOKIE_AWSELB} cookie is required')
         elif not scopus_batch_session_uuid:
-            logger.error('scopusSessionUUID cookie is required')
+            logger.error(f'{consts.COOKIE_SESSION_UUID} cookie is required')
         elif not scopus_batch_sc_session_id:
-            logger.error('SCSessionID cookie is required')
+            logger.error(f'{consts.COOKIE_SESSION_ID} cookie is required')
         elif not scopus_batch_ua:
             logger.error('User-Agent is required (must be same as used for logging in/CloudFlare verification)')
         else:
