@@ -89,30 +89,11 @@ async def main():
                                                    input_file_path=scopus_batch_input_file)
 
     if use_scopus:
-        scopus_key = os.getenv('SCOPUS_API_KEY')
-        scopus_base = os.getenv('SCOPUS_API_BASE')
+        r = await elsevier_api.use(fetcher_options,
+                                   output_path=scopus_api_output_path)
 
-        if scopus_base is None or scopus_base is None:
-            logger.critical("Please set SCOPUS_API_KEY and SCOPUS_API_BASE in .env (check out .env.sample) or with "
-                            "environment variables")
-        else:
-            async with ScopusApi(
-                    api_key=scopus_key,
-                    api_endpoint=scopus_base,
-                    proxies=[debug_proxy],
-                    verify_ssl=not args.ssl_insecure) as client:
-                r = await client.search(search_query)
-                if scopus_api_output_path:
-                    write_dump(
-                        scopus_api_output_path,
-                        json.dumps([p.to_dict() for p in r], ensure_ascii=False),
-                        'Elsevier API',
-                        logger)
-                for entry in r:
-                    logger.debug(entry)
-
-            with app.app_context():
-                init_app(app)
-                scopusBatchInsert(r)
+        with app.app_context():
+            init_app(app)
+            scopusBatchInsert(r)
 
 asyncio.run(main())
