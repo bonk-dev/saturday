@@ -1,0 +1,122 @@
+[
+    {
+        "id": "UqjFPrJEjN4J",
+        "title": "ezc3d: An easy C3D file I/O cross-platform solution for C++, Python and MATLAB",
+        "link": "https://joss.theoj.org/papers/10.21105/joss.02911.pdf",
+        "file_type": "[PDF]",
+        "authors": "Michaud, Benjamin and Begon, Micka{\\\"e}l",
+        "bibtex_uri": "http://127.0.0.1:8000/scholar.bib?q=info:UqjFPrJEjN4J:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT5lYNIW3DzDxaaf6gD0J0nU&scisf=4&ct=citation&cd=0&hl=en",
+        "entry_type": "article",
+        "year": "2021",
+        "journal": "Journal of Open Source Software",
+        "organization": ""
+    },
+    {
+        "id": "fKLbyDkPBTYJ",
+        "title": "Programming in Python 3",
+        "link": "https://cs.smu.ca/~porter/csc/227/ProgrammingInPython3.pdf",
+        "file_type": "[BOOK]",
+        "authors": "Summerfield, Mark",
+        "bibtex_uri": "http://127.0.0.1:8000/scholar.bib?q=info:fKLbyDkPBTYJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvTz6E59lvq9KNORFvgU_qrhY&scisf=4&ct=citation&cd=1&hl=en",
+        "entry_type": "book",
+        "year": "1900",
+        "journal": "",
+        "organization": ""
+    },
+    {
+        "id": "Et0H48cCHSgJ",
+        "title": "Traductor autom{\\`a}tic de C++ a Python",
+        "link": "https://upcommons.upc.edu/handle/2117/404442",
+        "file_type": "",
+        "authors": "Balteanu, Ioan Vlad",
+        "bibtex_uri": "http://127.0.0.1:8000/scholar.bib?q=info:Et0H48cCHSgJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT6ayN60wVFFnIuul0t-VV9o&scisf=4&ct=citation&cd=2&hl=en",
+        "entry_type": "mastersthesis",
+        "year": "2023",
+        "journal": "",
+        "organization": ""
+    },
+    {
+        "id": "c6SoNoC4-hAJ",
+        "title": "Some generic entry: because I was too lazy to dump more",
+        "link": "https://www.knihydaniela.cz/book-preview-334728.pdf",
+        "file_type": "[BOOK]",
+        "authors": "bonk",
+        "bibtex_uri": "http://127.0.0.1:8000/scholar.bib?q=info:c6SoNoC4-hAJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvTytdg-c_jxNAGfXpmFEUFts&scisf=4&ct=citation&cd=3&hl=en",
+        "entry_type": "article",
+        "year": "2025",
+        "journal": "",
+        "organization": "bonk-dev"
+    },
+    {
+        "id": "cbwIRHG-y9gJ",
+        "title": "Some generic entry: because I was too lazy to dump more",
+        "link": "https://books.google.com/books?hl=en&lr=&id=SRY3EQAAQBAJ&oi=fnd&pg=PP1&dq=python3+C%2B%2B&ots=s69j9Hg4qb&sig=2K7pE04Nw-rPfa4Q9SEp5tWiMYA",
+        "file_type": "[BOOK]",
+        "authors": "bonk",
+        "bibtex_uri": "http://127.0.0.1:8000/scholar.bib?q=info:cbwIRHG-y9gJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvTxjKrVEJv9Ddi2pKRId7uCs&scisf=4&ct=citation&cd=4&hl=en",
+        "entry_type": "article",
+        "year": "2025",
+        "journal": "",
+        "organization": "bonk-dev"
+    },
+    {
+        "id": "_9lEaft2eXgJ",
+        "title": "Some generic entry: because I was too lazy to dump more",
+        "link": "https://www.mdpi.com/2079-9292/12/1/143",
+        "file_type": "",
+        "authors": "bonk",
+        "bibtex_uri": "http://127.0.0.1:8000/scholar.bib?q=info:_9lEaft2eXgJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT4knTZ_1mfXLegojZq43X1k&scisf=4&ct=citation&cd=5&hl=en",
+        "entry_type": "article",
+        "year": "2025",
+        "journal": "",
+        "organization": "bonk-dev"
+    },
+    {
+        "id": "KzePotVcsx8J",
+        "title": "Inflationary Constant Factors and Why Python is Faster Than C++",
+        "link": "https://arxiv.org/abs/1911.12338",
+        "file_type": "",
+        "authors": "Niknami, Mehrdad",
+        "bibtex_uri": "http://127.0.0.1:8000/scholar.bib?q=info:KzePotVcsx8J:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvTzT2aQWH_NByQvEcYTvF2pA&scisf=4&ct=citation&cd=6&hl=en",
+        "entry_type": "article",
+        "year": "2019",
+        "journal": "arXiv preprint arXiv:1911.12338",
+        "organization": ""
+    },
+    {
+        "id": "zDgwbj-lumYJ",
+        "title": "Some generic entry: because I was too lazy to dump more",
+        "link": "https://arxiv.org/abs/1807.01775",
+        "file_type": "",
+        "authors": "bonk",
+        "bibtex_uri": "http://127.0.0.1:8000/scholar.bib?q=info:zDgwbj-lumYJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT1QcIBo30IWSIX9GFzYeG1I&scisf=4&ct=citation&cd=7&hl=en",
+        "entry_type": "article",
+        "year": "2025",
+        "journal": "",
+        "organization": "bonk-dev"
+    },
+    {
+        "id": "rjVrErA9chgJ",
+        "title": "Some generic entry: because I was too lazy to dump more",
+        "link": "https://odr.chalmers.se/items/6157f6f2-3c09-4126-a7b4-42208ba47618",
+        "file_type": "",
+        "authors": "bonk",
+        "bibtex_uri": "http://127.0.0.1:8000/scholar.bib?q=info:rjVrErA9chgJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT8hF1_ZWYg2ythyotPHQ-TQ&scisf=4&ct=citation&cd=8&hl=en",
+        "entry_type": "article",
+        "year": "2025",
+        "journal": "",
+        "organization": "bonk-dev"
+    },
+    {
+        "id": "CrjzZs6XnokJ",
+        "title": "PyGB: GraphBLAS DSL in Python with dynamic compilation into efficient C++",
+        "link": "https://ieeexplore.ieee.org/abstract/document/8425426/",
+        "file_type": "",
+        "authors": "Chamberlin, Jesse and Zalewski, Marcin and McMillan, Scott and Lumsdaine, Andrew",
+        "bibtex_uri": "http://127.0.0.1:8000/scholar.bib?q=info:CrjzZs6XnokJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpV3E:AAZF9b8AAAAAaDNvT3ENctCweY6AhVQOl000Vx0&scisig=AAZF9b8AAAAAaDNvT3t5JyLd0GfQcEQVoCZKhjs&scisf=4&ct=citation&cd=9&hl=en",
+        "entry_type": "inproceedings",
+        "year": "2018",
+        "journal": "",
+        "organization": "IEEE"
+    }
+]

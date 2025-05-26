@@ -89,5 +89,7 @@ async def main():
             with app.app_context():
                 init_app(app)
                 scopusBatchInsert(task.results)
+        elif task.module == 'cli.gscholar':
+            logger.debug(task.results)
 
 asyncio.run(main())
