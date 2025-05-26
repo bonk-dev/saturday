@@ -80,7 +80,7 @@ class ScopusScraper:
     """Maximum number of items accepted by the `/gateway/export-service/export` endpoint."""
 
     def __init__(self, config: ScopusScraperConfig, verify_ssl: bool = True, base_uri: str = BASE_URI,
-                 proxy: URL | str | Proxy | None = None):
+                 proxy: URL | str | Proxy | None = None, transport: Optional[httpx.AsyncBaseTransport] = None):
         """
         Initialize the ScopusScraper.
 
@@ -88,11 +88,12 @@ class ScopusScraper:
         :param bool verify_ssl:             Toggle SSL certificate verification.
         :param str base_uri:         Override the base URI (default: BASE_URI).
         :param URL | str | Proxy | None proxy:  Proxy to use when making HTTP(S) requests.
+        :param Optional[httpx.AsyncBaseTransport] transport: Use a custom HTTPX transport
         """
 
         self._base = base_uri
         self._session = httpx.AsyncClient(verify=verify_ssl, timeout=60, proxy=proxy,
-                                          cookies=config.build_cookie_store())
+                                          cookies=config.build_cookie_store(), transport=transport)
         self._session.headers.update({
             'Accept': 'application/json',
             'User-Agent': config.user_agent
