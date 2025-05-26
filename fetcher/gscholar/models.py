@@ -25,6 +25,20 @@ class GoogleScholarBibtexScrapeEntry:
 
 
 @dataclass
+class GoogleScholarBibtexEntry:
+    """Class for holding parsed BibTex entries"""
+    google_id: str
+    title: str
+    author: str
+    entry_type: str
+    bibtex_id: str
+
+    year: Optional[str]
+    journal: Optional[str]
+    organization: Optional[str]
+
+
+@dataclass
 class GoogleScholarEntry:
     """Class for holding Google Scholar entries merged from HTML and BibTex entries"""
     id: str

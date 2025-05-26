@@ -1,23 +1,10 @@
-from dataclasses import dataclass
 from typing import Optional, List
 
 import bibtexparser
 from bibtexparser.bibdatabase import BibDatabase
 
-from fetcher.gscholar.models import GoogleScholarBibtexScrapeEntry, GoogleScholarHtmlEntry, GoogleScholarEntry
-
-
-@dataclass
-class GoogleScholarBibtexEntry:
-    google_id: str
-    title: str
-    author: str
-    entry_type: str
-    bibtex_id: str
-
-    year: Optional[str]
-    journal: Optional[str]
-    organization: Optional[str]
+from fetcher.gscholar.models import GoogleScholarBibtexScrapeEntry, GoogleScholarHtmlEntry, GoogleScholarEntry, \
+    GoogleScholarBibtexEntry
 
 
 def parse_bibtex_entry(e: GoogleScholarBibtexScrapeEntry) -> Optional[GoogleScholarBibtexEntry]:
