@@ -69,6 +69,7 @@ async def main():
     scopus_api_output_path = args.scopus_api_output
 
     use_scopus_batch = args.scopus_batch or args.all
+    scopus_batch_input_file = args.scopus_batch_file
     scopus_batch_output_path = args.scopus_batch_output
 
     use_gscholar = args.google_scholar or args.all
@@ -82,79 +83,10 @@ async def main():
         google_scholar_data = await gscholar.use(fetcher_options)
 
     if use_scopus_batch:
-        logger.debug('Using Scopus batch export')
-        cookie_file_path = os.getenv('SCOPUS_BATCH_COOKIE_FILE')
-        scopus_batch_uri = os.getenv('SCOPUS_BATCH_BASE')
-        scopus_cookie_domain_name = os.getenv('SCOPUS_BATCH_COOKIE_JWT_DOMAIN')
-
-        if not scopus_cookie_domain_name:
-            logger.warning(f'Scopus batch: SCOPUS_BATCH_COOKIE_JWT_DOMAIN not set, defaulting to .scopus.com')
-            scopus_cookie_domain_name = '.scopus.com'
-        if not scopus_batch_uri:
-            logger.warning(f'Scopus batch: SCOPUS_BATCH_BASE not set, defaulting to {ScopusScraper.BASE_URI}')
-            scopus_batch_uri = ScopusScraper.BASE_URI
-
-        export_data = None
-        if args.scopus_batch_file is not None:
-            logger.info(f'Scopus batch: reading from local file: {args.scopus_batch_file}')
-            with open(args.scopus_batch_file, 'r') as b_file:
-                export_data = b_file.read()
-        elif not os.path.isfile(cookie_file_path):
-            logger.error(f'Scopus batch: SCOPUS_BATCH_COOKIE_FILE file does not exist (path: "{cookie_file_path}")')
-        else:
-            with open(cookie_file_path, 'r') as cookie_file_f:
-                cookie_file = cookie_file_f.read()
-            cookies = http.cookies.SimpleCookie(cookie_file)
-            cookies.load(cookie_file)
-
-            scopus_batch_jwt = cookies.get('SCOPUS_JWT')
-            scopus_batch_awselb = cookies.get('AWSELB')
-            scopus_batch_session_uuid = cookies.get('scopusSessionUUID')
-            scopus_batch_sc_session_id = cookies.get('SCSessionID')
-            scopus_batch_ua = os.getenv('SCOPUS_BATCH_USER_AGENT')
-
-            if not scopus_batch_jwt:
-                logger.error('Scopus batch: SCOPUS_JWT cookie is required')
-            elif not scopus_batch_awselb:
-                logger.error('Scopus batch: AWSELB cookie is required')
-            elif not scopus_batch_session_uuid:
-                logger.error('Scopus batch: scopusSessionUUID cookie is required')
-            elif not scopus_batch_sc_session_id:
-                logger.error('Scopus batch: SCSessionID cookie is required')
-            elif not scopus_batch_ua:
-                logger.error('Scopus batch: User-Agent is required (must be same as used for logging in/CloudFlare '
-                             'verification)')
-            else:
-                logger.info("All required Scopus batch cookies were found")
-                async with ScopusScraper(ScopusScraperConfig(user_agent=scopus_batch_ua,
-                                                             scopus_jwt=scopus_batch_jwt.value,
-                                                             scopus_jwt_domain=scopus_cookie_domain_name,
-                                                             awselb=scopus_batch_awselb.value,
-                                                             scopus_session_uuid=scopus_batch_session_uuid.value,
-                                                             sc_session_id=scopus_batch_sc_session_id.value),
-                                         verify_ssl=not args.ssl_insecure,
-                                         base_uri=scopus_batch_uri,
-                                         proxy=debug_proxy) as sc_batch:
-                    export_data = await sc_batch.export_all(
-                        search_query,
-                        file_type=ExportFileType.CSV,
-                        fields=all_identifiers())
-                    if scopus_batch_output_path:
-                        write_dump(
-                            scopus_batch_output_path,
-                            export_data,
-                            f_module='Scopus batch',
-                            logger=logger)
-        if export_data:
-            logger.debug('Scopus batch: parsing data')
-            # TODO: Find a more elegant solution for handling BOM?
-            export_data = export_data.removeprefix('\ufeff')
-            parser = ScopusCsvParser(export_data)
-
-            scopus_batch_pubs = parser.read_all_publications()
-            logger.info(f'Parsed publications: {len(scopus_batch_pubs)}')
-            for pub in scopus_batch_pubs:
-                logger.debug(pub.to_debug_string())
+        # TODO: Use data
+        scopus_batch_data = await scopus_batch.use(fetcher_options,
+                                                   raw_output_path=scopus_batch_output_path,
+                                                   input_file_path=scopus_batch_input_file)
 
     if use_scopus:
         scopus_key = os.getenv('SCOPUS_API_KEY')
