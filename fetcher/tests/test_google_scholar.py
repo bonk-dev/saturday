@@ -9,7 +9,7 @@ from fetcher.gscholar.models import GoogleScholarHtmlEntry
 from fetcher.gscholar.scraper import GoogleScholarScraper
 
 
-class TestMyServiceWithInjectedTransport(unittest.IsolatedAsyncioTestCase):
+class TestGoogleScholarFetcher(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         base_path = os.path.dirname(__file__)
         self.data_dir = os.path.join(base_path, 'data', 'google-scholar')
