@@ -1,22 +1,13 @@
 import argparse
 import asyncio
-import http.cookies
 import logging
-import os
-from typing import AnyStr
 
 from dotenv import load_dotenv
 
 from cli import gscholar, scopus_batch, elsevier_api
 from cli.options import ProxiesFetcherOptions
-from fetcher.scopus.api import ScopusApi
 from database.dbContext import *
 from database.scopusController import *
-import json
-
-from fetcher.scopus_batch.models import ExportFileType, all_identifiers
-from fetcher.scopus_batch.parser import ScopusCsvParser
-from fetcher.scopus_batch.scraper import ScopusScraper, ScopusScraperConfig
 
 
 async def main():
