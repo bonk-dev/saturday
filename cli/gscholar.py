@@ -3,6 +3,7 @@ import os
 from typing import Any
 
 from cli.options import ProxiesFetcherOptions, FetcherModuleResult
+from fetcher.gscholar.bibtex_parser import parse_bibtex_entry
 from fetcher.gscholar.scraper import GoogleScholarScraper
 
 
@@ -40,5 +41,9 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
         for entry in scraped_entries:
             bibtex_entry = await scr.scrape_bibtex_file(entry)
             logger.info(f'bibtext entry for id={entry.id!r}: {bibtex_entry!r}')
+
+            parsed_bib_entry = parse_bibtex_entry(bibtex_entry)
+            logger.info(parsed_bib_entry)
+
     # TODO: merge bibtex entries with scraped entries
     return FetcherModuleResult(module=__name__, results=scraped_entries)
