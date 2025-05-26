@@ -19,6 +19,20 @@ logger.setLevel(logging.DEBUG)
 
 
 def save_cookies(config: ScopusScraperConfig, filename: str):
+    """
+    Save Scopus scraper cookie values from the provided configuration to a file.
+
+    This function extracts JWT, AWS ELB, session ID, and session UUID cookies
+    from the given `ScopusScraperConfig` object, serializes them into
+    a `SimpleCookie`, and writes the cookie string to the specified file.
+
+    :param config: A `ScopusScraperConfig` containing cookie attributes
+                   (`scopus_jwt`, `awselb`, `sc_session_id`, `scopus_session_uuid`).
+    :type config: ScopusScraperConfig
+    :param filename: The path to the file where the cookie string will be saved.
+    :type filename: str
+    """
+
     cookies = http.cookies.SimpleCookie()
     cookies[consts.COOKIE_JWT] = config.scopus_jwt
     cookies[consts.COOKIE_AWSELB] = config.awselb
