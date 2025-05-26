@@ -5,6 +5,7 @@ from typing import Optional, Any
 
 from cli.options import CommonFetcherOptions, FetcherModuleResult
 from cli.utils import write_dump
+from fetcher.scopus_batch import consts
 from fetcher.scopus_batch.models import ExportFileType, all_identifiers
 from fetcher.scopus_batch.parser import ScopusCsvParser
 from fetcher.scopus_batch.scraper import ScopusScraper, ScopusScraperConfig
@@ -13,12 +14,26 @@ ENV_BATCH_COOKIE_FILE = 'SCOPUS_BATCH_COOKIE_FILE'
 ENV_BATCH_BASE = 'SCOPUS_BATCH_BASE'
 ENV_BATCH_COOKIE_JWT_DOMAIN = 'SCOPUS_BATCH_COOKIE_JWT_DOMAIN'
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+
+def save_cookies(config: ScopusScraperConfig, filename: str):
+    cookies = http.cookies.SimpleCookie()
+    cookies[consts.COOKIE_JWT] = config.scopus_jwt
+    cookies[consts.COOKIE_AWSELB] = config.awselb
+    cookies[consts.COOKIE_SESSION_ID] = config.sc_session_id
+    cookies[consts.COOKIE_SESSION_UUID] = config.scopus_session_uuid
+
+    logger.info('saving cookies to %s', filename)
+    with open(filename, 'w') as cookie_file:
+        cookie_file.write(cookies.output(header='', sep=';').strip())
+    logger.debug('saved cookies to %s', filename)
+
 
 async def use(options: CommonFetcherOptions,
               input_file_path:Optional[str] = None,
               raw_output_path: Optional[str] = None) -> FetcherModuleResult:
-    logger = logging.getLogger(__name__)
-
     logger.debug('using Scopus batch export')
     cookie_file_path = os.getenv(ENV_BATCH_COOKIE_FILE)
     scopus_batch_uri = os.getenv(ENV_BATCH_BASE)
@@ -71,16 +86,22 @@ async def use(options: CommonFetcherOptions,
                                      verify_ssl=options.verify_ssl,
                                      base_uri=scopus_batch_uri,
                                      proxy=options.debug_proxy) as sc_batch:
-                export_data = await sc_batch.export_all(
-                    options.search_query,
-                    file_type=ExportFileType.CSV,
-                    fields=all_identifiers())
-                if raw_output_path:
-                    write_dump(
-                        raw_output_path,
-                        export_data,
-                        f_module=__name__,
-                        logger=logger)
+                try:
+                    export_data = await sc_batch.export_all(
+                        options.search_query,
+                        file_type=ExportFileType.CSV,
+                        fields=all_identifiers())
+                    if raw_output_path:
+                        write_dump(
+                            raw_output_path,
+                            export_data,
+                            f_module=__name__,
+                            logger=logger)
+                finally:
+                    new_cookies = sc_batch.get_cookies()
+                    if new_cookies is not None:
+                        save_cookies(new_cookies, cookie_file_path)
+
     if export_data:
         logger.debug('parsing data')
         # TODO: Find a more elegant solution for handling BOM?
