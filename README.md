@@ -65,9 +65,9 @@ $ python3 main.py --scopus-batch --google-scholar "python3 C++"
 Currently, only the `fetchers` module contains automated unit tests:
 ```shell
 $ python -m unittest discover fetcher/tests
-..........
+...........
 ----------------------------------------------------------------------
-Ran 10 tests in 0.202s
+Ran 11 tests in 0.200s
 
 OK
 ```
