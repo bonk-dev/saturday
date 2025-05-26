@@ -5,7 +5,7 @@ import logging
 from dotenv import load_dotenv
 
 from cli import gscholar, scopus_batch, elsevier_api
-from cli.options import ProxiesFetcherOptions
+from cli.options import ProxiesFetcherOptions, FetcherModuleResult
 from database.dbContext import *
 from database.scopusController import *
 
@@ -69,22 +69,25 @@ async def main():
                                             search_query=search_query,
                                             proxies=prod_proxies,
                                             debug_proxy=debug_proxy)
+    scrapers_tasks = []
     if use_gscholar:
-        # TODO: Use data
-        google_scholar_data = await gscholar.use(fetcher_options)
+        scrapers_tasks.append(gscholar.use(fetcher_options))
 
     if use_scopus_batch:
-        # TODO: Use data
-        scopus_batch_data = await scopus_batch.use(fetcher_options,
-                                                   raw_output_path=scopus_batch_output_path,
-                                                   input_file_path=scopus_batch_input_file)
-
+        scrapers_tasks.append(scopus_batch.use(fetcher_options,
+                                               raw_output_path=scopus_batch_output_path,
+                                               input_file_path=scopus_batch_input_file))
     if use_scopus:
-        r = await elsevier_api.use(fetcher_options,
-                                   output_path=scopus_api_output_path)
+        scrapers_tasks.append(elsevier_api.use(fetcher_options,
+                                               output_path=scopus_api_output_path))
 
-        with app.app_context():
-            init_app(app)
-            scopusBatchInsert(r)
+    # noinspection PyTypeChecker
+    done_tasks: list[FetcherModuleResult] = await asyncio.gather(*scrapers_tasks)
+
+    for task in done_tasks:
+        if task.module == 'cli.elsevier_api':
+            with app.app_context():
+                init_app(app)
+                scopusBatchInsert(task.results)
 
 asyncio.run(main())

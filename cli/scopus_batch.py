@@ -3,7 +3,7 @@ import logging
 import os
 from typing import Optional, Any
 
-from cli.options import CommonFetcherOptions
+from cli.options import CommonFetcherOptions, FetcherModuleResult
 from cli.utils import write_dump
 from fetcher.scopus_batch.models import ExportFileType, all_identifiers
 from fetcher.scopus_batch.parser import ScopusCsvParser
@@ -16,7 +16,7 @@ ENV_BATCH_COOKIE_JWT_DOMAIN = 'SCOPUS_BATCH_COOKIE_JWT_DOMAIN'
 
 async def use(options: CommonFetcherOptions,
               input_file_path:Optional[str] = None,
-              raw_output_path: Optional[str] = None) -> Any:
+              raw_output_path: Optional[str] = None) -> FetcherModuleResult:
     logger = logging.getLogger(__name__)
 
     logger.debug('using Scopus batch export')
@@ -91,3 +91,6 @@ async def use(options: CommonFetcherOptions,
         logger.info(f'parsed publications: {len(scopus_batch_pubs)}')
         for pub in scopus_batch_pubs:
             logger.debug(pub.to_debug_string())
+    else:
+        scopus_batch_pubs = []
+    return FetcherModuleResult(module=__name__, results=scopus_batch_pubs)

@@ -3,13 +3,13 @@ import logging
 import os
 from typing import Optional
 
-from cli.options import CommonFetcherOptions
+from cli.options import CommonFetcherOptions, FetcherModuleResult
 from cli.utils import write_dump
 from fetcher.scopus.api import ScopusApi
 from fetcher.scopus.models import SearchEntry
 
 
-async def use(options: CommonFetcherOptions, output_path: Optional[str] = None) -> list[SearchEntry]:
+async def use(options: CommonFetcherOptions, output_path: Optional[str] = None) -> FetcherModuleResult:
     logger = logging.getLogger(__name__)
 
     scopus_key = os.getenv('SCOPUS_API_KEY')
@@ -33,4 +33,4 @@ async def use(options: CommonFetcherOptions, output_path: Optional[str] = None) 
                     logger)
             for entry in r:
                 logger.debug(entry)
-            return r
+            return FetcherModuleResult(module=__name__, results=r)

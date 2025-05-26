@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Any
 
-from cli.options import ProxiesFetcherOptions
+from cli.options import ProxiesFetcherOptions, FetcherModuleResult
 from fetcher.gscholar.scraper import GoogleScholarScraper
 
 
@@ -11,7 +11,7 @@ ENV_USER_AGENT = 'GOOGLE_SCHOLAR_USER_AGENT'
 
 
 # TODO: Make this return actual data
-async def use(options: ProxiesFetcherOptions) -> Any:
+async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
     logger = logging.getLogger(__name__)
 
     gscholar_base = os.getenv(ENV_BASE_URI)
@@ -40,3 +40,5 @@ async def use(options: ProxiesFetcherOptions) -> Any:
         for entry in scraped_entries:
             bibtex_entry = await scr.scrape_bibtex_file(entry)
             logger.info(f'bibtext entry for id={entry.id!r}: {bibtex_entry!r}')
+    # TODO: merge bibtex entries with scraped entries
+    return FetcherModuleResult(module=__name__, results=scraped_entries)

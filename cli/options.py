@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Any
 
 
 @dataclass
@@ -12,3 +12,9 @@ class CommonFetcherOptions:
 @dataclass
 class ProxiesFetcherOptions(CommonFetcherOptions):
     proxies: Optional[list[str]]
+
+
+@dataclass
+class FetcherModuleResult:
+    module: str
+    results: Any
