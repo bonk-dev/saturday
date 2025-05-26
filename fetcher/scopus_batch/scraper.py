@@ -3,11 +3,12 @@ import itertools
 import logging
 import random
 import string
-from typing import Any
+from typing import Any, Optional
 
 import httpx
 from httpx import Cookies, URL, Proxy
 
+from fetcher.scopus_batch import consts
 from fetcher.scopus_batch.models import SearchEidsResult, ExportFileType, FieldGroupIdentifiers
 
 
@@ -100,6 +101,10 @@ class ScopusScraper:
         self._nextTransactionId = 1
         self._logger = logging.getLogger(__name__)
         self._post_lock = asyncio.Lock()
+
+        # keep config for JWT refresh
+        self._config = config
+        self._refreshed = False
 
     async def __aenter__(self):
         return self
@@ -304,7 +309,32 @@ class ScopusScraper:
         if r.is_success:
             # HTTPX client auto-saves the new token from the Set-Cookie header
             self._logger.debug('Successfully refreshed JWT token')
+
+            self._refreshed = True
+            self._config = ScopusScraperConfig(
+                user_agent=self._config.user_agent,
+                scopus_jwt=self._session.cookies[consts.COOKIE_JWT],
+                scopus_jwt_domain=self._config.scopus_jwt_domain,
+                awselb=self._session.cookies[consts.COOKIE_AWSELB],
+                scopus_session_uuid=self._session.cookies[consts.COOKIE_SESSION_UUID],
+                sc_session_id=self._session.cookies[consts.COOKIE_SESSION_ID]
+            )
         else:
             self._logger.error('An error has occurred while refreshing the Scopus JWT token')
             self._logger.error(r.text)
         return r
+
+    def get_cookies(self) -> Optional[ScopusScraperConfig]:
+        """
+        Retrieve the current Scopus scraper configuration containing cookie data.
+
+        This method returns the stored `ScopusScraperConfig` object only if the
+        internal cookies have been refreshed since the last retrieval. If the
+        cookies have not been refreshed (`self._refreshed` is False), this method
+        returns `None`.
+
+        :return: The `ScopusScraperConfig` containing valid cookie information if
+                 refreshed; otherwise, `None`.
+        :rtype: Optional[ScopusScraperConfig]
+        """
+        return self._config if self._refreshed else None
