@@ -1,0 +1,102 @@
+[
+    {
+        "google_id": "UqjFPrJEjN4J",
+        "title": "ezc3d: An easy C3D file I/O cross-platform solution for C++, Python and MATLAB",
+        "author": "Michaud, Benjamin and Begon, Micka{\\\"e}l",
+        "entry_type": "article",
+        "bibtex_id": "michaud2021ezc3d",
+        "year": "2021",
+        "journal": "Journal of Open Source Software",
+        "organization": ""
+    },
+    {
+        "google_id": "fKLbyDkPBTYJ",
+        "title": "Programming in Python 3",
+        "author": "Summerfield, Mark",
+        "entry_type": "book",
+        "bibtex_id": "summerfield1900programming",
+        "year": "1900",
+        "journal": "",
+        "organization": ""
+    },
+    {
+        "google_id": "Et0H48cCHSgJ",
+        "title": "Traductor autom{\\`a}tic de C++ a Python",
+        "author": "Balteanu, Ioan Vlad",
+        "entry_type": "mastersthesis",
+        "bibtex_id": "balteanu2023traductor",
+        "year": "2023",
+        "journal": "",
+        "organization": ""
+    },
+    {
+        "google_id": "c6SoNoC4-hAJ",
+        "title": "Some generic entry: because I was too lazy to dump more",
+        "author": "bonk",
+        "entry_type": "article",
+        "bibtex_id": "genericentry",
+        "year": "2025",
+        "journal": "",
+        "organization": "bonk-dev"
+    },
+    {
+        "google_id": "cbwIRHG-y9gJ",
+        "title": "Some generic entry: because I was too lazy to dump more",
+        "author": "bonk",
+        "entry_type": "article",
+        "bibtex_id": "genericentry",
+        "year": "2025",
+        "journal": "",
+        "organization": "bonk-dev"
+    },
+    {
+        "google_id": "_9lEaft2eXgJ",
+        "title": "Some generic entry: because I was too lazy to dump more",
+        "author": "bonk",
+        "entry_type": "article",
+        "bibtex_id": "genericentry",
+        "year": "2025",
+        "journal": "",
+        "organization": "bonk-dev"
+    },
+    {
+        "google_id": "KzePotVcsx8J",
+        "title": "Inflationary Constant Factors and Why Python is Faster Than C++",
+        "author": "Niknami, Mehrdad",
+        "entry_type": "article",
+        "bibtex_id": "niknami2019inflationary",
+        "year": "2019",
+        "journal": "arXiv preprint arXiv:1911.12338",
+        "organization": ""
+    },
+    {
+        "google_id": "zDgwbj-lumYJ",
+        "title": "Some generic entry: because I was too lazy to dump more",
+        "author": "bonk",
+        "entry_type": "article",
+        "bibtex_id": "genericentry",
+        "year": "2025",
+        "journal": "",
+        "organization": "bonk-dev"
+    },
+    {
+        "google_id": "rjVrErA9chgJ",
+        "title": "Some generic entry: because I was too lazy to dump more",
+        "author": "bonk",
+        "entry_type": "article",
+        "bibtex_id": "genericentry",
+        "year": "2025",
+        "journal": "",
+        "organization": "bonk-dev"
+    },
+    {
+        "google_id": "CrjzZs6XnokJ",
+        "title": "PyGB: GraphBLAS DSL in Python with dynamic compilation into efficient C++",
+        "author": "Chamberlin, Jesse and Zalewski, Marcin and McMillan, Scott and Lumsdaine, Andrew",
+        "entry_type": "inproceedings",
+        "bibtex_id": "chamberlin2018pygb",
+        "year": "2018",
+        "journal": "",
+        "organization": "IEEE"
+    }
+]
