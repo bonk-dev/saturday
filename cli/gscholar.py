@@ -28,7 +28,6 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
 
     rotate_proxy = False
     proxies_list = options.proxies if options.proxies and len(options.proxies) > 0 else [None]
-    proxies_list = [f'http://127.0.0.{i}:8081' for i in range(1, 50)]
     proxy_cycle = itertools.cycle(proxies_list)
 
     gscholar_proxy = next(proxy_cycle)
