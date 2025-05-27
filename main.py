@@ -6,10 +6,13 @@ import os
 from typing import AnyStr
 
 from dotenv import load_dotenv
+
+from database.dbInserts.gscholarAPIInsert import scholarInsert
 from fetcher.scopus.api import ScopusApi
 from fetcher.gscholar.scraper import GoogleScholarScraper
 from database.dbContext import *
-from database.scopusController import *
+from database.dbInserts.scopusAPIInsert import *
+from database.dbInserts.scopusBatchInsert import *
 import json
 
 from fetcher.scopus_batch.models import ExportFileType, all_identifiers
@@ -40,7 +43,7 @@ def write_dump(filename: str, data: AnyStr, f_module: str, logger: logging.Logge
 
     logger.info(f'{f_module}: writing output to "{filename}"')
     try:
-        with open(filename, 'w') as export_file:
+        with open(filename, 'w', encoding='utf-8') as export_file:
             export_file.write(data)
     except PermissionError as e:
         logger.error(f'{f_module}: permission denied to output file: {e.filename}')
@@ -114,6 +117,7 @@ async def main():
             write_dump(gscholar_output_path, json.dumps(r, ensure_ascii=False), 'gscholar', logger)
         logger.debug(json.dumps(r))
         logger.debug(r)
+        scholarInsert(r)
 
     if use_scopus_batch:
         logger.debug('Using Scopus batch export')
@@ -187,14 +191,19 @@ async def main():
 
             scopus_batch_pubs = parser.read_all_publications()
             logger.info(f'Parsed publications: {len(scopus_batch_pubs)}')
-            for pub in scopus_batch_pubs:
-                logger.debug(pub.to_debug_string())
+            with app.app_context():
+                init_app(app)
+                scopusBatchInsert(scopus_batch_pubs)
+
+            # for pub in scopus_batch_pubs:
+            #     logger.debug(pub.to_debug_string())
+
 
     if use_scopus:
         scopus_key = os.getenv('SCOPUS_API_KEY')
         scopus_base = os.getenv('SCOPUS_API_BASE')
 
-        if scopus_base is None or scopus_base is None:
+        if scopus_base is None or scopus_key is None:
             logger.critical("Please set SCOPUS_API_KEY and SCOPUS_API_BASE in .env (check out .env.sample) or with "
                             "environment variables")
         else:

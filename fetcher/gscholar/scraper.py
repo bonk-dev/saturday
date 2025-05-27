@@ -74,6 +74,7 @@ class GoogleScholarScraper:
         except BaseException as e:
             # TODO: Rotate proxy on exception
             self._logger.error(f'GoogleScholarScraper errored out after scraping {len(results)} results')
-            self._logger.error(e, type(e))
+            self._logger.error("GoogleScholarScraper errored out: %s (%s)", e, type(e).__name__)
+
 
         return results
