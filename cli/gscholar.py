@@ -42,12 +42,13 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
     merged_entries = []
     while True:
         if rotate_proxy:
-            logger.warning(f'changing proxy: new_proxy=')
+            logger.warning(f'changing proxy')
             if len(proxies_list) <= 1:
                 logger.error('no proxies or just one, stopping the scraping operation')
                 break
             else:
                 gscholar_proxy = next(proxy_cycle)
+                logger.warning(f'changing proxy, next proxy={gscholar_proxy}')
                 await scr.aclose()
                 try:
                     await scr.init(proxy=gscholar_proxy)
