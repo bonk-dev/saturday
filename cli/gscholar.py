@@ -9,10 +9,53 @@ from httpx import RequestError
 
 from cli.options import ProxiesFetcherOptions, FetcherModuleResult
 from fetcher.gscholar.bibtex_parser import parse_bibtex_entry, merge_entries
+from fetcher.gscholar.models import GoogleScholarHtmlEntry
 from fetcher.gscholar.scraper import GoogleScholarScraper, CaptchaError
 
 ENV_BASE_URI = 'GOOGLE_SCHOLAR_BASE'
 ENV_USER_AGENT = 'GOOGLE_SCHOLAR_USER_AGENT'
+
+
+async def _download_bibtex_entries(html_entries: list[GoogleScholarHtmlEntry],
+                                   logger: logging.Logger,
+                                   proxies: list[str],
+                                   scr: GoogleScholarScraper,
+                                   proxy_cycle):
+    bibs = []
+    rotate_proxy = False
+    for entry in html_entries:
+        # whether to retry current entry
+        retry = True
+
+        while retry:
+            if rotate_proxy:
+                if len(proxies) <= 1:
+                    logger.error('no proxies or just one, stopping the scraping operation')
+                    return bibs
+                else:
+                    gscholar_proxy = next(proxy_cycle)
+                    logger.warning(f'changing proxy, next proxy={gscholar_proxy}')
+                    await scr.aclose()
+                    try:
+                        await scr.init(proxy=gscholar_proxy)
+                        rotate_proxy = False
+                    except RequestError as r_error:
+                        logger.error(f'during proxy rotation, an error has occured: error={r_error}')
+                        continue
+            try:
+                bibtex_entry = await scr.scrape_bibtex_file(entry)
+                logger.debug(f'bibtext entry for id={entry.id!r}: {bibtex_entry!r}')
+
+                parsed_bib_entry = parse_bibtex_entry(bibtex_entry)
+                bibs.append(parsed_bib_entry)
+                retry = False
+            except CaptchaError:
+                logger.error(f'during BibTex (id={entry.id}), Google Scholar requested a CAPTCHA verification')
+                rotate_proxy = True
+            except RequestError as r_error:
+                logger.error(f'during BibTex (id={entry.id}), an error has occured: error={r_error}')
+                rotate_proxy = True
+    return bibs
 
 
 async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
@@ -78,44 +121,11 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
         page += 10
     logger.info('HTML scraping done!')
 
-    merged_entries = []
-    bibs = []
-    rotate_proxy = False
-    for entry in all_scraped_entries:
-        # whether to retry current entry
-        retry = True
-        # whether to entirely stop bibtex downloading
-        stop = False
-        while retry:
-            if rotate_proxy:
-                if len(proxies_list) <= 1:
-                    logger.error('no proxies or just one, stopping the scraping operation')
-                    stop = True
-                    break
-                else:
-                    gscholar_proxy = next(proxy_cycle)
-                    logger.warning(f'changing proxy, next proxy={gscholar_proxy}')
-                    await scr.aclose()
-                    try:
-                        await scr.init(proxy=gscholar_proxy)
-                        rotate_proxy = False
-                    except RequestError as r_error:
-                        logger.error(f'during proxy rotation, an error has occured: error={r_error}')
-                        continue
-            try:
-                bibtex_entry = await scr.scrape_bibtex_file(entry)
-                logger.debug(f'bibtext entry for id={entry.id!r}: {bibtex_entry!r}')
+    bibs = await _download_bibtex_entries(html_entries=all_scraped_entries,
+                                          logger=logger,
+                                          proxies=proxies_list,
+                                          proxy_cycle=proxy_cycle,
+                                          scr=scr)
 
-                parsed_bib_entry = parse_bibtex_entry(bibtex_entry)
-                bibs.append(parsed_bib_entry)
-                retry = False
-            except CaptchaError:
-                logger.error(f'during BibTex (id={entry.id}), Google Scholar requested a CAPTCHA verification')
-                rotate_proxy = True
-            except RequestError as r_error:
-                logger.error(f'during BibTex (id={entry.id}), an error has occured: error={r_error}')
-                rotate_proxy = True
-        if stop:
-            break
-    merged_entries.extend(merge_entries(all_scraped_entries, bibs))
+    merged_entries = merge_entries(all_scraped_entries, bibs)
     return FetcherModuleResult(module=__name__, results=merged_entries)
