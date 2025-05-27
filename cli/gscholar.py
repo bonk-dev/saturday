@@ -51,6 +51,7 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
                 await scr.aclose()
                 try:
                     await scr.init(proxy=gscholar_proxy)
+                    rotate_proxy = False
                 except RequestError as r_error:
                     logger.error(f'during proxy rotation, an error has occured: error={r_error}')
                     continue
