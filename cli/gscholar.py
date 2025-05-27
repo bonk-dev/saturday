@@ -2,7 +2,7 @@ import itertools
 import logging
 import os
 import sys
-from typing import Any
+from typing import Any, Iterator
 
 import httpx
 from httpx import RequestError
@@ -18,9 +18,8 @@ ENV_USER_AGENT = 'GOOGLE_SCHOLAR_USER_AGENT'
 
 async def _download_bibtex_entries(html_entries: list[GoogleScholarHtmlEntry],
                                    logger: logging.Logger,
-                                   proxies: list[str],
                                    scr: GoogleScholarScraper,
-                                   proxy_cycle):
+                                   proxy_cycle: Iterator):
     bibs = []
     rotate_proxy = False
     for entry in html_entries:
@@ -29,19 +28,18 @@ async def _download_bibtex_entries(html_entries: list[GoogleScholarHtmlEntry],
 
         while retry:
             if rotate_proxy:
-                if len(proxies) <= 1:
-                    logger.error('no proxies or just one, stopping the scraping operation')
+                gscholar_proxy = next(proxy_cycle, None)
+                if gscholar_proxy is None:
+                    logger.error('no more proxies')
                     return bibs
-                else:
-                    gscholar_proxy = next(proxy_cycle)
-                    logger.warning(f'changing proxy, next proxy={gscholar_proxy}')
-                    await scr.aclose()
-                    try:
-                        await scr.init(proxy=gscholar_proxy)
-                        rotate_proxy = False
-                    except RequestError as r_error:
-                        logger.error(f'during proxy rotation, an error has occured: error={r_error}')
-                        continue
+                logger.warning(f'changing proxy, next proxy={gscholar_proxy}')
+                await scr.aclose()
+                try:
+                    await scr.init(proxy=gscholar_proxy)
+                    rotate_proxy = False
+                except RequestError as r_error:
+                    logger.error(f'during proxy rotation, an error has occured: error={r_error}')
+                    continue
             try:
                 bibtex_entry = await scr.scrape_bibtex_file(entry)
                 logger.debug(f'bibtext entry for id={entry.id!r}: {bibtex_entry!r}')
@@ -71,7 +69,7 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
 
     rotate_proxy = False
     proxies_list = options.proxies if options.proxies and len(options.proxies) > 0 else [None]
-    proxy_cycle = itertools.cycle(proxies_list)
+    proxy_cycle = iter(proxies_list)
 
     gscholar_proxy = next(proxy_cycle)
 
@@ -87,19 +85,18 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
     while True:
         if rotate_proxy:
             logger.warning(f'changing proxy')
-            if len(proxies_list) <= 1:
-                logger.error('no proxies or just one, stopping the scraping operation')
+            gscholar_proxy = next(proxy_cycle, None)
+            if gscholar_proxy is None:
+                logger.error('no more proxies')
                 break
-            else:
-                gscholar_proxy = next(proxy_cycle)
-                logger.warning(f'changing proxy, next proxy={gscholar_proxy}')
-                await scr.aclose()
-                try:
-                    await scr.init(proxy=gscholar_proxy)
-                    rotate_proxy = False
-                except RequestError as r_error:
-                    logger.error(f'during proxy rotation, an error has occured: error={r_error}')
-                    continue
+            logger.warning(f'changing proxy, next proxy={gscholar_proxy}')
+            await scr.aclose()
+            try:
+                await scr.init(proxy=gscholar_proxy)
+                rotate_proxy = False
+            except RequestError as r_error:
+                logger.error(f'during proxy rotation, an error has occured: error={r_error}')
+                continue
         scraped_entries = []
         try:
             scraped_entries = await scr.search_scholar(options.search_query, start=page)
@@ -123,7 +120,6 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
 
     bibs = await _download_bibtex_entries(html_entries=all_scraped_entries,
                                           logger=logger,
-                                          proxies=proxies_list,
                                           proxy_cycle=proxy_cycle,
                                           scr=scr)
 
