@@ -1,10 +1,7 @@
-import itertools
 import logging
 import os
-import sys
-from typing import Any, Iterator
+from typing import Iterator
 
-import httpx
 from httpx import RequestError
 
 from cli.options import ProxiesFetcherOptions, FetcherModuleResult
