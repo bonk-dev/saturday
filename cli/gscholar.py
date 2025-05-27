@@ -32,7 +32,7 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
     gscholar_proxy = next(proxy_cycle)
 
     try:
-        await scr.init(proxy=gscholar_proxy, transport=options.custom_transport)
+        await scr.init(proxy=gscholar_proxy)
     except RequestError as r_error:
         logger.error(f'proxy={gscholar_proxy}')
         logger.error(f'during client init, an error has occured: error={r_error}')
@@ -50,7 +50,7 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
                 gscholar_proxy = next(proxy_cycle)
                 await scr.aclose()
                 try:
-                    await scr.init(proxy=gscholar_proxy, transport=options.custom_transport)
+                    await scr.init(proxy=gscholar_proxy)
                 except RequestError as r_error:
                     logger.error(f'during proxy rotation, an error has occured: error={r_error}')
                     continue
