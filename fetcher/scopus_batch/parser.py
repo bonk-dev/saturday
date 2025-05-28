@@ -59,6 +59,9 @@ class ScopusCsvParser:
             raise ValueError('The actual CSV header row does not match the expected header row.')
 
         for row in reader:
+            if len(row) != len(expected_header_row):
+                continue
+
             (_, authors, _, title, year, source_title, volume, issue, article_number, page_start,
              page_end, page_count, cited_by, doi, link, affiliations, _, abstract, author_keywords,
              index_keywords, _, _, tradenames, manufacturers, funding_details, funding_texts, references,
