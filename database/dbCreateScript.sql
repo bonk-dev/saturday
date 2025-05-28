@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS "Affiliation" (
 	"ID"	INTEGER,
-	"ScopusID"	INTEGER,
-	"ScopusURL"	TEXT,
+	"SourceID"	TEXT,
+	"SourceURL"	TEXT,
 	"Name"	TEXT NOT NULL,
 	"Country"	TEXT,
 	"City"	TEXT,
@@ -11,12 +11,14 @@ CREATE TABLE IF NOT EXISTS "Affiliation" (
 );
 CREATE TABLE IF NOT EXISTS "Article" (
 	"ID"	INTEGER,
-	"ScopusID"	INTEGER,
-	"ScopusURL"	TEXT,
+	"SourceID"	TEXT,
+	"SourceURL"	TEXT,
 	"Name"	TEXT NOT NULL,
 	"PublishDate"	TEXT,
 	"ISSN"	INTEGER,
 	"EISSN"	INTEGER,
+	"DOI" TEXT,
+	"Publisher" TEXT,
 	"Volume"	INTEGER,
 	"Description"	TEXT,
 	"Type"	TEXT,
@@ -53,8 +55,8 @@ CREATE TABLE IF NOT EXISTS "ArticlexKeywords" (
 );
 CREATE TABLE IF NOT EXISTS "Author" (
 	"ID"	INTEGER,
-	"ScopusID"	INTEGER,
-	"ScopusURL"	TEXT,
+	"SourceID"	TEXT,
+	"SourceURL"	TEXT,
 	"FullName"	TEXT NOT NULL,
 	"FirstName"	TEXT,
 	"SureName"	TEXT,
