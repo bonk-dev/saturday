@@ -3,10 +3,12 @@ import traceback
 
 from flask import request
 from flask_restx import Resource, Namespace
+
+import cli.gscholar
 from backend.config import config
 from backend.routes import logger
+from cli.options import ProxiesFetcherOptions
 from database.dbInserts.gscholarAPIInsert import scholarInsert
-from fetcher.gscholar.scraper import GoogleScholarScraper
 from backend.models import insert_request_fields, insert_response_fields, error_response_fields
 
 
@@ -53,8 +55,12 @@ class GoogleScholarSearch(Resource):
             logger.info(f'SSL insecure: {ssl_insecure}, Proxies: {prod_proxies}')
 
             async def run_gscholar_search():
-                scr = GoogleScholarScraper(verify_ssl=not ssl_insecure, proxies=prod_proxies)
-                return await scr.search(search_query)
+                fetcher_options = ProxiesFetcherOptions(verify_ssl=not ssl_insecure,
+                                                        search_query=search_query,
+                                                        proxies=prod_proxies,
+                                                        debug_proxy=debug_proxy)
+                cli_results = await cli.gscholar.use(fetcher_options)
+                return cli_results.results
 
             # Run the async function
             r = asyncio.run(run_gscholar_search())
