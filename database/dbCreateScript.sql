@@ -79,3 +79,6 @@ CREATE TABLE IF NOT EXISTS "Keywords" (
 	PRIMARY KEY("ID"),
 	CONSTRAINT "FK_Insert" FOREIGN KEY("InsertID") REFERENCES "InsertLog"("ID")
 );
+CREATE INDEX idx_author_sourceid ON Author(SourceID);
+CREATE INDEX idx_affiliation_sourceid ON Affiliation(SourceID);
+CREATE INDEX idx_keywords_keyword ON Keywords(Keyword);

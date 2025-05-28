@@ -123,7 +123,7 @@ class MethodsList(Resource):
         :return: Dictionary containing success status and list of aggregation methods with HTTP status code.
         """
         try:
-            return {'success': True, 'values': ['count', 'sum', 'average', 'min', 'max']}, 200
+            return {'success': True, 'values': ['count', 'count_distinct', 'sum', 'average', 'min', 'max']}, 200
 
         except Exception as e:
             return {'error': str(e), 'success': False}, 500
@@ -143,7 +143,19 @@ class OperatorsList(Resource):
         :return: Dictionary containing success status and list of SQL operators with HTTP status code.
         """
         try:
-            return {'success': True, 'values': ['=', '>', '<', '!=', 'IN', 'LIKE']}, 200
+            return {'success': True, 'values': ['=', '>', '<', '!=', 'IN', 'LIKE', 'NOT NULL']}, 200
+
+        except Exception as e:
+            return {'error': str(e), 'success': False}, 500
+
+@ns_filter_options.route('/chart-type')
+class ChartTypes(Resource):
+    @ns_filter_options.response(200, 'Success', multiselect_values_model)
+    @ns_filter_options.response(400, 'Bad Request', error_response_model)
+    @ns_filter_options.response(500, 'Internal Server Error', error_response_model)
+    def post(self):
+        try:
+            return {'success': True, 'values': ["bar","line","pie","doughnut","radar","polarArea"]}, 200
 
         except Exception as e:
             return {'error': str(e), 'success': False}, 500

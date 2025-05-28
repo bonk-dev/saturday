@@ -1,0 +1,58 @@
+{
+    "x_axis":{
+       "table":"Affiliation",
+       "field":"Name",
+       "alias":""
+    },
+    "y_axis_datasets":[
+       {
+          "table":"Article",
+          "field":"ID",
+          "method":"count",
+          "name":"",
+          "label":""
+       }
+    ],
+    "filters":[
+       {
+          "table":"Author",
+          "field":"ID",
+          "operator":"IN",
+          "values":[
+             
+          ]
+       }
+    ],
+    "chart_type":"pie"
+ }
+
+
+
+ {
+    "x_axis":{
+       "table":"Affiliation",
+       "field":"Country",
+       "alias":"country"
+    },
+    "y_axis_datasets":[
+       {
+          "table":"Author",
+          "field":"ID",
+          "method":"count",
+          "name":"author_count",
+          "label":"Authors"
+       }
+    ],
+    "filters":[
+       {
+          "table":"Affiliation",
+          "field":"Country",
+          "value":[
+             "Poland",
+             "Germany"
+          ],
+          "operator":"IN"
+       }
+    ],
+    "chart_type":"pie"
+ }

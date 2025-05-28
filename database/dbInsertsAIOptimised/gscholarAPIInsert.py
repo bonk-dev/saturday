@@ -3,7 +3,7 @@ from typing import List
 from fetcher.gscholar.models import GoogleScholarEntry
 
 
-def scholarInsert(data: List[GoogleScholarEntry]) -> int:
+def scholarInsertOptimised(data: List[GoogleScholarEntry]) -> int:
     """
     Optimized insert for Google Scholar publications with batch operations.
     """

@@ -10,7 +10,7 @@ from backend.routes import logger
 from cli.options import ProxiesFetcherOptions
 from database.dbInserts.gscholarAPIInsert import scholarInsert
 from backend.models import insert_request_fields, insert_response_fields, error_response_fields
-
+from database.dbInsertsAIOptimised.gscholarAPIInsert import scholarInsertOptimised
 
 ns_gscholar = Namespace('gscholar', description='Google Scholar operations')
 
@@ -66,7 +66,7 @@ class GoogleScholarSearch(Resource):
             r = asyncio.run(run_gscholar_search())
 
 
-            insertCount = scholarInsert(r)
+            insertCount = scholarInsertOptimised(r)
             return {
                 'success': True,
                 'search_query': search_query,

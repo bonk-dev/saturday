@@ -8,6 +8,7 @@ from backend.config import config
 from backend.models import insert_request_fields, insert_response_fields, error_response_fields
 from database.dbInserts.scopusAPIInsert import scopusAPIInsert
 from backend.routes import logger
+from database.dbInsertsAIOptimised.scopusApiInsertOptimised import scopusAPIInsertOptimised
 from fetcher.scopus.api import ScopusApi
 
 ns_scopus_api = Namespace('scopus-api', description='Scopus API operations')
@@ -72,7 +73,7 @@ class ScopusApiSearch(Resource):
 
             # Insert into database using scopusAPIInsert
             try:
-                insertCount = scopusAPIInsert(result)
+                insertCount = scopusAPIInsertOptimised(result)
                 logger.info(f'Successfully inserted {insertCount} records into database')
                 return {
                     'success': True,

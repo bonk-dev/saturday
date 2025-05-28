@@ -114,9 +114,12 @@ def insert_authors(authors: list[Author], insert_id: int, cursor) -> list[int]:
     """
     author_ids = []
     for author in authors:
+        # Use consistent SourceID format with 's' prefix
+        source_id = "s" + author.authid
+
         cursor.execute(
             "SELECT ID FROM Author WHERE SourceID = ?",
-            ("s" + author.authid,)
+            (source_id,)
         )
         result = cursor.fetchone()
 
@@ -129,7 +132,7 @@ def insert_authors(authors: list[Author], insert_id: int, cursor) -> list[int]:
                     FirstName, SureName, Initials, InsertID
                 ) VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
-                author.authid,
+                source_id,  # Now consistent with the SELECT query
                 author.author_url,
                 author.authname,
                 author.surname,
@@ -156,9 +159,12 @@ def insert_affiliations(affiliations: list[Affiliation], insert_id: int, cursor)
     """
     affiliation_ids = []
     for affiliation in affiliations:
+        # Use consistent SourceID format with 's' prefix
+        source_id = 's' + affiliation.afid
+
         cursor.execute(
             "SELECT ID FROM Affiliation WHERE SourceID = ?",
-            ('s'+affiliation.afid,)
+            (source_id,)
         )
         result = cursor.fetchone()
 
@@ -171,7 +177,7 @@ def insert_affiliations(affiliations: list[Affiliation], insert_id: int, cursor)
                     Country, City, InsertID
                 ) VALUES (?, ?, ?, ?, ?, ?)
             """, (
-                's'+affiliation.afid,
+                source_id,  # Now using the same variable
                 affiliation.affiliation_url,
                 affiliation.affilname,
                 affiliation.affiliation_country,
@@ -200,8 +206,9 @@ def insert_keywords(keywords: list[str], insert_id: int, cursor) -> list[int]:
     for keyword in keywords:
         keyword = keyword.strip()
 
+        # Use consistent table name casing
         cursor.execute(
-            "SELECT Id FROM keywords WHERE keyword = ?",
+            "SELECT Id FROM Keywords WHERE Keyword = ?",
             (keyword,)
         )
         result = cursor.fetchone()
@@ -242,7 +249,7 @@ def insert_article(article: SearchEntry, insert_id: int, cursor) -> int:
                         InsertID
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
-        's'+article.identifier,
+        's' + article.identifier,
         article.url,
         article.title,
         article.cover_date,

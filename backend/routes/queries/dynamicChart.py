@@ -46,6 +46,8 @@ def build_where_clause(filters: list) -> tuple[str, list]:
         elif operator == '!=':
             where_conditions.append(f"{table}.{field} != ?")
             params.append(value)
+        elif operator == 'NOT NULL':
+            where_conditions.append(f"{table}.{field} IS NOT NULL")
         else:  # Default equality
             where_conditions.append(f"{table}.{field} = ?")
             params.append(value)
@@ -65,6 +67,8 @@ def get_aggregation(method: str, field: str) -> str:
     """
     if method.lower() == 'count':
         return f"COUNT({field})"
+    elif method.lower() == 'count_distinct':
+        return f"COUNT(DISTINCT {field})"
     elif method.lower() == 'sum':
         return f"SUM({field})"
     elif method.lower() == 'average' or method.lower() == 'avg':
@@ -243,6 +247,26 @@ class DynamicChartData(Resource):
         """
         Generate dynamic chart data by executing SQL queries based on axis and dataset configuration.
         Builds aggregated SQL queries with necessary joins and filters, then formats results for Chart.js compatibility.
+
+        'examples': {
+                'simple_count': {
+                    'x_axis': {'table': 'Article', 'field': 'PublishDate', 'alias': 'year'},
+                    'y_axis_datasets': [
+                        {'table': 'Article', 'field': 'ID', 'method': 'count', 'name': 'article_count', 'label': 'Articles Published'}
+                    ],
+                    'chart_type': 'bar'
+                },
+                'with_filters': {
+                    'x_axis': {'table': 'Affiliation', 'field': 'Country', 'alias': 'country'},
+                    'y_axis_datasets': [
+                        {'table': 'Author', 'field': 'ID', 'method': 'count', 'name': 'author_count', 'label': 'Authors'}
+                    ],
+                    'filters': [
+                        {'table': 'Affiliation', 'field': 'Country', 'value': ['Poland', 'Germany'], 'operator': 'IN'}
+                    ],
+                    'chart_type': 'pie'
+                }
+            }
 
         :return: JSON response containing Chart.js compatible data structure with labels and datasets.
         :rtype: dict

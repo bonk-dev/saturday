@@ -8,8 +8,8 @@ import http.cookies
 
 from backend.config import config
 from backend.models import insert_request_fields, insert_response_fields, error_response_fields
-from database.dbInserts.scopusBatchInsert import scopusBatchInsert
 from backend.routes import logger
+from database.dbInsertsAIOptimised.scopusBatchInsertOptimised import scopusBatchInsertOptimised
 from fetcher.scopus_batch.models import all_identifiers, ExportFileType
 from fetcher.scopus_batch.parser import ScopusCsvParser
 from fetcher.scopus_batch.scraper import ScopusScraper, ScopusScraperConfig
@@ -21,7 +21,7 @@ insert_response_model = ns_scopus_batch.model('SearchResponse', insert_response_
 error_response_model = ns_scopus_batch.model('ErrorResponse', error_response_fields)
 
 
-@ns_scopus_batch.route('/export')
+@ns_scopus_batch.route('/search')
 class ScopusBatchExport(Resource):
     @ns_scopus_batch.expect(insert_request_model)
     @ns_scopus_batch.response(200, 'Success', insert_response_model)
@@ -136,7 +136,7 @@ class ScopusBatchExport(Resource):
             logger.info(f'Parsed publications: {len(scopus_batch_pubs)}')
 
             try:
-                insertCount = scopusBatchInsert(scopus_batch_pubs)
+                insertCount = scopusBatchInsertOptimised(scopus_batch_pubs)
                 logger.info(f'Successfully inserted {len(scopus_batch_pubs)} records into database')
                 return {
                     'success': True,
