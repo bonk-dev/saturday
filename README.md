@@ -9,8 +9,7 @@ A Python 3 app designed to scrape science publication metadata from various sour
 ### Command-line
 ```shell
 $ python3 main.py
-usage: main.py [-h] [-a] [-p PROXY] [--debug-proxy DEBUG_PROXY] [-g]
-               [--google-scholar-output GOOGLE_SCHOLAR_OUTPUT] [-s]
+usage: main.py [-h] [-a] [-p PROXY] [--debug-proxy DEBUG_PROXY] [-g] [-s]
                [--scopus-api-output SCOPUS_API_OUTPUT] [-b] [--scopus-batch-file SCOPUS_BATCH_FILE]
                [--scopus-batch-output SCOPUS_BATCH_OUTPUT] [--ssl-insecure]
                search_query
@@ -27,12 +26,9 @@ options:
                         http://127.0.0.2:1234. Not used when making requests to IP-authenticated
                         services (Elsevier, Scopus, etc.)
   --debug-proxy DEBUG_PROXY
-                        HTTP(S) proxy address, used for ALL requests, including ones made to services
-                        based on IP authentication (Elsevier, Scopus)
+                        HTTP(S) proxy address, used for ALL requests, including ones made to
+                        services based on IP authentication (Elsevier, Scopus)
   -g, --google-scholar  Use Google Scholar for scraping metadata
-  --google-scholar-output GOOGLE_SCHOLAR_OUTPUT
-                        Path to a file where raw data fetched from Google Scholar will be saved. File
-                        type: JSON.
   -s, --scopus-api      Use Scopus API for scraping metadata
   --scopus-api-output SCOPUS_API_OUTPUT
                         Path to a file where raw data fetched from Elsevier API will be saved. File
@@ -41,8 +37,8 @@ options:
   --scopus-batch-file SCOPUS_BATCH_FILE
                         Use a local .CSV dump instead of exporting from Scopus
   --scopus-batch-output SCOPUS_BATCH_OUTPUT
-                        Path to a file where raw data fetched from Scopus batch export will be saved.
-                        File type: CSV.
+                        Path to a file where raw data fetched from Scopus batch export will be
+                        saved. File type: CSV.
   --ssl-insecure        Do not verify upstream server SSL/TLS certificates
 ```
 
@@ -63,6 +59,17 @@ $ python3 main.py --scopus-batch --scopus-batch-output "/tmp/sc-batch.csv" "pyth
 #### Scopus (batch gateway) and Google Scholar
 ```shell
 $ python3 main.py --scopus-batch --google-scholar "python3 C++" 
+```
+
+## Tests
+Currently, only the `fetchers` module contains automated unit tests:
+```shell
+$ python -m unittest discover fetcher/tests
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.200s
+
+OK
 ```
 
 ## Setup
@@ -153,7 +160,28 @@ It is important to use the user's web-browser `User-Agent` value, because
 using anything different **will** trigger Cloudflare anti-bot mechanisms.
 
 ### Google Scholar
-This fetcher module doesn't use any environment variables.
+This fetcher module doesn't require any authentication cookies or keys, but
+a user can configure the base URI for requests and the User-Agent to be used
+by the HTTP(S) client.
 
-A user can supply a proxy server to use while scraping with 
+Also, a user can supply a proxy server to use while scraping with 
 the `--proxy` option (see [Usage](#usage)).
+
+#### GOOGLE_SCHOLAR_BASE
+This env variable allows the user to change the base URI of the endpoints used
+by the scraper module. Default value: `https://scholar.google.com`.
+
+For example, if you change this to `https://example.org`, then the scraper
+will send a request to `https://example.org/scholar?q=...` 
+and **NOT** to `https://scholar.google.com/scholar?q=...` when searching
+for publications.
+
+#### GOOGLE_SCHOLAR_USER_AGENT
+This env variable is used by the app to set the `User-Agent` header
+when sending requests to the Google Scholar website.
+
+#### Example .env
+```
+GOOGLE_SCHOLAR_BASE=https://scholar.google.com
+GOOGLE_SCHOLAR_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+```

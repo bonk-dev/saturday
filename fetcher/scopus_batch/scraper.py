@@ -3,11 +3,12 @@ import itertools
 import logging
 import random
 import string
-from typing import Any
+from typing import Any, Optional
 
 import httpx
 from httpx import Cookies, URL, Proxy
 
+from fetcher.scopus_batch import consts
 from fetcher.scopus_batch.models import SearchEidsResult, ExportFileType, FieldGroupIdentifiers
 
 
@@ -44,13 +45,13 @@ class ScopusScraperConfig:
         :rtype: httpx.Cookies
         """
         cookies = Cookies({
-            'SCSessionID': self.sc_session_id,
-            'scopusSessionUUID': self.scopus_session_uuid,
-            'AWSELB': self.awselb,
-            'at_check': 'true'
+            consts.COOKIE_SESSION_ID: self.sc_session_id,
+            consts.COOKIE_SESSION_UUID: self.scopus_session_uuid,
+            consts.COOKIE_AWSELB: self.awselb,
+            consts.COOKIE_AT_CHECK: 'true'
         })
         # cookies.set('SCOPUS_JWT', self.scopus_jwt, domain='.scopus.com', path='/')
-        cookies.set('SCOPUS_JWT', value=self.scopus_jwt, domain=self.scopus_jwt_domain, path='/')
+        cookies.set(consts.COOKIE_JWT, value=self.scopus_jwt, domain=self.scopus_jwt_domain, path='/')
         return cookies
 
 
@@ -79,7 +80,7 @@ class ScopusScraper:
     """Maximum number of items accepted by the `/gateway/export-service/export` endpoint."""
 
     def __init__(self, config: ScopusScraperConfig, verify_ssl: bool = True, base_uri: str = BASE_URI,
-                 proxy: URL | str | Proxy | None = None):
+                 proxy: URL | str | Proxy | None = None, transport: Optional[httpx.AsyncBaseTransport] = None):
         """
         Initialize the ScopusScraper.
 
@@ -87,11 +88,12 @@ class ScopusScraper:
         :param bool verify_ssl:             Toggle SSL certificate verification.
         :param str base_uri:         Override the base URI (default: BASE_URI).
         :param URL | str | Proxy | None proxy:  Proxy to use when making HTTP(S) requests.
+        :param Optional[httpx.AsyncBaseTransport] transport: Use a custom HTTPX transport
         """
 
         self._base = base_uri
         self._session = httpx.AsyncClient(verify=verify_ssl, timeout=60, proxy=proxy,
-                                          cookies=config.build_cookie_store())
+                                          cookies=config.build_cookie_store(), transport=transport)
         self._session.headers.update({
             'Accept': 'application/json',
             'User-Agent': config.user_agent
@@ -100,6 +102,10 @@ class ScopusScraper:
         self._nextTransactionId = 1
         self._logger = logging.getLogger(__name__)
         self._post_lock = asyncio.Lock()
+
+        # keep config for JWT refresh
+        self._config = config
+        self._refreshed = False
 
     async def __aenter__(self):
         return self
@@ -304,7 +310,32 @@ class ScopusScraper:
         if r.is_success:
             # HTTPX client auto-saves the new token from the Set-Cookie header
             self._logger.debug('Successfully refreshed JWT token')
+
+            self._refreshed = True
+            self._config = ScopusScraperConfig(
+                user_agent=self._config.user_agent,
+                scopus_jwt=self._session.cookies[consts.COOKIE_JWT],
+                scopus_jwt_domain=self._config.scopus_jwt_domain,
+                awselb=self._session.cookies[consts.COOKIE_AWSELB],
+                scopus_session_uuid=self._session.cookies[consts.COOKIE_SESSION_UUID],
+                sc_session_id=self._session.cookies[consts.COOKIE_SESSION_ID]
+            )
         else:
             self._logger.error('An error has occurred while refreshing the Scopus JWT token')
             self._logger.error(r.text)
         return r
+
+    def get_cookies(self) -> Optional[ScopusScraperConfig]:
+        """
+        Retrieve the current Scopus scraper configuration containing cookie data.
+
+        This method returns the stored `ScopusScraperConfig` object only if the
+        internal cookies have been refreshed since the last retrieval. If the
+        cookies have not been refreshed (`self._refreshed` is False), this method
+        returns `None`.
+
+        :return: The `ScopusScraperConfig` containing valid cookie information if
+                 refreshed; otherwise, `None`.
+        :rtype: Optional[ScopusScraperConfig]
+        """
+        return self._config if self._refreshed else None

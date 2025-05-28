@@ -1,0 +1,82 @@
+[
+    {
+        "id": "ILtpbLDicUEJ",
+        "title": "A C++ TPSA/DA Library With Python Wrapper",
+        "link": "https://www.osti.gov/biblio/1973974",
+        "file_type": "",
+        "authors": "Y Zhang, H Zhang - 2019 - osti.gov",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:ILtpbLDicUEJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSIU:AAZF9b8AAAAAaDNvUIVhECAFByrO9kRcCnLpjEg&scisig=AAZF9b8AAAAAaDNvUIUS2MmdZs8m4II7tDSB8jA&scisf=4&ct=citation&cd=10&hl=en"
+    },
+    {
+        "id": "5Ny2BiH_-jAJ",
+        "title": "Uma comparação empírica em velocidade de processamento entre C++, Go, Rust, Python e JavaScript",
+        "link": "https://lume.ufrgs.br/handle/10183/272878",
+        "file_type": "",
+        "authors": "AR Crestani - 2024 - lume.ufrgs.br",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:5Ny2BiH_-jAJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSIU:AAZF9b8AAAAAaDNvUIVhECAFByrO9kRcCnLpjEg&scisig=AAZF9b8AAAAAaDNvUGY3MXXKbpQ0Z6hXV6m1r9o&scisf=4&ct=citation&cd=11&hl=en"
+    },
+    {
+        "id": "8h8Di8v97JcJ",
+        "title": "Deploying a C++ Software with (or without) Python Embedding and Extension",
+        "link": "https://www.eceasst.org/index.php/eceasst/article/view/2596",
+        "file_type": "",
+        "authors": "A Nejati, M Svechnikov, J Wuttke - Electronic Communications of the …, 2025 - eceasst.org",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:8h8Di8v97JcJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSIU:AAZF9b8AAAAAaDNvUIVhECAFByrO9kRcCnLpjEg&scisig=AAZF9b8AAAAAaDNvUHNNkJO8wG5QzoYiXagDLqE&scisf=4&ct=citation&cd=12&hl=en"
+    },
+    {
+        "id": "Dj9l6MIunKoJ",
+        "title": "A modern reimplementation of an alignment pipeline for the analysis and quantification of small non-coding RNA and isoforms using C++ and Python",
+        "link": "https://webthesis.biblio.polito.it/14493/",
+        "file_type": "",
+        "authors": "M Capettini - 2020 - webthesis.biblio.polito.it",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:Dj9l6MIunKoJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSIU:AAZF9b8AAAAAaDNvUIVhECAFByrO9kRcCnLpjEg&scisig=AAZF9b8AAAAAaDNvUEnUT6A52NPfPb03gtB739c&scisf=4&ct=citation&cd=13&hl=en"
+    },
+    {
+        "id": "QqSwPcqqWfIJ",
+        "title": "Interactive C++ code development using C++ Explorer and GitHub Classroom for educational purposes",
+        "link": "https://onlinelibrary.wiley.com/doi/abs/10.1002/cpe.6893",
+        "file_type": "",
+        "authors": "P Diehl, SR Brandt - Concurrency and Computation: Practice …, 2023 - Wiley Online Library",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:QqSwPcqqWfIJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSIU:AAZF9b8AAAAAaDNvUIVhECAFByrO9kRcCnLpjEg&scisig=AAZF9b8AAAAAaDNvUJaT-tp0gSgNcmhNqP0gcHI&scisf=4&ct=citation&cd=14&hl=en"
+    },
+    {
+        "id": "4mCLBgw0K2UJ",
+        "title": "Getting Started with Python 3",
+        "link": "https://www.taylorfrancis.com/chapters/edit/10.1201/9781315382395-17/getting-started-python-3-brian-barnes-michael-sellers",
+        "file_type": "",
+        "authors": "BC Barnes, MS Sellers - Introduction to Scientific and Technical …, 2016 - taylorfrancis.com",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:4mCLBgw0K2UJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSIU:AAZF9b8AAAAAaDNvUIVhECAFByrO9kRcCnLpjEg&scisig=AAZF9b8AAAAAaDNvUJaZ9H7fGWjOBxA1TmsS3MM&scisf=4&ct=citation&cd=15&hl=en"
+    },
+    {
+        "id": "qCUC3nZCGRQJ",
+        "title": "PyAlbany: A Python interface to the C++ multiphysics solver Albany",
+        "link": "https://www.sciencedirect.com/science/article/pii/S0377042722006355",
+        "file_type": "",
+        "authors": "K Liegeois, M Perego, T Hartland - Journal of Computational and Applied …, 2023 - Elsevier",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:qCUC3nZCGRQJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSIU:AAZF9b8AAAAAaDNvUIVhECAFByrO9kRcCnLpjEg&scisig=AAZF9b8AAAAAaDNvUBFATei0EGP1WKxrk7GXSEQ&scisf=4&ct=citation&cd=16&hl=en"
+    },
+    {
+        "id": "xIM6cRhV1v4J",
+        "title": "PyO3: Building Python Extension Modules in Native Rust with Performance and Safety in Mind",
+        "link": "https://link.springer.com/chapter/10.1007/978-3-031-85902-1_4",
+        "file_type": "",
+        "authors": "PD Johnson, DD Hodson - … in Computer Science, Computer Engineering & …, 2024 - Springer",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:xIM6cRhV1v4J:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSIU:AAZF9b8AAAAAaDNvUIVhECAFByrO9kRcCnLpjEg&scisig=AAZF9b8AAAAAaDNvUP7sc5kNizzWjFnt_0A9MOw&scisf=4&ct=citation&cd=17&hl=en"
+    },
+    {
+        "id": "gXmqLdUsfqQJ",
+        "title": "cppTPSA/pyTPSA: a C++/Python package for truncated power series algebra",
+        "link": "https://joss.theoj.org/papers/10.21105/joss.04818.pdf",
+        "file_type": "[PDF]",
+        "authors": "H Zhang - Journal of Open Source Software, 2024 - joss.theoj.org",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:gXmqLdUsfqQJ:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSIU:AAZF9b8AAAAAaDNvUIVhECAFByrO9kRcCnLpjEg&scisig=AAZF9b8AAAAAaDNvUFTqABn5-dN3P_vj5LqUJ68&scisf=4&ct=citation&cd=18&hl=en"
+    },
+    {
+        "id": "56ytOTS0M98J",
+        "title": "SeqAn3–Sequence Analysis and Modern C++",
+        "link": "https://refubium.fu-berlin.de/handle/fub188/30952",
+        "file_type": "",
+        "authors": "HP Hauswedell - 2021 - refubium.fu-berlin.de",
+        "bibtex_uri": "https://scholar.googleusercontent.com/scholar.bib?q=info:56ytOTS0M98J:scholar.google.com/&output=citation&scisdr=CgL8C_QpEPXZpfJpSIU:AAZF9b8AAAAAaDNvUIVhECAFByrO9kRcCnLpjEg&scisig=AAZF9b8AAAAAaDNvUPnKZZbu0xni3fo_s2R1WlY&scisf=4&ct=citation&cd=19&hl=en"
+    }
+]

@@ -1,14 +1,12 @@
-from scholarly import Publication, Author
-
 from database.dbContext import get_db
 from typing import List
 
 
 # Import your scholar models here
-# from fetcher.scholar.models import Publication
+from fetcher.gscholar.models import GoogleScholarEntry
 
 
-def scholarInsert(data: List[Publication]) -> int:
+def scholarInsert(data: List[GoogleScholarEntry]) -> int:
     """
     Insert Google Scholar Publication objects into database with complete relational mapping.
     Performs transactional insertion of publications with their associated authors, affiliations,
@@ -43,7 +41,7 @@ def scholarInsert(data: List[Publication]) -> int:
         cursor.close()
 
 
-def _insert_publication(publication: Publication, insert_id: int, cursor) -> int:
+def _insert_publication(publication: GoogleScholarEntry, insert_id: int, cursor) -> int:
     """
     Insert a single publication with its associated data.
 
@@ -53,33 +51,31 @@ def _insert_publication(publication: Publication, insert_id: int, cursor) -> int
     :return: Database ID of the newly inserted article.
     :rtype: int
     """
-    bib = publication.get('bib', {})
 
     # Extract keywords from abstract or other sources if available
     keywords = []
-    if bib.get('abstract'):
-        # Simple keyword extraction
-        abstract_words = bib.get('abstract', '').split()
-        keywords = [word.strip('.,!?;:') for word in abstract_words if len(word) > 5][:10]
+    # if bib.get('abstract'):
+    #     # Simple keyword extraction
+    #     abstract_words = bib.get('abstract', '').split()
+    #     keywords = [word.strip('.,!?;:') for word in abstract_words if len(word) > 5][:10]
 
     # Insert article
     article_id = _insert_scholar_article(publication, insert_id, cursor)
 
     # Handle authors
     author_ids = []
-    if bib.get('author'):
-        # Parse author string (Google Scholar often provides comma-separated author names)
-        author_names = [name.strip() for name in bib.get('author', '').split(',')]
-        for author_name in author_names:
-            if author_name:
-                author_id = _insert_author_by_name(author_name, insert_id, cursor)
-                author_ids.append(author_id)
+    # Parse author string (Google Scholar often provides comma-separated author names)
+    author_names = [name.strip() for name in publication.authors.split(',')]
+    for author_name in author_names:
+        if author_name:
+            author_id = _insert_author_by_name(author_name, insert_id, cursor)
+            author_ids.append(author_id)
 
     # Handle affiliations (limited info available from Google Scholar)
     affiliation_ids = []
-    if bib.get('publisher'):
-        affiliation_id = _insert_affiliation_by_name(bib.get('publisher'), insert_id, cursor)
-        affiliation_ids.append(affiliation_id)
+    # if bib.get('publisher'):
+    #     affiliation_id = _insert_affiliation_by_name(bib.get('publisher'), insert_id, cursor)
+    #     affiliation_ids.append(affiliation_id)
 
     # Handle keywords
     keyword_ids = _insert_scholar_keywords(keywords, insert_id, cursor)
@@ -92,7 +88,7 @@ def _insert_publication(publication: Publication, insert_id: int, cursor) -> int
     return article_id
 
 
-def _insert_scholar_article(publication: 'Publication', insert_id: int, cursor) -> int:
+def _insert_scholar_article(publication: GoogleScholarEntry, insert_id: int, cursor) -> int:
     """
     Insert article record from Google Scholar Publication object.
 
@@ -102,11 +98,10 @@ def _insert_scholar_article(publication: 'Publication', insert_id: int, cursor) 
     :return: Database ID of the newly inserted article record.
     :rtype: int
     """
-    bib = publication.get('bib', {})
 
     # Extract DOI from pub_url if available
     doi = None
-    pub_url = publication.get('pub_url', '')
+    pub_url = publication.link
     if 'doi.org' in pub_url:
         doi = pub_url.split('doi.org/')[-1]
 
@@ -117,67 +112,25 @@ def _insert_scholar_article(publication: 'Publication', insert_id: int, cursor) 
             Type, SubType, CitedByCount, Sponsor, InsertID
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
-        'g'+publication.get('cites_id', [None])[0] if publication.get('cites_id') else None,  # Use cites_id as identifier
-        publication.get('pub_url'),
-        bib.get('title', ''),
-        bib.get('pub_year'),
+        'g'+publication.id,
+        publication.link,
+        publication.title,
+        publication.year,
         None,
         None,
         doi,
-        bib.get('publisher', ''),
-        bib.get('volume'),
-        bib.get('abstract', ''),
-        bib.get('pub_type', ''),
+        None,  # TODO: bib.get('publisher', ''),
+        None,  # bib.get('volume'),
         None,
-        publication.get('num_citations', 0),
+        publication.entry_type,
+        None,
+        None,  # TODO: publication.get('num_citations', 0),
         None,
         insert_id
     ))
 
     return cursor.lastrowid
 
-
-def _insert_scholar_author(author: Author, insert_id: int, cursor) -> int:
-    """
-    Insert or retrieve author record from Google Scholar Author object.
-
-    :param Author author: Author object from Google Scholar.
-    :param int insert_id: Insert log ID for tracking this batch operation.
-    :param cursor: Database cursor for executing SQL statements.
-    :return: Database ID of the author record.
-    :rtype: int
-    """
-    scholar_id = author.get('scholar_id')
-
-    if scholar_id:
-        cursor.execute("SELECT ID FROM Author WHERE SourceID = ?", ('g'+scholar_id,))
-        result = cursor.fetchone()
-        if result:
-            return result[0]
-
-    # Parse name components
-    full_name = author.get('name', '')
-    name_parts = full_name.split()
-    first_name = name_parts[0] if name_parts else ''
-    surname = ' '.join(name_parts[1:]) if len(name_parts) > 1 else ''
-    initials = ''.join([part[0] + '.' for part in name_parts if part]) if name_parts else ''
-
-    cursor.execute("""
-        INSERT INTO Author (
-            SourceID, SourceURL, FullName, 
-            FirstName, SureName, Initials, InsertID
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-    """, (
-        'g'+scholar_id,
-        author.get('homepage', ''),
-        full_name,
-        first_name,
-        surname,
-        initials,
-        insert_id
-    ))
-
-    return cursor.lastrowid
 
 
 def _insert_author_by_name(author_name: str, insert_id: int, cursor) -> int:
