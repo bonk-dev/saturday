@@ -27,8 +27,8 @@
     </div>
 
     <div class="form-group">
-      <label class="form-label">Alias</label>
-      <input v-model="state.alias" placeholder="Alias" class="form-input" />
+      <label class="form-label">Field Name</label>
+      <input v-model="state.alias" placeholder="Enter field name" class="form-input" />
     </div>
   </div>
 </template>
@@ -56,7 +56,6 @@ const state = reactive({
   alias: props.modelValue.label || '',
 });
 
-// Main watcher
 watch(
   () => ({ ...state }),
   (newVal) => {
@@ -69,13 +68,10 @@ watch(
   { deep: true }
 );
 
-// Fixed syntax: Added missing parenthesis
 watch(
   () => state.table,
   (newTable) => {
-    if (!newTable) {
-      state.field = '';
-    }
+    state.field = '';
   },
   { immediate: true }
 );

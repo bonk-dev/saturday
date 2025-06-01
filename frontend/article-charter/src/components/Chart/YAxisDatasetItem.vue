@@ -37,13 +37,13 @@
     </div>
 
     <div class="form-group">
-      <label class="form-label">Name</label>
-      <input v-model="state.name" placeholder="Name" class="form-input" />
+      <label class="form-label">Field Name</label>
+      <input v-model="state.name" placeholder="Enter field name" class="form-input" />
     </div>
 
     <div class="form-group">
       <label class="form-label">Label</label>
-      <input v-model="state.label" placeholder="Label" class="form-input" />
+      <input v-model="state.label" placeholder="Enter label" class="form-input" />
     </div>
   </div>
 </template>
@@ -75,7 +75,6 @@ const state = reactive({
   label: props.modelValue.label || '',
 });
 
-// Synchronizacja ze stanem zewnętrznym
 watch(
   () => ({ ...state }),
   (newVal) => {
@@ -84,7 +83,6 @@ watch(
   { deep: true }
 );
 
-// Zerowanie pól zależnych
 watch(
   () => state.table,
   (newTable, oldTable) => {

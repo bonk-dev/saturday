@@ -73,7 +73,7 @@ class ScopusApiSearch(Resource):
 
             # Insert into database using scopusAPIInsert
             try:
-                insertCount = scopusAPIInsertOptimised(result)
+                insertCount = scopusAPIInsert(result)
                 logger.info(f'Successfully inserted {insertCount} records into database')
                 return {
                     'success': True,

@@ -1,12 +1,12 @@
 <template>
   <div class="card" style="max-width: 400px; margin: auto">
     <div class="form-group">
-      <label class="form-label" for="search">Search Query</label>
+      <label class="form-label" for="search">Search Phrase</label>
       <input
         id="search"
         v-model="searchQuery"
         type="text"
-        placeholder="Wpisz zapytanie"
+        placeholder="Enter search phrase"
         class="form-input"
         :disabled="loading"
       />
@@ -14,38 +14,38 @@
 
     <div class="flex flex-col gap-lg">
       <button class="btn btn-primary" @click="sendToAll" :disabled="loading || !searchQuery">
-        Wyślij do wszystkich
+        Send to all
       </button>
       <button
         class="btn btn-secondary"
         @click="() => sendTo('http://localhost:5000/gscholar/search')"
         :disabled="loading || !searchQuery"
       >
-        Wyślij do GScholar
+        Find in google scholar
       </button>
       <button
         class="btn btn-secondary"
         @click="() => sendTo('http://localhost:5000/scopus-api/search')"
         :disabled="loading || !searchQuery"
       >
-        Wyślij do Scopus API
+        Find in Scopus API
       </button>
       <button
         class="btn btn-secondary"
         @click="() => sendTo('http://localhost:5000/scopus-batch/search')"
         :disabled="loading || !searchQuery"
       >
-        Wyślij do Scopus Batch
+        Find in Scopus Scraper
       </button>
     </div>
 
     <div v-if="results.length" class="mt-lg">
-      <h3>Wyniki:</h3>
+      <h3>Results:</h3>
       <ul>
         <li v-for="(res, index) in results" :key="index" class="card-description">
-          <strong>{{ getEndpointName(res.endpoint) }}:</strong>
-          <span v-if="res.error" style="color: var(--error)">Błąd: {{ res.error }}</span>
-          <span v-else>Query: "{{ res.search_query }}", Count: {{ res.count }}</span>
+          <strong>{{ getEndpointName(res.endpoint) }}:&nbsp;</strong>
+          <span v-if="res.error" style="color: var(--error)">Błąd:&nbsp; {{ res.error }}</span>
+          <span v-else>Query:&nbsp; "{{ res.search_query }}", Count:&nbsp; {{ res.count }}</span>
         </li>
       </ul>
     </div>
@@ -122,7 +122,7 @@ async function sendToAll() {
 </script>
 
 <style scoped>
-.mt-lg {
-  margin-top: var(--space-lg);
+.btn {
+  padding: 0.5rem 1rem;
 }
 </style>

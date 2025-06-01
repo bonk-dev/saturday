@@ -1,11 +1,9 @@
 <template>
   <div class="layout">
-    <!-- Wykres: lewa strona, bez scrolla -->
     <div class="chart-panel">
-      <DynamicChat v-if="chartData" :chartPayload="chartData" />
+      <DynamicChat v-if="chartData" :chartPayload="chartData" :chartNames="chartNames" />
+      <TableBuilder v-if="chartData" :table="chartData.table" :fullPayload="request" />
     </div>
-
-    <!-- Formularz: prawa strona, z własnym scrollowaniem -->
     <div class="builder-panel">
       <TabsComponent :tabs="tabs" />
     </div>
@@ -18,43 +16,46 @@ import DynamicChat from './Chart/DynamicChat.vue';
 import QueryBuilder from './Chart/QueryBuilder.vue';
 import TabsComponent from './TabsComponent.vue';
 import DatabaseInserts from './Inserts/DatabaseInserts.vue';
+import TableBuilder from './Chart/TableBuilder.vue';
 
 const chartData = ref(null);
+const chartNames = ref(null);
+const request = ref(null);
 
 function handleQueryResult(payload) {
-  chartData.value = payload;
+  chartData.value = payload.result;
+  chartNames.value = payload.chart_names;
+  request.value = payload.form;
 }
 
 const tabs = [
   {
-    label: 'QueryBuilder',
+    label: 'Query Builder',
     component: QueryBuilder,
     props: {
       onSubmit: handleQueryResult,
     },
   },
-  { label: 'DatabaseInsert', component: DatabaseInserts },
+  { label: 'Fetch data', component: DatabaseInserts },
 ];
 </script>
 
 <style scoped>
 .layout {
   display: flex;
-  height: 100vh; /* pełna wysokość ekranu */
+  height: 100vh;
   overflow: hidden;
 }
 
-/* Lewy panel z wykresem */
 .chart-panel {
   flex: 2;
   padding: 20px;
-  overflow: hidden; /* brak scrolla */
+  overflow-y: auto;
 }
 
-/* Prawy panel z formularzem */
 .builder-panel {
   flex: 1;
   padding: 20px;
-  overflow-y: auto; /* scroll tylko w pionie */
+  overflow-y: auto;
 }
 </style>

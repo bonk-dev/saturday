@@ -25,15 +25,14 @@ def scopusAPIInsert(data: list[SearchEntry]) -> int:
         for article in data:
             author_ids = insert_authors(article.authors, insert_id, cursor)
             affiliation_ids = insert_affiliations(article.affiliations, insert_id, cursor)
-
             keyword_ids = insert_keywords(article.authkeywords, insert_id, cursor)
             article_id = insert_article(article, insert_id, cursor)
 
             bind_authors(author_ids, article_id, cursor)
             bind_affiliations(affiliation_ids, article_id, cursor)
             bind_keywords(keyword_ids, article_id, cursor)
-        db.commit()
 
+        db.commit()
         return insert_count
     except Exception as e:
         db.rollback()
@@ -46,8 +45,7 @@ def scopusAPIInsert(data: list[SearchEntry]) -> int:
 def bind_authors(author_ids: list[int], article_id: int, cursor) -> None:
     """
     Create many-to-many relationships between articles and authors in junction table.
-    Inserts records into ArticlexAuthor table to establish associations between
-    articles and their contributing authors using their respective database IDs.
+    Checks for existing relationships before inserting to ensure uniqueness.
 
     :param list[int] author_ids: List of author database IDs to associate with article.
     :param int article_id: Database ID of the article to bind authors to.
@@ -56,17 +54,27 @@ def bind_authors(author_ids: list[int], article_id: int, cursor) -> None:
     :rtype: None
     """
     for author_id in author_ids:
-        cursor.execute("""
-            INSERT INTO ArticlexAuthor (ArticleID, AuthorID)
-            VALUES (?, ?)
-        """, (article_id, author_id))
+        try:
+            # Check if relationship already exists
+            cursor.execute("""
+                SELECT 1 FROM ArticlexAuthor 
+                WHERE ArticleID = ? AND AuthorID = ?
+            """, (article_id, author_id))
+
+            if not cursor.fetchone():
+                cursor.execute("""
+                    INSERT INTO ArticlexAuthor (ArticleID, AuthorID)
+                    VALUES (?, ?)
+                """, (article_id, author_id))
+        except Exception as e:
+            print(f"Error binding author {author_id} to article {article_id}: {e}")
+            raise
 
 
 def bind_keywords(keyword_ids: list[int], article_id: int, cursor) -> None:
     """
     Create many-to-many relationships between articles and keywords in junction table.
-    Inserts records into ArticlexKeywords table to establish associations between
-    articles and their associated keywords using their respective database IDs.
+    Checks for existing relationships before inserting to ensure uniqueness.
 
     :param list[int] keyword_ids: List of keyword database IDs to associate with article.
     :param int article_id: Database ID of the article to bind keywords to.
@@ -75,17 +83,27 @@ def bind_keywords(keyword_ids: list[int], article_id: int, cursor) -> None:
     :rtype: None
     """
     for keyword_id in keyword_ids:
-        cursor.execute("""
-            INSERT INTO ArticlexKeywords (ArticleID, KeywordsID)
-            VALUES (?, ?)
-        """, (article_id, keyword_id))
+        try:
+            # Check if relationship already exists
+            cursor.execute("""
+                SELECT 1 FROM ArticlexKeywords 
+                WHERE ArticleID = ? AND KeywordsID = ?
+            """, (article_id, keyword_id))
+
+            if not cursor.fetchone():
+                cursor.execute("""
+                    INSERT INTO ArticlexKeywords (ArticleID, KeywordsID)
+                    VALUES (?, ?)
+                """, (article_id, keyword_id))
+        except Exception as e:
+            print(f"Error binding keyword {keyword_id} to article {article_id}: {e}")
+            raise
 
 
 def bind_affiliations(affiliation_ids: list[int], article_id: int, cursor) -> None:
     """
     Create many-to-many relationships between articles and affiliations in junction table.
-    Inserts records into ArticlexAffiliation table to establish associations between
-    articles and their institutional affiliations using their respective database IDs.
+    Checks for existing relationships before inserting to ensure uniqueness.
 
     :param list[int] affiliation_ids: List of affiliation database IDs to associate with article.
     :param int article_id: Database ID of the article to bind affiliations to.
@@ -94,10 +112,21 @@ def bind_affiliations(affiliation_ids: list[int], article_id: int, cursor) -> No
     :rtype: None
     """
     for affiliation_id in affiliation_ids:
-        cursor.execute("""
-            INSERT INTO ArticlexAffiliation (ArticleID, AffiliationID)
-            VALUES (?, ?)
-        """, (article_id, affiliation_id))
+        try:
+            # Check if relationship already exists
+            cursor.execute("""
+                SELECT 1 FROM ArticlexAffiliation 
+                WHERE ArticleID = ? AND AffiliationID = ?
+            """, (article_id, affiliation_id))
+
+            if not cursor.fetchone():
+                cursor.execute("""
+                    INSERT INTO ArticlexAffiliation (ArticleID, AffiliationID)
+                    VALUES (?, ?)
+                """, (article_id, affiliation_id))
+        except Exception as e:
+            print(f"Error binding affiliation {affiliation_id} to article {article_id}: {e}")
+            raise
 
 
 def insert_authors(authors: list[Author], insert_id: int, cursor) -> list[int]:
@@ -132,7 +161,7 @@ def insert_authors(authors: list[Author], insert_id: int, cursor) -> list[int]:
                     FirstName, SureName, Initials, InsertID
                 ) VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
-                source_id,  # Now consistent with the SELECT query
+                source_id,
                 author.author_url,
                 author.authname,
                 author.surname,
@@ -177,7 +206,7 @@ def insert_affiliations(affiliations: list[Affiliation], insert_id: int, cursor)
                     Country, City, InsertID
                 ) VALUES (?, ?, ?, ?, ?, ?)
             """, (
-                source_id,  # Now using the same variable
+                source_id,
                 affiliation.affiliation_url,
                 affiliation.affilname,
                 affiliation.affiliation_country,
@@ -204,9 +233,8 @@ def insert_keywords(keywords: list[str], insert_id: int, cursor) -> list[int]:
     keyword_ids = []
 
     for keyword in keywords:
-        keyword = keyword.strip()
+        keyword = keyword.strip().lower()
 
-        # Use consistent table name casing
         cursor.execute(
             "SELECT Id FROM Keywords WHERE Keyword = ?",
             (keyword,)
@@ -241,27 +269,33 @@ def insert_article(article: SearchEntry, insert_id: int, cursor) -> int:
     :return: Database ID of the newly inserted article record.
     :rtype: int
     """
-    cursor.execute("""
-                    INSERT INTO Article (
-                        SourceID, SourceURL, Name, PublishDate,
-                        ISSN, EISSN, Volume, Description, Type,
-                        SubType, CitedByCount, Sponsor, 
-                        InsertID
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-        's' + article.identifier,
-        article.url,
-        article.title,
-        article.cover_date,
-        article.issn,
-        article.eissn,
-        article.volume,
-        article.description,
-        article.aggregation_type,
-        article.subtype_description,
-        article.citedby_count,
-        article.fundSponsor,
-        insert_id
-    ))
-    article_id = cursor.lastrowid
-    return article_id
+    cursor.execute("SELECT ID FROM Article WHERE SourceID = ?", ('s' + article.identifier,))
+    result = cursor.fetchone()
+
+    if result:
+        return result[0]
+    else:
+        cursor.execute("""
+            INSERT INTO Article (
+                SourceID, SourceURL, Name, PublishDate,
+                ISSN, EISSN, Volume, Description, Type,
+                SubType, CitedByCount, Sponsor, 
+                InsertID
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            's' + article.identifier,
+            article.url,
+            article.title,
+            article.cover_date,
+            article.issn,
+            article.eissn,
+            article.volume,
+            article.description,
+            article.aggregation_type,
+            article.subtype_description,
+            article.citedby_count,
+            article.fundSponsor,
+            insert_id
+        ))
+        article_id = cursor.lastrowid
+        return article_id

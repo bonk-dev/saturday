@@ -551,7 +551,6 @@ pre code {
 .shadow-lg {
   box-shadow: var(--shadow-lg);
 }
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {

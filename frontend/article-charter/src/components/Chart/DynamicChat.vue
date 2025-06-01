@@ -2,77 +2,91 @@
   <canvas ref="canvas"></canvas>
 </template>
 
-<script>
+<script setup>
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { Chart, registerables } from 'chart.js';
+
 Chart.register(...registerables);
 
-export default {
-  name: 'ChartRenderer',
-  props: {
-    chartPayload: {
-      type: Object,
-      required: true,
-    },
+const props = defineProps({
+  chartPayload: {
+    type: Object,
+    required: true,
   },
-  data() {
-    return {
-      chartInstance: null,
-    };
+  chartNames: {
+    type: Object,
+    required: true,
   },
-  mounted() {
-    this.renderChart();
-  },
-  watch: {
-    chartPayload: {
-      handler() {
-        this.updateChart();
-      },
-      deep: true,
-    },
-  },
-  methods: {
-    renderChart() {
-      if (!this.chartPayload.success) {
-        console.warn('Chart payload was not successful');
-        return;
-      }
+});
 
-      const ctx = this.$refs.canvas.getContext('2d');
-      this.chartInstance = new Chart(ctx, {
-        type: this.chartPayload.chart_type || 'bar',
-        data: this.chartPayload.data,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-            title: {
-              display: true,
-              text: 'Wykres danych',
-            },
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
+const canvas = ref(null);
+let chartInstance = null;
+
+function renderChart() {
+  if (!props.chartPayload.success) {
+    console.warn('Chart payload was not successful');
+    return;
+  }
+
+  const ctx = canvas.value.getContext('2d');
+
+  chartInstance = new Chart(ctx, {
+    type: props.chartPayload.chart_type || 'bar',
+    data: props.chartPayload.data,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: props.chartNames.value.title || 'Wykres danych',
+        },
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: props.chartNames.value.xtitle || '',
           },
         },
-      });
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: props.chartNames.value.ytitle || '',
+          },
+        },
+      },
     },
-    updateChart() {
-      if (this.chartInstance) {
-        this.chartInstance.destroy();
-      }
-      this.renderChart();
-    },
+  });
+}
+
+function updateChart() {
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+  renderChart();
+}
+
+onMounted(() => {
+  renderChart();
+});
+
+watch(
+  () => props.chartPayload,
+  () => {
+    updateChart();
   },
-  beforeUnmount() {
-    if (this.chartInstance) {
-      this.chartInstance.destroy();
-    }
-  },
-};
+  { deep: true }
+);
+
+onBeforeUnmount(() => {
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+});
 </script>
 
 <style scoped>

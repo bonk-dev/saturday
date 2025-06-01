@@ -1,96 +1,86 @@
 <template>
-  <div class="form-group">
-    <Multiselect
-      v-model="localValue"
-      :options="options"
-      :multiple="multiple"
-      :placeholder="placeholder"
-      :disabled="disabled"
-      :close-on-select="!multiple"
-      class="form-input custom-multiselect"
-    />
+  <div class="filter-form card">
+    <div class="form-group">
+      <!-- Aggregated field selector -->
+      <Multiselect
+        v-model="state.field"
+        :options="fieldOptions"
+        :multiple="false"
+        placeholder="Select aggregated field"
+        :disabled="!fieldOptions.length"
+        class="form-input custom-multiselect"
+      />
+    </div>
+    <!-- Operator selector -->
+    <div class="form-group">
+      <label class="form-label">Operator</label>
+      <DbSelect
+        v-model="state.operator"
+        options-endpoint="http://127.0.0.1:5000/filter-options/operator"
+        :options-payload="{}"
+        :multiple="false"
+        placeholder="Select operator"
+        :disabled="!state.field"
+      />
+    </div>
+
+    <!-- Value input -->
+    <div class="form-group">
+      <label class="form-label">Value</label>
+      <input
+        v-model="state.value"
+        type="text"
+        placeholder="Enter value"
+        class="form-input"
+        :disabled="!state.field"
+      />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { reactive, watch } from 'vue';
+import DbSelect from '../Shared/DbSelect.vue';
 import Multiselect from 'vue-multiselect';
 
 const props = defineProps({
   modelValue: {
-    type: [Array, String, Object, null],
+    type: Object,
+    default: () => ({
+      field: '',
+      value: '',
+      operator: '',
+    }),
+  },
+  fieldOptions: {
+    type: Array,
     default: () => [],
   },
-  optionsEndpoint: String,
-  optionsPayload: Object,
-  multiple: Boolean,
-  placeholder: String,
-  disabled: Boolean,
 });
 
 const emit = defineEmits(['update:modelValue']);
 
-const localValue = ref(
-  props.multiple ? (Array.isArray(props.modelValue) ? [...props.modelValue] : []) : props.modelValue
-);
-
-async function fetchOptions() {
-  try {
-    if (!props.optionsEndpoint) return;
-    const response = await fetch(props.optionsEndpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(props.optionsPayload),
-    });
-
-    const data = await response.json();
-    options.value = Array.isArray(data?.values) ? data.values : [];
-  } catch (error) {
-    console.error('Error fetching options:', error);
-    options.value = [];
-  }
-}
-
-const options = ref([]);
+const state = reactive({
+  field: props.modelValue.field || '',
+  value: props.modelValue.value || '',
+  operator: props.modelValue.operator || '',
+});
 
 watch(
-  () => localValue.value,
+  () => state.field,
+  () => {
+    state.operator = '';
+  }
+);
+
+watch(
+  () => ({ ...state }),
   (newVal) => {
     emit('update:modelValue', newVal);
-  }
-);
-
-watch(
-  () => [props.optionsPayload, props.disabled],
-  ([newPayload, newDisabled]) => {
-    if (!newDisabled) {
-      fetchOptions();
-    } else {
-      options.value = [];
-    }
   },
-  { immediate: true, deep: true }
+  { deep: true }
 );
-
-watch(
-  () => props.modelValue,
-  (newVal) => {
-    const normalizedNewVal = props.multiple ? (Array.isArray(newVal) ? [...newVal] : []) : newVal;
-
-    if (JSON.stringify(normalizedNewVal) !== JSON.stringify(localValue.value)) {
-      localValue.value = normalizedNewVal;
-    }
-  },
-  { immediate: true }
-);
-
-onMounted(() => {
-  if (!props.disabled) {
-    fetchOptions();
-  }
-});
 </script>
-
 <style scoped>
 .form-group :deep(.custom-multiselect.multiselect) {
   --tag-bg: var(--primary);
