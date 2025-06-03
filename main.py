@@ -7,10 +7,9 @@ from dotenv import load_dotenv
 from cli import gscholar, scopus_batch, elsevier_api
 from cli.options import ProxiesFetcherOptions, FetcherModuleResult
 from database.dbContext import *
-from database.dbInserts.gscholarAPIInsert import scholarInsert
-from database.dbInserts.scopusAPIInsert import scopusAPIInsert
-
-from database.dbInserts.scopusBatchInsert import scopusBatchInsert
+from database.dbInsertsAIOptimised.gscholarAPIInsert import scholarInsertOptimised
+from database.dbInsertsAIOptimised.scopusApiInsertOptimised import scopusAPIInsertOptimised
+from database.dbInsertsAIOptimised.scopusBatchInsertOptimised import scopusBatchInsertOptimised
 
 
 async def main():
@@ -91,12 +90,12 @@ async def main():
         init_app(app)
         for task in done_tasks:
             if task.module == 'cli.elsevier_api':
-                scopusAPIInsert(task.results)
+                scopusAPIInsertOptimised(task.results)
             elif task.module == 'cli.gscholar':
                 logger.debug(task.results)
-                scholarInsert(task.results)
+                scholarInsertOptimised(task.results)
             elif task.module == 'cli.scopus_batch':
-                scopusBatchInsert(task.results)
+                scopusBatchInsertOptimised(task.results)
 
 
 asyncio.run(main())
