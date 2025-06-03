@@ -73,6 +73,12 @@ OK
 ```
 
 ## Setup
+### Python requirements
+In order to install required Python packages:
+- (optionally) set up a venv: ```python -m venv .venv && source .venv/bin/activate```
+- install packages: ```pip install -r requirements.txt```
+
+### Environment variables
 Some fetcher modules require additional setup (API keys, cookies etc.).
 Here are the required steps for all implemented fetchers.
 
