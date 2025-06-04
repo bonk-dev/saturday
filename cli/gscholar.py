@@ -12,9 +12,10 @@ from fetcher.gscholar.scraper import GoogleScholarScraper, CaptchaError
 ENV_BASE_URI = 'GOOGLE_SCHOLAR_BASE'
 ENV_USER_AGENT = 'GOOGLE_SCHOLAR_USER_AGENT'
 
+logger = logging.getLogger(__name__)
+
 
 async def _download_bibtex_entries(html_entries: list[GoogleScholarHtmlEntry],
-                                   logger: logging.Logger,
                                    scr: GoogleScholarScraper,
                                    proxy_cycle: Iterator):
     bibs = []
