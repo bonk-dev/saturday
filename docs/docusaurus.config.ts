@@ -84,7 +84,7 @@ const config: Config = {
           items: [
             {
               label: 'Instrukcja obsługi',
-              to: '/intro',
+              to: '/',
             },
           ],
         },
