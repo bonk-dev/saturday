@@ -3,8 +3,12 @@ import logging
 import os
 from typing import Optional, Any
 
+from httpx import NetworkError
+
+from cli.error_container import _ErrorContainer
 from cli.options import CommonFetcherOptions, FetcherModuleResult
 from cli.utils import write_dump
+from fetcher.exceptions import InvalidCookiesError
 from fetcher.scopus_batch import consts
 from fetcher.scopus_batch.models import ExportFileType, all_identifiers
 from fetcher.scopus_batch.parser import ScopusCsvParser
@@ -48,6 +52,8 @@ def save_cookies(config: ScopusScraperConfig, filename: str):
 async def use(options: CommonFetcherOptions,
               input_file_path:Optional[str] = None,
               raw_output_path: Optional[str] = None) -> FetcherModuleResult:
+    errors = _ErrorContainer(logger)
+
     logger.debug('using Scopus batch export')
     cookie_file_path = os.getenv(ENV_BATCH_COOKIE_FILE)
     scopus_batch_uri = os.getenv(ENV_BATCH_BASE)
@@ -66,7 +72,7 @@ async def use(options: CommonFetcherOptions,
         with open(input_file_path, 'r') as b_file:
             export_data = b_file.read()
     elif not os.path.isfile(cookie_file_path):
-        logger.error(f'SCOPUS_BATCH_COOKIE_FILE file does not exist (path: "{cookie_file_path}")')
+        errors.add_error(f'SCOPUS_BATCH_COOKIE_FILE file does not exist (path: "{cookie_file_path}")')
     else:
         with open(cookie_file_path, 'r') as cookie_file_f:
             cookie_file = cookie_file_f.read()
@@ -80,15 +86,15 @@ async def use(options: CommonFetcherOptions,
         scopus_batch_ua = os.getenv('SCOPUS_BATCH_USER_AGENT')
 
         if not scopus_batch_jwt:
-            logger.error(f'{consts.COOKIE_JWT} cookie is required')
+            errors.add_error(f'{consts.COOKIE_JWT} cookie is required')
         elif not scopus_batch_awselb:
-            logger.error(f'{consts.COOKIE_AWSELB} cookie is required')
+            errors.add_error(f'{consts.COOKIE_AWSELB} cookie is required')
         elif not scopus_batch_session_uuid:
-            logger.error(f'{consts.COOKIE_SESSION_UUID} cookie is required')
+            errors.add_error(f'{consts.COOKIE_SESSION_UUID} cookie is required')
         elif not scopus_batch_sc_session_id:
-            logger.error(f'{consts.COOKIE_SESSION_ID} cookie is required')
+            errors.add_error(f'{consts.COOKIE_SESSION_ID} cookie is required')
         elif not scopus_batch_ua:
-            logger.error('User-Agent is required (must be same as used for logging in/CloudFlare verification)')
+            errors.add_error('User-Agent is required (must be same as used for logging in/CloudFlare verification)')
         else:
             logger.info("all required Scopus batch cookies were found")
             async with ScopusScraper(ScopusScraperConfig(user_agent=scopus_batch_ua,
@@ -100,6 +106,7 @@ async def use(options: CommonFetcherOptions,
                                      verify_ssl=options.verify_ssl,
                                      base_uri=scopus_batch_uri,
                                      proxy=options.debug_proxy) as sc_batch:
+                from httpx import HTTPError
                 try:
                     export_data = await sc_batch.export_all(
                         options.search_query,
@@ -111,21 +118,31 @@ async def use(options: CommonFetcherOptions,
                             export_data,
                             f_module=__name__,
                             logger=logger)
+                except HTTPError as h_error:
+                    errors.add_error(f'HTTP error: {h_error}')
+                except NetworkError as n_error:
+                    errors.add_error(f'Network error: {n_error}')
+                except InvalidCookiesError as i_error:
+                    errors.add_error(f'Cookie error: {i_error}')
+                except Exception as err:
+                    raise err
                 finally:
                     new_cookies = sc_batch.get_cookies()
                     if new_cookies is not None:
                         save_cookies(new_cookies, cookie_file_path)
 
-    if export_data:
-        logger.debug('parsing data')
-        # TODO: Find a more elegant solution for handling BOM?
-        export_data = export_data.removeprefix('\ufeff')
-        parser = ScopusCsvParser(export_data)
+    scopus_batch_pubs = []
+    try:
+        if export_data:
+            logger.debug('parsing data')
+            # TODO: Find a more elegant solution for handling BOM?
+            export_data = export_data.removeprefix('\ufeff')
+            parser = ScopusCsvParser(export_data)
 
-        scopus_batch_pubs = parser.read_all_publications()
-        logger.info(f'parsed publications: {len(scopus_batch_pubs)}')
-        for pub in scopus_batch_pubs:
-            logger.debug(pub.to_debug_string())
-    else:
-        scopus_batch_pubs = []
-    return FetcherModuleResult(module=__name__, results=scopus_batch_pubs, errors=[])
+            scopus_batch_pubs = parser.read_all_publications()
+            logger.info(f'parsed publications: {len(scopus_batch_pubs)}')
+            for pub in scopus_batch_pubs:
+                logger.debug(pub.to_debug_string())
+    except ValueError as v_error:
+        errors.add_error(str(v_error))
+    return FetcherModuleResult(module=__name__, results=scopus_batch_pubs, errors=errors.get_errors())
