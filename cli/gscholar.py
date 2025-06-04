@@ -4,6 +4,7 @@ from typing import Iterator
 
 from httpx import RequestError
 
+from cli.error_container import _ErrorContainer
 from cli.options import ProxiesFetcherOptions, FetcherModuleResult
 from fetcher.gscholar.bibtex_parser import parse_bibtex_entry, merge_entries
 from fetcher.gscholar.models import GoogleScholarHtmlEntry
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 async def _download_bibtex_entries(html_entries: list[GoogleScholarHtmlEntry],
+                                   errors: _ErrorContainer,
                                    scr: GoogleScholarScraper,
                                    proxy_cycle: Iterator):
     bibs = []
@@ -28,7 +30,7 @@ async def _download_bibtex_entries(html_entries: list[GoogleScholarHtmlEntry],
             if rotate_proxy:
                 gscholar_proxy = next(proxy_cycle, None)
                 if gscholar_proxy is None:
-                    logger.error('no more proxies')
+                    errors.add_error('partial scrape: CAPTCHA requested, but no more proxies left')
                     return bibs
                 logger.warning(f'changing proxy, next proxy={gscholar_proxy}')
                 await scr.aclose()
@@ -36,7 +38,7 @@ async def _download_bibtex_entries(html_entries: list[GoogleScholarHtmlEntry],
                     await scr.init(proxy=gscholar_proxy)
                     rotate_proxy = False
                 except RequestError as r_error:
-                    logger.error(f'during proxy rotation, an error has occured: error={r_error}')
+                    errors.add_error(f'during proxy rotation, an error has occured: error={r_error}')
                     continue
             try:
                 bibtex_entry = await scr.scrape_bibtex_file(entry)
@@ -55,7 +57,7 @@ async def _download_bibtex_entries(html_entries: list[GoogleScholarHtmlEntry],
 
 
 async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
-    logger = logging.getLogger(__name__)
+    errors = _ErrorContainer(logger)
 
     gscholar_base = os.getenv(ENV_BASE_URI)
     gscholar_ua = os.getenv(ENV_USER_AGENT)
@@ -74,7 +76,7 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
         await scr.init(proxy=gscholar_proxy)
     except RequestError as r_error:
         logger.error(f'proxy={gscholar_proxy}')
-        logger.error(f'during client init, an error has occured: error={r_error}')
+        errors.add_error(f'during client init, an error has occured: error={r_error}')
         rotate_proxy = True
 
     page = 0
@@ -84,7 +86,7 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
             logger.warning(f'changing proxy')
             gscholar_proxy = next(proxy_cycle, None)
             if gscholar_proxy is None:
-                logger.error('no more proxies')
+                errors.add_error('partial scrape: CAPTCHA requested, but no more proxies left')
                 break
             logger.warning(f'changing proxy, next proxy={gscholar_proxy}')
             await scr.aclose()
@@ -92,7 +94,7 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
                 await scr.init(proxy=gscholar_proxy)
                 rotate_proxy = False
             except RequestError as r_error:
-                logger.error(f'during proxy rotation, an error has occured: error={r_error}')
+                errors.add_error(f'during proxy rotation, an error has occured: error={r_error}')
                 continue
         scraped_entries = []
         try:
@@ -116,9 +118,9 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
     logger.info('HTML scraping done!')
 
     bibs = await _download_bibtex_entries(html_entries=all_scraped_entries,
-                                          logger=logger,
+                                          errors=errors,
                                           proxy_cycle=proxy_cycle,
                                           scr=scr)
 
     merged_entries = merge_entries(all_scraped_entries, bibs)
-    return FetcherModuleResult(module=__name__, results=merged_entries, errors=[])
+    return FetcherModuleResult(module=__name__, results=merged_entries, errors=errors.get_errors())
