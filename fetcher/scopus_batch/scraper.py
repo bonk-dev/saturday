@@ -8,6 +8,7 @@ from typing import Any, Optional
 import httpx
 from httpx import Cookies, URL, Proxy
 
+from fetcher.exceptions import InvalidCookiesError
 from fetcher.scopus_batch import consts
 from fetcher.scopus_batch.models import SearchEidsResult, ExportFileType, FieldGroupIdentifiers
 
@@ -29,7 +30,9 @@ class ScopusScraperConfig:
     :ivar str scopus_session_uuid:   See `scopus_session_uuid` parameter.
     :ivar str sc_session_id:         See `sc_session_id` parameter.
     """
-    def __init__(self, user_agent: str, scopus_jwt: str, scopus_jwt_domain: str, awselb: str, scopus_session_uuid: str, sc_session_id: str):
+
+    def __init__(self, user_agent: str, scopus_jwt: str, scopus_jwt_domain: str, awselb: str, scopus_session_uuid: str,
+                 sc_session_id: str):
         self.user_agent = user_agent
         self.scopus_jwt = scopus_jwt
         self.scopus_jwt_domain = scopus_jwt_domain
@@ -113,6 +116,12 @@ class ScopusScraper:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self._session.aclose()
 
+    @staticmethod
+    def _raise_for_error(response: httpx.Response):
+        if response.status_code == httpx.codes.UNAUTHORIZED or response.status_code == httpx.codes.FORBIDDEN:
+            raise InvalidCookiesError(str(response.url))
+        response.raise_for_status()
+
     async def search_eids(self, item_count: int, offset: int, query: str) -> SearchEidsResult:
         """
         Perform a document EID search on Scopus.
@@ -120,7 +129,8 @@ class ScopusScraper:
         :param int item_count:  Number of EIDs to retrieve in this request.
         :param int offset:      Zero-based offset of the first EID to retrieve.
         :param str query:       Scopus search query string (e.g. `"TITLE-ABS-KEY(...)"`).
-        :raises RuntimeError:   If the HTTP response status indicates an error.
+        :raises HTTPError:      If the HTTP response status indicates an error.
+        :raises InvalidCookiesError: If the provided cookies were invalid
         :return: Parsed `SearchEidsResult` containing EID list and metadata.
         :rtype: SearchEidsResult
         """
@@ -136,8 +146,8 @@ class ScopusScraper:
         self._logger.debug(f'search_eids: {payload}')
 
         r = await self._post(f'{self._base}/api/documents/search/eids', json=payload)
-        if r.is_error:
-            raise RuntimeError(f'An error has occurred while searching for EIDs (code={r.status_code}): {r.text}')
+        ScopusScraper._raise_for_error(r)
+
         return SearchEidsResult(json_data=r.json())
 
     @staticmethod
@@ -188,7 +198,8 @@ class ScopusScraper:
         :param list[FieldGroupIdentifiers] field_group_ids: Fields to include.
         :param str locale:                    Locale code (default `'en-US'`).
         :param bool hide_headers:             Whether to omit column headers after the first page.
-        :raises RuntimeError:                 If the HTTP response status indicates an error.
+        :raises HTTPError:                    If the HTTP response status indicates an error.
+        :raises InvalidCookiesError: If the provided cookies were invalid
         :return: Raw text of the exported file part.
         :rtype: str
         """
@@ -216,8 +227,7 @@ class ScopusScraper:
         self._nextTransactionId += 1
 
         r = await self._post(f'{self._base}/gateway/export-service/export?batchId={batch_id}', json=payload)
-        if r.is_error:
-            raise RuntimeError(f'An error has occurred while exporting part (code={r.status_code}): {r.text}')
+        ScopusScraper._raise_for_error(r)
         return r.text
 
     async def export_all(self, title: str, file_type: ExportFileType, fields: list[FieldGroupIdentifiers]) -> str:
@@ -269,7 +279,8 @@ class ScopusScraper:
                 exported_eid_count += len(eid_batch)
                 self._logger.info(f'export_all: exported {exported_eid_count}/{all_eid_count}')
             self._logger.debug(f'export_all: researching EIDs (offset={exported_eid_count})')
-            eid_search_results = await self.search_eids(ScopusScraper.__MAX_EIDS_PER_SEARCH__, exported_eid_count, query)
+            eid_search_results = await self.search_eids(ScopusScraper.__MAX_EIDS_PER_SEARCH__, exported_eid_count,
+                                                        query)
             all_eid_count = eid_search_results.response.num_found
             eids = eid_search_results.response.docs
             self._logger.debug(f'export_all: found {len(eids)} new EIDs')
