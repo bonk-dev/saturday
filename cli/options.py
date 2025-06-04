@@ -19,3 +19,8 @@ class FetcherModuleResult:
     module: str
     results: Any
     errors: List[str]
+
+    def get_error_message(self) -> Optional[str]:
+        if len(self.errors) > 0:
+            return f'{self.module} did not complete without errors: {self.errors}'
+        return None

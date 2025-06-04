@@ -90,11 +90,20 @@ async def main():
         init_app(app)
         for task in done_tasks:
             if task.module == 'cli.elsevier_api':
+                e_msg = task.get_error_message()
+                if e_msg:
+                    logger.error(e_msg)
                 scopusAPIInsertOptimised(task.results)
             elif task.module == 'cli.gscholar':
+                e_msg = task.get_error_message()
+                if e_msg:
+                    logger.error(e_msg)
                 logger.debug(task.results)
                 scholarInsertOptimised(task.results)
             elif task.module == 'cli.scopus_batch':
+                e_msg = task.get_error_message()
+                if e_msg:
+                    logger.error(e_msg)
                 scopusBatchInsertOptimised(task.results)
 
 
