@@ -56,7 +56,6 @@ async def _download_bibtex_entries(html_entries: list[GoogleScholarHtmlEntry],
 
 async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
     logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
 
     gscholar_base = os.getenv(ENV_BASE_URI)
     gscholar_ua = os.getenv(ENV_USER_AGENT)
