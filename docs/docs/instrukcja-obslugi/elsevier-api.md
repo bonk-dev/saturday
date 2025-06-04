@@ -75,3 +75,21 @@ Elseviera, będzie je wysyłać na ten właśnie adres.
 
 Jest to przydatne podczas testowania aplikacji, gdy mamy swój własny serwer, który zachowuje się dokładnie tak samo
 (albo podobnie) jak oficjalne API Elsevier. 
+
+
+## Użycie
+API Elsevier możemy używać zarówno z poziomu interfejsu konsolowego, jak i z graficznego. 
+
+### Konsolowo
+```shell
+$ python3 main.py --scopus-api "python3 c++ wulkan"
+
+INFO:__main__:Using "python3 c++ wulkan" as the search query
+INFO:fetcher.scopus.api:Searching (all pages) for "python3 c++ wulkan"
+INFO:fetcher.scopus.api:Searching (single page) for "python3 c++ wulkan", start: 0, count: 25
+INFO:fetcher.scopus.api:Searching (single page) for "python3 c++ wulkan", start: 50, count: 25
+[...]
+```
+
+### Graficznie
+TODO: 
