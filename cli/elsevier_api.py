@@ -33,4 +33,4 @@ async def use(options: CommonFetcherOptions, output_path: Optional[str] = None) 
                     logger)
             for entry in r:
                 logger.debug(entry)
-            return FetcherModuleResult(module=__name__, results=r)
+            return FetcherModuleResult(module=__name__, results=r, errors=[])

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Any
+from typing import Optional, Any, List
 
 
 @dataclass
@@ -18,3 +18,4 @@ class ProxiesFetcherOptions(CommonFetcherOptions):
 class FetcherModuleResult:
     module: str
     results: Any
+    errors: List[str]

@@ -121,4 +121,4 @@ async def use(options: ProxiesFetcherOptions) -> FetcherModuleResult:
                                           scr=scr)
 
     merged_entries = merge_entries(all_scraped_entries, bibs)
-    return FetcherModuleResult(module=__name__, results=merged_entries)
+    return FetcherModuleResult(module=__name__, results=merged_entries, errors=[])

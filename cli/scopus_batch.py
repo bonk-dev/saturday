@@ -128,4 +128,4 @@ async def use(options: CommonFetcherOptions,
             logger.debug(pub.to_debug_string())
     else:
         scopus_batch_pubs = []
-    return FetcherModuleResult(module=__name__, results=scopus_batch_pubs)
+    return FetcherModuleResult(module=__name__, results=scopus_batch_pubs, errors=[])
