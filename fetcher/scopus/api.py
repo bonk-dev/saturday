@@ -1,6 +1,7 @@
 import logging
 import httpx
 
+from fetcher.exceptions import InvalidAPIKeyError
 from fetcher.proxy.rotator import ProxyRotator
 from fetcher.scopus.models import SearchResults, SearchEntry
 
@@ -84,6 +85,8 @@ class ScopusApi:
         :param int count:  Number of results to return on this page
                            (must be ≤ :const:`SCOBUS_SEARCH_MAX_COUNT`).
         :raises ValueError: If `count` > `SCOBUS_SEARCH_MAX_COUNT`.
+        :raises InvalidAPIKeyError: If the provided API key is invalid (service returned a 401 Unauthorized)
+        :raises HTTPError: If the HTTP response status code indicates failure (other than 401 Unauthorized)
         :return: Parsed search results for this page.
         :rtype: SearchResults
         """
@@ -98,6 +101,10 @@ class ScopusApi:
         response = await self._session.get(f'{self._base}/content/search/scopus', params=query)
         self._logger.debug(f'Response status: {str(response.status_code)}')
         self._logger.debug(f'Response text: {response.text}')
+
+        if response.status_code == httpx.codes.UNAUTHORIZED:
+            raise InvalidAPIKeyError(str(response.url))
+        response.raise_for_status()
 
         return SearchResults(json_data=response.json())
 
