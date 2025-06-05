@@ -204,4 +204,6 @@ INFO:fetcher.scopus_batch.scraper:export_all: exported 400/5135
 ```
 
 ### Graficznie
-TODO: 
+
+![Zrzut ekranu pokazujący panel pobierania danych w interfejsie graficznym](./assets/batch-14.webp)
+<p class="text--italic" aria-hidden="true">Zrzut ekranu pokazujący panel pobierania danych w interfejsie graficznym</p>

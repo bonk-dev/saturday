@@ -92,4 +92,6 @@ INFO:fetcher.scopus.api:Searching (single page) for "python3 c++ wulkan", start:
 ```
 
 ### Graficznie
-TODO: 
+
+![Zrzut ekranu pokazujący panel pobierania danych w interfejsie graficznym](./assets/elsevier-4.webp)
+<p class="text--italic" aria-hidden="true">Zrzut ekranu pokazujący panel pobierania danych w interfejsie graficznym</p>
