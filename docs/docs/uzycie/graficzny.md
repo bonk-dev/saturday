@@ -28,6 +28,32 @@ z modułów albo wszystkimi.
 
 ## Wykresy
 
-TODO
+Za pomocą interfejsu graficznego można tworzyć różne wykresy, na podstawie pobranych wcześniej danych.
 
-[//]: # (TODO: add graph instructions)
+### Przykład
+
+Aby stworzyć wykres przedstawiający ilość publikacji w zależności od autora, należy na początek ustawić
+oś X tak, aby przedstawiała autorów (oraz identyfikujące ich pole, np. imię i nazwisko).
+
+![Zrzut ekranu pokazujący ustawienia osi X](./assets/gui-2.webp)
+<p class="text--italic" aria-hidden="true">Zrzut ekranu pokazujący ustawienia osi X</p>
+
+Następnie trzeba skonfigurować oś Y tak, aby znajdowała się na niej liczba artykułów. Do tego służy funkcja `count`.
+
+![Zrzut ekranu pokazujący ustawienia osi Y](./assets/gui-3.webp)
+<p class="text--italic" aria-hidden="true">Zrzut ekranu pokazujący ustawienia osi Y</p>
+
+Należy jeszcze wybrać typ wykresu (przykładowo słupkowy), oraz opcjonalnie ustawić limit na osi X oraz sortowanie.
+
+![Zrzut ekranu pokazujący dodatkowe ustawienia](./assets/gui-4.webp)
+<p class="text--italic" aria-hidden="true">Zrzut ekranu pokazujący dodatkowe ustawienia</p>
+
+Na koniec trzeba nadać nazwę wykresowi i nacisnąć przycisk "Submit Query".
+
+![Zrzut ekranu pokazujący dodatkowe ustawienia #2](./assets/gui-5.webp)
+<p class="text--italic" aria-hidden="true">Zrzut ekranu pokazujący dodatkowe ustawienia #2</p>
+
+Po chwili powinien pojawić się wykres oraz odpowiadająca mu tabela danych.
+
+![Zrzut ekranu przedstawiający wygenerowany wykres](./assets/gui-6.webp)
+<p class="text--italic" aria-hidden="true">Zrzut ekranu przedstawiający wygenerowany wykres</p>
