@@ -14,9 +14,15 @@ Jedną z opcji korzystania z programu jest interfejs graficzny. Za jego pomocą 
 
 ## Uruchamianie
 
-idk, pewnie bedzie jakiś plik do uruchamiania
+Interfejs graficzny można uruchomić zarówno za pomocą zbudowanego pliku `gui.exe`, jak i za pomocą skryptu.
 
-[//]: # (TODO: add run instructions)
+Zbudowany plik nie wymaga instalacji żadnych innych programów. Wystarczy dwa razy kliknąć plik:
+
+<video controls preload='metadata' class="saturday-video" aria-hidden="true">
+    <source src={require('./assets/gui-7.webm').default} />
+</video>
+
+Następnie należy w przeglądarce otworzyć adres: [http://127.0.0.1:5000/ui](http://127.0.0.1:5000/ui).
 
 ## Pobieranie danych
 
