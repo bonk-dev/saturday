@@ -15,7 +15,10 @@ i Google Scholar (poprzez scraping HTML).
   interfejsy API HTTP oraz scraping HTML.
 - **Wykorzystane technologie:**
   Główne biblioteki obejmują [HTTPX](https://www.python-httpx.org/) dla żądań HTTP(S) 
-  i [BeautifulSoup4](https://www.crummy.com/software/BeautifulSoup/) dla scrapingu HTML.
+  i [BeautifulSoup4](https://www.crummy.com/software/BeautifulSoup/) do scrapingu HTML.
+  Projekt obejmuje również backend stworzony za pomocą [Flaska](https://github.com/pallets/flask) do obsługi danych 
+  i logiki biznesowej oraz frontend zbudowany przy użyciu [Vue.js](https://vuejs.org/) 
+  oraz [Chart.js](https://www.chartjs.org/) do interaktywnej, wizualnej prezentacji zebranych i przetworzonych danych.
 - **Ujednolicenie formatów:**  
   Narzędzie obsługuje różne formaty danych zwracane przez różne źródła (np. JSON z interfejsów API, CSV 
   z nieoficjalnych eksportów i częściowo przetworzone słowniki Python z HTML scrapingu). Ujednolica te 
