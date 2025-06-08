@@ -25,6 +25,9 @@ class AppConfig:
         # Logging
         self.log_level = os.getenv('LOG_LEVEL', 'INFO')
 
+        # Static files
+        self.static_dir = os.getenv('STATIC_DIR', 'ui')
+
     def _get_bool_env(self, key: str, default: bool = False) -> bool:
         """Get boolean environment variable"""
         value = os.getenv(key, '').lower()

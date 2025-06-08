@@ -5,6 +5,21 @@ A Python 3 app designed to scrape science publication metadata from various sour
   - Scopus' website export gateway
 - Google Scholar
 
+## Build
+1. Install [just](https://github.com/casey/just?tab=readme-ov-file#installation)
+2. Run `just all` - the artifacts will be in the `dist/` directory.
+
+All available recipes:
+```shell
+$ just -l
+Available recipes:
+    all  # Build everything
+    cli  # Build the Python CLI into an exe
+    docs # Build Docusaurus docs
+    env  # Copy .env.sample to dist/.env
+    gui  # Build backend + frontend into an exe
+```
+
 ## Usage
 ### Command-line
 ```shell
