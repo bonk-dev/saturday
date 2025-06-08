@@ -1,6 +1,9 @@
 # Build the Python CLI into an exe
 cli:
-    echo TODO
+    pyinstaller \
+        --add-data "database/dbCreateScript.sql:database" \
+        --onefile main.py \
+        --name cli
 
 # Build backend + frontend into an exe
 app:
