@@ -78,7 +78,7 @@ const config: Config = {
           items: [
             {
               label: 'Instrukcja obsługi',
-              to: '/category/wstepna-konfiguracja',
+              to: '/category/wstępna-konfiguracja',
             },
             {
               label: 'Opis projektu',
