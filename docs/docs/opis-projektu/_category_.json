@@ -1,0 +1,8 @@
+{
+    "label": "Opis projektu",
+    "position": 4,
+    "link": {
+      "type": "generated-index",
+      "description": "Opis poszczególnych modułów oraz użytych bibliotek i technologii"
+    }
+}
