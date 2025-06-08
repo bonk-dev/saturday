@@ -7,7 +7,9 @@ A Python 3 app designed to scrape science publication metadata from various sour
 
 ## Build
 1. Install [just](https://github.com/casey/just?tab=readme-ov-file#installation)
-2. Run `just all` - the artifacts will be in the `dist/` directory.
+2. Install pip requirements (preferably in venv): `pip install -r requirements.txt`
+3. Install [Node.js](https://nodejs.org/en/download)
+4. Run `just all` - the artifacts will be in the `dist/` directory.
 
 All available recipes:
 ```shell
