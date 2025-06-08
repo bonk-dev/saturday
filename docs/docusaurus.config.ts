@@ -84,7 +84,15 @@ const config: Config = {
           items: [
             {
               label: 'Instrukcja obsługi',
-              to: '/',
+              to: '/category/wstepna-konfiguracja',
+            },
+            {
+              label: 'Opis projektu',
+              to: '/category/opis-projektu',
+            },
+            {
+              label: 'Podsumowanie',
+              to: '/podsumowanie',
             },
           ],
         },
