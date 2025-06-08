@@ -1,5 +1,5 @@
 import logging
-from flask import Flask
+from flask import Flask, send_from_directory, redirect
 from flask_restx import Api
 from dotenv import load_dotenv
 
@@ -12,10 +12,29 @@ from backend.routes.queries.filterOptions import ns_filter_options
 from database.dbContext import init_app
 from backend.config import config
 from flask_cors import CORS
+
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
+
+
+@app.route('/ui')
+@app.route('/ui/')
+def ui_index():
+    return send_from_directory(config.static_dir, 'index.html')
+
+
+@app.route('/ui/<path:filename>')
+def ui_static(filename):
+    return send_from_directory(config.static_dir, filename)
+
+
+@app.route('/')
+def index():
+    return redirect('/ui')
+
+
 CORS(app)
 # Configure Flask-RESTX for Swagger
 api = Api(app,
@@ -29,15 +48,12 @@ api = Api(app,
 logging.basicConfig(level=getattr(logging, config.log_level.upper()))
 logger = logging.getLogger(__name__)
 
-
 api.add_namespace(ns_gscholar)
 api.add_namespace(ns_scopus_api)
 api.add_namespace(ns_scopus_batch)
 api.add_namespace(ns_system)
 api.add_namespace(ns_dynamicChart)
 api.add_namespace(ns_filter_options)
-
-
 
 init_app(app)
 
