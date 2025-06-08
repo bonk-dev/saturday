@@ -28,3 +28,8 @@
   --ifm-color-primary-lightest: #eaadad;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.saturday-video {
+  max-width: 100%;
+  height: auto;
+}
