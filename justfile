@@ -2,7 +2,6 @@
 cli:
     pyinstaller \
         --add-data "database/dbCreateScript.sql:database" \
-        --add-data "test.txt:." \
         --onefile main.py \
         --name cli
 
