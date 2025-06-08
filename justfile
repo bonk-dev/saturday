@@ -25,11 +25,14 @@ gui: env
 
 
 # Build Docusaurus docs
+[working-directory: 'docs']
 docs:
-    mkdir -p dist/docs
-    npm --prefix docs install
-    npm --prefix docs run build
-    cp -vr docs/build/* dist/docs/
+    #!/usr/bin/env bash
+    ROOT='..'
+    mkdir -p "$ROOT/dist/docs"
+    npm install
+    npm run build
+    cp -vr build/* "$ROOT/dist/docs/"
 
 # Build everything
 all: cli gui docs
