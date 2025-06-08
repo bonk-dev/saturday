@@ -14,7 +14,8 @@ i Google Scholar (poprzez scraping HTML).
   Program gromadzi metadane publikacji z wielu źródeł, wykorzystując zarówno oficjalne, jak i nieoficjalne 
   interfejsy API HTTP oraz scraping HTML.
 - **Wykorzystane technologie:**
-  Główne biblioteki obejmują HTTPX dla żądań HTTP(S) i BeautifulSoup4 dla scrapingu HTML.
+  Główne biblioteki obejmują [HTTPX](https://www.python-httpx.org/) dla żądań HTTP(S) 
+  i [BeautifulSoup4](https://www.crummy.com/software/BeautifulSoup/) dla scrapingu HTML.
 - **Ujednolicenie formatów:**  
   Narzędzie obsługuje różne formaty danych zwracane przez różne źródła (np. JSON z interfejsów API, CSV 
   z nieoficjalnych eksportów i częściowo przetworzone słowniki Python z HTML scrapingu). Ujednolica te 
