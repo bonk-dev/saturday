@@ -1,3 +1,5 @@
+import pkgutil
+
 from flask import Flask, g
 import sqlite3
 
@@ -32,7 +34,6 @@ def create_db_if_missing():
     table_exists = cursor.fetchone()
 
     if not table_exists:
-        with open("database/dbCreateScript.sql", 'r') as file:
-            sql_script = file.read()
+        sql_script = pkgutil.get_data('database', 'dbCreateScript.sql').decode('utf-8')
         cursor.executescript(sql_script)
         db.commit()
