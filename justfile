@@ -2,12 +2,18 @@
 cli:
     pyinstaller \
         --add-data "database/dbCreateScript.sql:database" \
+        --add-data "test.txt:." \
         --onefile main.py \
         --name cli
 
 # Build backend + frontend into an exe
-app:
-    echo TODO
+gui:
+    npm --prefix frontend/article-charter install
+    npm --prefix frontend/article-charter run build
+    pyinstaller --add-data "frontend/article-charter/dist:ui" \
+        --add-data "database/dbCreateScript.sql:database" \
+        --onefile backend/main.py \
+        --name gui
 
 
 # Build Docusaurus docs
@@ -18,4 +24,4 @@ docs:
     cp -vr docs/build/* dist/docs/
 
 # Build everything
-all: cli app docs
+all: cli gui docs
