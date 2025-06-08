@@ -64,12 +64,6 @@ const config: Config = {
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'sidebar',
-          position: 'left',
-          label: 'Instrukcja obsługi',
-        },
-        {
           href: 'https://github.com/bonk-dev/saturday',
           label: 'GitHub',
           position: 'right',
