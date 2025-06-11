@@ -45,13 +45,18 @@
       <label class="form-label">Label</label>
       <input v-model="state.label" placeholder="Enter label" class="form-input" />
     </div>
+
+    <div class="form-group">
+      <label class="form-label">Background Color</label>
+      <ColorPicker class="form-input" v-model="state.background_color" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import DbSelect from '../Shared/DbSelect.vue';
 import { reactive, watch } from 'vue';
-
+import ColorPicker from '../Shared/ColorPicker.vue';
 const props = defineProps({
   modelValue: {
     type: Object,
@@ -61,6 +66,7 @@ const props = defineProps({
       method: '',
       name: '',
       label: '',
+      background_color: '',
     }),
   },
 });
@@ -73,6 +79,7 @@ const state = reactive({
   method: props.modelValue.method || '',
   name: props.modelValue.name || '',
   label: props.modelValue.label || '',
+  background_color: props.modelValue.background_color || '',
 });
 
 watch(

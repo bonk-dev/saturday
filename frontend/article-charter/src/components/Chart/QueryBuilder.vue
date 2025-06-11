@@ -125,6 +125,87 @@
         <input v-model="chart_name" type="text" placeholder="Enter value" class="form-input" />
       </div>
     </div>
+
+    <!-- Chart Colors -->
+    <div class="card mb-6">
+      <div class="card-header">
+        <h2 class="card-title">Chart Colors</h2>
+      </div>
+      <div class="card-content">
+        <div>
+          <label class="block mb-1">Background Color</label>
+          <ColorPicker v-model="form.style.backgroundColor" />
+        </div>
+        <div>
+          <label class="block mb-1">Font Color</label>
+          <ColorPicker v-model="form.style.fontColor" />
+        </div>
+        <div>
+          <label class="block mb-1">Title Font Color</label>
+          <ColorPicker v-model="form.style.titleFontColor" />
+        </div>
+        <div>
+          <label class="block mb-1">Grid Color</label>
+          <ColorPicker v-model="form.style.gridColor" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Style Options -->
+    <div class="card mb-6">
+      <div class="card-header">
+        <h2 class="card-title">Chart Style Options</h2>
+      </div>
+      <div class="card-content">
+        <!-- Font Family -->
+        <div>
+          <label class="block mb-1">Font Family</label>
+          <DbSelect
+            v-model="form.style.fontFamily"
+            :options-endpoint="'http://127.0.0.1:5000/filter-options/fonts'"
+            :options-payload="{}"
+            :multiple="false"
+            placeholder="Choose font"
+          />
+        </div>
+
+        <!-- Font Size -->
+        <div>
+          <label class="block mb-1">Font Size (px)</label>
+          <input
+            type="number"
+            v-model="form.style.fontSize"
+            class="form-input"
+            placeholder="Font size"
+            min="8"
+          />
+        </div>
+
+        <!-- Legend Position -->
+        <div>
+          <label class="block mb-1">Legend Position</label>
+          <DbSelect
+            v-model="form.style.legendPosition"
+            :options-endpoint="'http://127.0.0.1:5000/filter-options/legend-position'"
+            :options-payload="{}"
+            :multiple="false"
+            placeholder="Legend position"
+          />
+        </div>
+
+        <!-- Title Font Size -->
+        <div>
+          <label class="block mb-1">Title Font Size (px)</label>
+          <input
+            type="number"
+            v-model="form.style.titleFontSize"
+            class="form-input"
+            placeholder="Title font size"
+            min="10"
+          />
+        </div>
+      </div>
+    </div>
     <!-- Submit -->
     <div class="text-center mt-6">
       <button class="btn btn-primary" @click="submitQuery">Submit Query</button>
@@ -146,6 +227,7 @@ import HavingFilterItem from './HavingFilterItem.vue';
 import DbSelect from '../Shared/DbSelect.vue';
 import { ref, defineEmits, computed, watch } from 'vue';
 import OrderByItem from './OrderByItem.vue';
+import ColorPicker from '../Shared/ColorPicker.vue';
 const emit = defineEmits(['submit']);
 
 const form = ref({
@@ -157,6 +239,7 @@ const form = ref({
       method: '',
       name: '',
       label: '',
+      background_color: '#3b82f6',
     },
   ],
   filters: [],
@@ -164,6 +247,16 @@ const form = ref({
   order_by: [],
   limit: null,
   chart_type: '',
+  style: {
+    backgroundColor: '#0f172a',
+    fontFamily: '',
+    fontSize: 14,
+    fontColor: '#f8fafc',
+    legendPosition: '',
+    titleFontSize: 18,
+    titleFontColor: '#f8fafc',
+    gridColor: '#94a3b8',
+  },
 });
 
 const chart_name = ref('');
@@ -180,6 +273,7 @@ function addYAxisDataset() {
     method: '',
     name: '',
     label: '',
+    background_color: '#3b82f6',
   });
 }
 
@@ -302,6 +396,8 @@ function validateForm() {
 
 async function submitQuery() {
   if (!validateForm()) return;
+
+  form.value.limit = form.value.limit || 0;
 
   try {
     const response = await fetch('http://127.0.0.1:5000/dynamic-chart/data', {

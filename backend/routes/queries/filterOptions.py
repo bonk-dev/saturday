@@ -159,3 +159,67 @@ class ChartTypes(Resource):
 
         except Exception as e:
             return {'error': str(e), 'success': False}, 500
+
+
+@ns_filter_options.route('/legend-position')
+class LegendPosition(Resource):
+    @ns_filter_options.response(200, 'Success', multiselect_values_model)
+    @ns_filter_options.response(400, 'Bad Request', error_response_model)
+    @ns_filter_options.response(500, 'Internal Server Error', error_response_model)
+    def post(self):
+        """
+        Retrieve list of available SQL comparison operators for filtering data.
+        Returns predefined operators used in WHERE clauses for database queries.
+        Supports equality, inequality, range, set membership, and pattern matching operations.
+
+        :return: Dictionary containing success status and list of SQL operators with HTTP status code.
+        """
+        try:
+            return {'success': True, 'values': ['top', 'bottom', 'left', 'right']}, 200
+
+        except Exception as e:
+            return {'error': str(e), 'success': False}, 500
+
+
+@ns_filter_options.route('/fonts')
+class HtmlFontFamiliesList(Resource):
+    @ns_filter_options.response(200, 'Success', multiselect_values_model)
+    @ns_filter_options.response(400, 'Bad Request', error_response_model)
+    @ns_filter_options.response(500, 'Internal Server Error', error_response_model)
+    def post(self):
+        """
+        Retrieve list of default HTML font families available across web browsers.
+        Returns predefined font family values commonly used in CSS font-family declarations.
+        Includes generic families and widely supported system fonts for cross-platform compatibility.
+
+        :return: Dictionary containing success status and list of HTML font families with HTTP status code.
+        """
+        try:
+            font_families = [
+                'serif',
+                'sans-serif',
+                'monospace',
+                'cursive',
+                'fantasy',
+                'system-ui',
+                'Arial',
+                'Helvetica',
+                'Times New Roman',
+                'Times',
+                'Courier New',
+                'Courier',
+                'Verdana',
+                'Georgia',
+                'Palatino',
+                'Garamond',
+                'Bookman',
+                'Comic Sans MS',
+                'Trebuchet MS',
+                'Arial Black',
+                'Impact'
+            ]
+
+            return {'success': True, 'values': font_families}, 200
+
+        except Exception as e:
+            return {'error': str(e), 'success': False}, 500
