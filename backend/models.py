@@ -38,7 +38,7 @@ dataset_config_fields = {
                            description='Aggregation method: count, sum, average, min, max'),
     'name': fields.String(required=True, description='Dataset identifier'),
     'label': fields.String(required=False, description='Display label for the dataset'),
-    'color': fields.String(required=False, description='Color code for the dataset (hex)')
+    'background_color': fields.String(required=False, description='Color code for the dataset (hex)')
 }
 
 filter_config_fields = {

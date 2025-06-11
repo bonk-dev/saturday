@@ -390,7 +390,7 @@ def execute_separate_queries(x_axis, y_axis_datasets, filters, having_filters, o
         dataset_results.append({
             'name': name,
             'label': dataset.get('label', name),
-            'color': dataset.get('color', None),
+            'background_color': dataset.get('background_color', None),
             'data': dataset_values
         })
     return x_values, dataset_results

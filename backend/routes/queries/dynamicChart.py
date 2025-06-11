@@ -101,8 +101,8 @@ class DynamicChartData(Resource):
             having_filters = data.get('having_filters', [])
             order_by = data.get('order_by', [])
             limit = data.get('limit', None)
-            chart_type = data.get('chart_type', 'line')
-
+            chart_type = data.get('chart_type', 'bar')
+            style_config = data.get('style', {})
             # Validate required fields
             if not x_axis or not y_axis_datasets:
                 return {'error': 'x_axis and y_axis_datasets are required', 'success': False}, 400
@@ -145,14 +145,17 @@ class DynamicChartData(Resource):
             chart_datasets = []
             colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
 
+
             # Check if this is a pie-type chart that needs individual colors per data point
             pie_chart_types = ['pie', 'doughnut', 'radar', 'polararea']
             is_pie_type = chart_type.lower() in pie_chart_types
 
             for i, dataset_result in enumerate(dataset_results):
+                background_color = dataset_result.get('background_color') or colors[i % len(colors)]
                 dataset_config = {
                     'label': dataset_result['label'],
                     'data': dataset_result['data'],
+                    'backgroundColor': background_color,
                     'borderWidth': 1
                 }
 
@@ -164,8 +167,7 @@ class DynamicChartData(Resource):
                     dataset_config['borderColor'] = individual_colors
                 else:
                     # For other chart types, use single color per dataset
-                    single_color = dataset_result['color'] or colors[i % len(colors)]
-                    dataset_config['backgroundColor'] = single_color
+                    single_color = dataset_config['backgroundColor'] or colors[i % len(colors)]
                     dataset_config['borderColor'] = single_color
 
                     if chart_type == 'line':
@@ -178,10 +180,23 @@ class DynamicChartData(Resource):
                 'datasets': chart_datasets
             }
 
+
+            default_style = {
+                'backgroundColor': '#ffffff',
+                'fontColor': '#333333',
+                'legendPosition': 'bottom',
+                'titleFontSize': 18,
+                'titleFontColor': '#000000',
+                'gridColor': '#cccccc'
+            }
+
+            final_style = {**default_style, **style_config}
+
             response = {
                 'success': True,
                 'data': chart_data,
                 'chart_type': chart_type,
+                'style': final_style,
                 'table': table_structure,
                 'query_info': {
                     'total_records': len(x_values),

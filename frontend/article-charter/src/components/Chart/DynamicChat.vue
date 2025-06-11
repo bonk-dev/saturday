@@ -28,7 +28,14 @@ function renderChart() {
     return;
   }
 
+  const { style = {} } = props.chartPayload;
+
   const ctx = canvas.value.getContext('2d');
+
+  // Optional: set canvas background color
+  if (style.backgroundColor) {
+    canvas.value.style.backgroundColor = style.backgroundColor;
+  }
 
   chartInstance = new Chart(ctx, {
     type: props.chartPayload.chart_type || 'bar',
@@ -37,25 +44,71 @@ function renderChart() {
       responsive: true,
       plugins: {
         legend: {
-          position: 'top',
+          position: style.legendPosition || 'top',
+          labels: {
+            color: style.fontColor || '#666',
+            font: {
+              family: style.fontFamily || 'sans-serif',
+              size: style.fontSize || 12,
+            },
+          },
         },
         title: {
           display: true,
           text: props.chartNames.value.title || 'Wykres danych',
+          color: style.titleFontColor || '#000',
+          font: {
+            size: style.titleFontSize || 16,
+            family: style.fontFamily || 'sans-serif',
+          },
         },
       },
       scales: {
         x: {
+          grid: {
+            color: style.gridColor || '#e5e5e5',
+          },
           title: {
             display: true,
             text: props.chartNames.value.xtitle || '',
+            color: style.fontColor || '#666',
+            font: {
+              size: style.fontSize || 12,
+              family: style.fontFamily || 'sans-serif',
+            },
+          },
+          ticks: {
+            color: style.fontColor || '#666',
+            font: {
+              size: style.fontSize || 12,
+              family: style.fontFamily || 'sans-serif',
+            },
+            callback: function (value, index, ticks) {
+              const originalLabel = props.chartPayload.data.labels?.[index] ?? String(value);
+              return originalLabel.length > 40 ? originalLabel.slice(0, 40) + '...' : originalLabel;
+            },
           },
         },
         y: {
           beginAtZero: true,
+          grid: {
+            color: style.gridColor || '#e5e5e5',
+          },
           title: {
             display: true,
             text: props.chartNames.value.ytitle || '',
+            color: style.fontColor || '#666',
+            font: {
+              size: style.fontSize || 12,
+              family: style.fontFamily || 'sans-serif',
+            },
+          },
+          ticks: {
+            color: style.fontColor || '#666',
+            font: {
+              size: style.fontSize || 12,
+              family: style.fontFamily || 'sans-serif',
+            },
           },
         },
       },
